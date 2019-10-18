@@ -71,21 +71,6 @@ public class Alarm {
 			}
 		}
 
-		// if (currentTime >= alarmTime) {
-		// 	System.out.println("\n\n\n\n\n HERE WE MADE IT \n\n\n\n\n");
-		// 	KThread thread = waitQueue.nextThread();
-		// 	if (thread != null) {
-		// 		thread.ready();
-		// 	}
-		// }
-		// else{
-		// 	System.out.println(currentTime+"/"+alarmTime);
-		// }
-		// KThread thread = waitQueue.nextThread();
-		// if (thread != null) {
-		// 	thread.ready();
-		// }
-
 		// make current thread yield
 		KThread.currentThread().yield();
 		Machine.interrupt().restore(intStatus);
@@ -105,7 +90,7 @@ public class Alarm {
 	 */
 	public void waitUntil(long x) {
 
-		//Handle negative and small times
+		// Handle negative and 0
 		if (x <= 0 ) {
 			return;			
 		}
@@ -120,7 +105,7 @@ public class Alarm {
 		Machine.interrupt().restore(intStatus);
 	}
 
-        /**
+    /**
 	 * Cancel any timer set by <i>thread</i>, effectively waking
 	 * up the thread immediately (placing it in the scheduler
 	 * ready set) and returning true.  If <i>thread</i> has no
@@ -158,13 +143,9 @@ public class Alarm {
 		}
     }
 
-    // Implement more test methods here ...
-
     // Invoke Alarm.selfTest() from ThreadedKernel.selfTest()
     public static void selfTest() {
 	alarmTest1();
 	alarmTest2();
-
-	// Invoke your other test methods here ...
     }
 }
