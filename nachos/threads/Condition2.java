@@ -60,12 +60,13 @@ public class Condition2 {
 	public void wake() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 
-		// Wake up AT MOST one thread
 		boolean intStatus = Machine.interrupt().disable(); // Disable interrupts
+
+		// Wake up AT MOST one thread (First thread in queue)
 		if (!waitQueue.isEmpty()) {
 
 			KThread threadToWake = waitQueue.removeFirst(); // Get first thread in wait queue
-			// and then remove it from the queue
+			// and remove it from the queue
 			if (threadToWake != null) 
 				threadToWake.ready();
 			Machine.interrupt().restore(intStatus); //Restore interrupts
@@ -79,11 +80,12 @@ public class Condition2 {
 	public void wakeAll() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 
-		//wake up ALL threads
 		boolean intStatus = Machine.interrupt().disable(); // Disable interrupts
+
+		//wake up ALL threads in waitQueue
 		while(!waitQueue.isEmpty()){
 			KThread threadToWake = waitQueue.removeFirst(); // Get first thread in wait queue
-			// and then remove it from the queue
+			// and remove it from the queue
 			if (threadToWake != null) 
 				threadToWake.ready();
 			Machine.interrupt().restore(intStatus); //Restore interrupts

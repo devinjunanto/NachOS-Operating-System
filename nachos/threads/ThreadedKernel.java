@@ -1,4 +1,4 @@
-package nachos.threads;
+xpackage nachos.threads;
 
 import nachos.machine.*;
 
@@ -50,6 +50,7 @@ public class ThreadedKernel extends Kernel {
 		Semaphore.selfTest();
 		SynchList.selfTest();
 		alarm.selfTest();
+		dummy4.selfTest();
 		if (Machine.bank() != null) {
 			ElevatorBank.selfTest();
 		}
