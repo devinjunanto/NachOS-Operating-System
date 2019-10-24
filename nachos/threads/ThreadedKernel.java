@@ -1,4 +1,4 @@
-xpackage nachos.threads;
+package nachos.threads;
 
 import nachos.machine.*;
 
@@ -47,8 +47,8 @@ public class ThreadedKernel extends Kernel {
 	 */
 	public void selfTest() {
 		KThread.selfTest();
-		Semaphore.selfTest();
-		SynchList.selfTest();
+		// Semaphore.selfTest();
+		// SynchList.selfTest();
 		alarm.selfTest();
 		dummy4.selfTest();
 		if (Machine.bank() != null) {
@@ -94,5 +94,5 @@ public class ThreadedKernel extends Kernel {
 
 	private static ElevatorController dummy7 = null;
 
-        private static GameMatch dummy8 = null;
+    private static GameMatch dummy8 = null;
 }

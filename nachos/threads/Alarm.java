@@ -1,7 +1,7 @@
 package nachos.threads;
 
 import nachos.machine.*;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Uses the hardware timer to provide preemption, and to allow threads to sleep
@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
  */
 public class Alarm {
 
-	private class AlarmTimeThread  {
+	private class AlarmTimeThread implements Comparable<AlarmTimeThread> {
 		private KThread thread;
     	private long waketime;
     	public AlarmTimeThread (KThread thread, long waketime){
@@ -63,16 +63,17 @@ public class Alarm {
 
 		//Set off first alarm in queue as soon as its wakeTime is less than current time
 		while(!alarmQueue.isEmpty() && alarmQueue.peek().waketime <= currentTime ){
+			//System.out.format("Waketime - %d , currentTime - %d",alarmQueue.peek().waketime, currentTime );
 			AlarmTimeThread alarmReady = alarmQueue.poll();
 			KThread alarmThread = alarmReady.thread;
 
-			if (alarmThread != null) {
-				alarmThread.ready();
-			}
+			System.out.println("Removing "+alarmThread+" from alarmQueue");
+
+			if (alarmThread != null)	alarmThread.ready();
 		}
 
 		// make current thread yield
-		KThread.currentThread().yield();
+		KThread.yield();
 		Machine.interrupt().restore(intStatus);
 	}
 
@@ -101,6 +102,7 @@ public class Alarm {
 		boolean intStatus = Machine.interrupt().disable();
 
 		alarmQueue.add(alarmTimeThread);
+		System.out.println("Added " + alarmTimeThread.thread +" for "+x+" ticks to alarmQueue - " + alarmQueue.size());
 		currentThread.sleep();
 		Machine.interrupt().restore(intStatus);
 	}
@@ -114,13 +116,33 @@ public class Alarm {
 	 * <p>
 	 * @param thread the thread whose timer should be cancelled.
 	 */
-        public boolean cancel(KThread thread) {
+    public boolean cancel(KThread thread) {
+
+    	// Creating an iterator 
+        Iterator<AlarmTimeThread> value = alarmQueue.iterator(); 
+        while (value.hasNext()) { 
+        	AlarmTimeThread alarmToCancel = value.next();
+            if (thread == alarmToCancel.thread) {
+            	boolean intStatus = Machine.interrupt().disable();
+           		System.out.println("Cancel alarm !!"+thread);
+           		alarmQueue.remove(alarmToCancel); //Remove from queue
+           		alarmToCancel.thread.ready();     //Thread ready
+           		Machine.interrupt().restore(intStatus);
+           		return true;
+            }
+        }
+
+    	//** FROM TA //
+    //This has to call ready on thread before returning true
+    // in wake think about how you dont want to ready twice based on True/False of this function
+    // Moreover, wakeQueue in Condition2 will still contain the thread, so think about that edge case
 		return false;
 	}
 
 	// Add Alarm testing code to the Alarm class
     
     public static void alarmTest1() {
+    	System.out.println("\n\nALARM TEST 1\n\n");
 		int durations[] = {100, 0, 100*1000};
 		long t0, t1;
 		for (int d : durations) {
@@ -132,6 +154,7 @@ public class Alarm {
     }
 
      public static void alarmTest2() {
+     	System.out.println("\n\nALARM TEST 2\n\n");
 		int durations[] = {4000*1000, -10, 1000000};
 		long t0, t1;
 		
@@ -143,9 +166,39 @@ public class Alarm {
 		}
     }
 
+    public static void cancelTest() {
+    	System.out.println("\n\nCANCEL TEST\n\n");
+		int durations[] = {30000000, 40000000, 50000000};
+		long t0, t1;
+		
+		for (int d : durations) {
+			t0 = Machine.timer().getTime();
+			System.out.println("Setting alarm for "+d);
+
+			KThread main = KThread.currentThread();
+
+		    KThread t = new KThread( new Runnable () {
+				public void run() {
+					//lock.acquire();
+					ThreadedKernel.alarm.cancel(main);
+					//lock.release();
+				}
+			});
+			t.setName("t").fork();
+		    // ThreadedKernel.alarm.waitUntil (d);
+		    ThreadedKernel.alarm.waitUntil (d);
+		   	//ThreadedKernel.alarm.cancel(KThread.currentThread());
+		    // ??? Does this work ?
+		    //ThreadedKernel.alarm.cancel(KThread.currentThread());
+		    t1 = Machine.timer().getTime();
+		    System.out.println ("alarmTest2: waited for " + (t1 - t0) + " ticks");
+		}
+    }
+
     // Invoke Alarm.selfTest() from ThreadedKernel.selfTest()
     public static void selfTest() {
-	alarmTest1();
-	alarmTest2();
+		alarmTest1();
+		alarmTest2();
+		cancelTest();
     }
 }
