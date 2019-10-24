@@ -46,11 +46,12 @@ public class ThreadedKernel extends Kernel {
 	 * here.
 	 */
 	public void selfTest() {
-		KThread.selfTest();
+		//KThread.selfTest();
 		// Semaphore.selfTest();
 		// SynchList.selfTest();
-		alarm.selfTest();
-		dummy4.selfTest();
+		//alarm.selfTest();
+		//dummy4.selfTest();
+		Rendezvous.selfTest();
 		if (Machine.bank() != null) {
 			ElevatorBank.selfTest();
 		}
