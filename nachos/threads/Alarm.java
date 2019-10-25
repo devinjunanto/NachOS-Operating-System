@@ -67,8 +67,6 @@ public class Alarm {
 			AlarmTimeThread alarmReady = alarmQueue.poll();
 			KThread alarmThread = alarmReady.thread;
 
-			System.out.println("Removing "+alarmThread+" from alarmQueue");
-
 			if (alarmThread != null)	alarmThread.ready();
 		}
 
@@ -102,7 +100,6 @@ public class Alarm {
 		boolean intStatus = Machine.interrupt().disable();
 
 		alarmQueue.add(alarmTimeThread);
-		System.out.println("Added " + alarmTimeThread.thread +" for "+x+" ticks to alarmQueue - " + alarmQueue.size());
 		currentThread.sleep();
 		Machine.interrupt().restore(intStatus);
 	}
@@ -124,7 +121,6 @@ public class Alarm {
         	AlarmTimeThread alarmToCancel = value.next();
             if (thread == alarmToCancel.thread) {
             	boolean intStatus = Machine.interrupt().disable();
-           		System.out.println("Cancel alarm !!"+thread);
            		alarmQueue.remove(alarmToCancel); //Remove from queue
            		alarmToCancel.thread.ready();     //Thread ready
            		Machine.interrupt().restore(intStatus);
@@ -165,6 +161,42 @@ public class Alarm {
 		    System.out.println ("alarmTest2: waited for " + (t1 - t0) + " ticks");
 		}
     }
+
+  //    public static void alarmTest3() {
+  //    	System.out.println("\n\nALARM TEST 3\n\n");
+		// long t0, t1;
+
+		// KThread t1 = new KThread( new Runnable () {
+		// 		public void run() {
+		// 			//lock.acquire();
+		// 			ThreadedKernel.alarm.WaitUntil(500000);
+		// 			//lock.release();
+		// 		}
+		// 	});
+		// KThread t2 = new KThread( new Runnable () {
+		// 		public void run() {
+		// 			//lock.acquire();
+		// 			ThreadedKernel.alarm.WaitUntil(400000);
+		// 			//lock.release();
+		// 		}
+		// 	});
+		// KThread t3 = new KThread( new Runnable () {
+		// 		public void run() {
+		// 			//lock.acquire();
+		// 			ThreadedKernel.alarm.WaitUntil(300000);
+		// 			//lock.release();
+		// 		}
+		// 	});
+
+		// t1.setName("t1").fork();
+		// t2.setName("t2").fork();
+		// t3.setName("t3").fork();
+
+
+		//     t1 = Machine.timer().getTime();
+		//     System.out.println ("alarmTest2: waited for " + (t1 - t0) + " ticks");
+		// }
+  //   }
 
     public static void cancelTest() {
     	System.out.println("\n\nCANCEL TEST\n\n");
