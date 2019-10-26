@@ -136,7 +136,7 @@ public class Alarm {
 	}
 
 	// Add Alarm testing code to the Alarm class
-    
+    // verify that a thread waits (approximately) for its requested duration; 
     public static void alarmTest1() {
     	System.out.println("\n\nALARM TEST 1\n\n");
 		int durations[] = {100, 0, 100*1000};
@@ -149,6 +149,7 @@ public class Alarm {
 		}
     }
 
+	//if the wait parameter is 0 or negative, the thread does not wait; 
      public static void alarmTest2() {
      	System.out.println("\n\nALARM TEST 2\n\n");
 		int durations[] = {4000*1000, -10, 1000000};
@@ -161,42 +162,18 @@ public class Alarm {
 		    System.out.println ("alarmTest2: waited for " + (t1 - t0) + " ticks");
 		}
     }
+	//multiple threads waiting on the alarm are woken up at the proper times, and in the proper order.
+     public static void alarmTest3() {
+     	System.out.println("\n\nALARM TEST 3\n\n");
+		long time2 = Machine.timer().getTime();
+		
+		// a1.waitUntil(500000);
+		// a2.waitUntil(500000);
+		// a3.waitUntil(500000);
 
-  //    public static void alarmTest3() {
-  //    	System.out.println("\n\nALARM TEST 3\n\n");
-		// long t0, t1;
-
-		// KThread t1 = new KThread( new Runnable () {
-		// 		public void run() {
-		// 			//lock.acquire();
-		// 			ThreadedKernel.alarm.WaitUntil(500000);
-		// 			//lock.release();
-		// 		}
-		// 	});
-		// KThread t2 = new KThread( new Runnable () {
-		// 		public void run() {
-		// 			//lock.acquire();
-		// 			ThreadedKernel.alarm.WaitUntil(400000);
-		// 			//lock.release();
-		// 		}
-		// 	});
-		// KThread t3 = new KThread( new Runnable () {
-		// 		public void run() {
-		// 			//lock.acquire();
-		// 			ThreadedKernel.alarm.WaitUntil(300000);
-		// 			//lock.release();
-		// 		}
-		// 	});
-
-		// t1.setName("t1").fork();
-		// t2.setName("t2").fork();
-		// t3.setName("t3").fork();
-
-
-		//     t1 = Machine.timer().getTime();
-		//     System.out.println ("alarmTest2: waited for " + (t1 - t0) + " ticks");
-		// }
-  //   }
+		long time1 = Machine.timer().getTime();
+		System.out.println ("alarmTest2: waited for " + (time1 - time2) + " ticks (Should be around 500000)");
+	}
 
     public static void cancelTest() {
     	System.out.println("\n\nCANCEL TEST\n\n");
@@ -231,6 +208,7 @@ public class Alarm {
     public static void selfTest() {
 		alarmTest1();
 		alarmTest2();
+		alarmTest3();
 		cancelTest();
     }
 }

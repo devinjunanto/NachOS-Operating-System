@@ -1,0 +1,54 @@
+Group Members - Shardul Saiya (A13964199)
+
+Description - 
+------------------------------------------------------------------
+Alarm 
+	- Made a priority queue to hold alarms based on alarm time in ascending order.
+	- Wrote timerInterrupt method to run every 500 ticks and check if time right now is greater than first alarm in priority queue.
+	- If current time is greater than first alarm time, then wake the alarm which was sleeping till now.
+
+ Testing
+ 	- Test if alarms set at correct order and wake up in correct order.
+ 	- Test multiple alarms.
+ 	- Test if it sleeps for approxim ateely that much time.
+ 	- Test negative and zero.
+
+------------------------------------------------------------------
+Join
+	- Used a threadedQueue to make a joinqueue
+	- If Ahas already finished, then B returns immediately from join without waiting. 
+	- If A has not finished, then B waits inside of join until A finishes; when A finishes, it resumes B.
+
+  Testing 
+  	- Test for the situation where the child finishes before the parent calls join on it.
+  	- Test If child has not finished, then parent waits inside of join until A finishes.
+
+------------------------------------------------------------------
+Condtion2
+	- Implement Sleep using a LinkedList of KThreads
+	- Implement Wake using 
+
+  Testing
+	- Using Pong Pong test 
+	- Consumer Test
+	- Testing sleepfor 
+------------------------------------------------------------------
+sleepFor
+	- Add thread to the alarmQueue as well as the waitQueue which is a linked list
+	- Use true false return value to find out if alarm wake has readied the thread
+
+  Testing
+  	- Test if sleepfor works for correct amt of time
+  	- Test if wakeall behaviour works well together with it
+------------------------------------------------------------------
+Rendezvous
+	- Synchronously exchange a value with another thread.  
+  	- Use hashmap with tag as key to map elements and match them
+  	- Not have hashmap and any members static so that different instances of rendezvous dont interract
+  	- 
+  Testing
+  	- Simple test
+	- Test multiple tags and sync
+	- Test multiple instances and sync
+	- Test if same tag can also be used repeatedly for multiple exchanges
+	- Test if same tag can also be used repeatedly for multiple exchanges
