@@ -367,12 +367,190 @@ public class UserProcess {
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
 
-		Lib.debug(dbgProcess, "UserProcess.handleExit (" + status + ")");
+		//Lib.debug(dbgProcess, "UserProcess.handleExit (" + status + ")");
 		// for now, unconditionally terminate with just one process
-		Kernel.kernel.terminate();
+		//Kernel.kernel.terminate();
+		for(int i = 0; i < openSize; i++)
+		{
+			if(openFiles[i] != null)
+				handleClose(i);
+		}
+		unloadSections();
+
+		coff.close();
+
+		if(pid == 0)
+			Kernel.kernel.terminate();
+		else
+			KThread.finish();
 
 		return 0;
 	}
+
+	private int handleOpen (int a, boolean created)
+	{
+		for (int i = 0; i < openSize - 2; i++)
+		{
+			if(openFiles[i-2] == null
+					{
+						String s = readVirtualMemoryString(a, 256);
+						if (s == null)
+							return -1;
+						OpenFile open = ThreadedKernel.fileSystem.open(s, created);
+						if (open == null)
+							return -1;
+						openFiles[i-2] = open;
+						return i - 2;
+					}
+		}
+		return -1;
+	}
+
+	private int handleRead(int description, int pointer, int count)
+	{
+		int totalc = 0;
+		int totalr = 0;
+		int current = 0;
+		if (description >= openSize || description < 0)
+			return -1;
+		else if (openFiles[description] == null)
+			return -1;
+		else if (count < 0)
+			return -1;
+		OpenFile open = openFiles[description];
+		if (open == null)
+			return -1;
+		totalc = count;
+		totalr = 0;
+		current = pointer;
+
+		while (totalc > 0)
+		{
+			byte[] buffer = new byte[1024];
+			int willWrite = Math.min(1024, totalc);
+			int writed = open.read(buffer, 0, willWrite);
+			if (writed == -1)
+				return -1;
+			int writeda = writeVirtualMemory(current, buffer, 0, writed);
+			totalc = totalc - writeda;
+			totalr = totalr + writeda;
+			current = current + writeda;
+
+			if(writeda < willWrite)
+				break;
+		}
+		return totalr;
+	}
+
+	private int handleWrite(int description, int pointer, int count)
+	{
+		int totalc = 0;
+		int totalr = 0;
+		int current = 0;
+		if(description >= openSize || description < 0)
+			return -1;
+		else if(openFiles[description] == null)
+			return -1;
+		else if(pointer <= 0)
+			return -1;
+		else if(count < 0)
+			return -1;
+		OpenFile open = openFiles[description];
+		if(open == null)
+			return -1;
+		totalc = count;
+		totalr = 0;
+		current = pointer;
+
+		while(totalc > 0)
+		{
+			byte[] buffer = new byte[1024];
+			int readc = Math.min(totalc, 1024);
+			int read = readVirtualMemory(current,buffer,0,readc);
+			if(read < 0)
+				return -1;
+			int reada = open.write(buffer,0,read);
+
+			if(reada == -1 && totalr == 0)
+				return -1;
+			totalc = totalc - reada;
+			totalr = totalr - reada;
+			current = current + reada;
+
+			if(reada < readc)
+				break;
+		}
+		return totalc;
+	}
+
+	private int handleClose (int description)
+	{
+		if(description >= openSize || description < 0)
+			return -1;
+		else if(openFiles[description] == null)
+			return -1;
+		openFiles[description].close();
+		openFiles[description] = null;
+		return 0;
+	}
+
+	private int handleUnlink (int virtualMem)
+	{
+		String s = readVirtualMemoryString(virtualMem,256);
+		if (s == null)
+			return -1;
+		else if(ThreadedKernel.fileSystem.remove(f))
+			return 0;
+		else
+			return -1;
+	}
+
+	private int handleExec (int adder, int count, int pointer)
+	{
+		String s = readVirtualMemoryString(adder, 256);
+
+		if (s == null)
+			return -1;
+		else if(count < 0 || argc > 16)
+			return -1;
+		int newCount = count * 4;
+		byte[] buffer = new byte[newCount];
+		int read = readVirtualMemory(pointer, buffer, 0, newCount);
+		if(read < buffer.length)
+			return -1;
+		int[] address = new int[count];
+		String[] s1 = new String[count];
+		for (int i = 0; i < count; i++)
+		{
+			address[i] = Lib.bytesToInt(buffer, i*4);
+		}
+		for (int j = 0; j < count; j++)
+		{
+			s1[i] = readVirtualMemoryString(address[i], 256);
+			if(s1[i] == null)
+				return -1;
+		}
+
+		UserProcess child = newUserProcess();
+		child.parent = this;
+		int childID = -1;
+		UserKernel.pidLock.acquire();
+
+		if(child.execute(file, s1))
+		{
+			childID = child.pid;
+			childrenList.add(childID);
+		}
+
+		UserKernel.pidLock.release();
+		return childID;
+	}
+
+	private int handleJoin()
+	{
+		return 0;
+	}
+
 
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2,
 			syscallJoin = 3, syscallCreate = 4, syscallOpen = 5,
@@ -481,6 +659,8 @@ public class UserProcess {
 			Lib.assertNotReached("Unexpected exception");
 		}
 	}
+
+
 
 	/** The program being run by this process. */
 	protected Coff coff;
