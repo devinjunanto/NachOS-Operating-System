@@ -391,7 +391,7 @@ public class UserProcess {
 	{
 		for (int i = 0; i < openSize - 2; i++)
 		{
-			if(openFiles[i-2] == null
+			if(openFiles[i-2] == null)
 					{
 						String s = readVirtualMemoryString(a, 256);
 						if (s == null)
@@ -624,6 +624,8 @@ public class UserProcess {
 			return handleHalt();
 		case syscallExit:
 			return handleExit(a0);
+		case syscallCreate:
+			return handleCreate(a0);
 
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
