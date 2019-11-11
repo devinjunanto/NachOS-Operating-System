@@ -379,10 +379,10 @@ public class UserProcess {
 
 		coff.close();
 
-		if (pid == 0)
-			Kernel.kernel.terminate();
-		else
-			KThread.finish();
+		// if (pid == 0)
+		// 	Kernel.kernel.terminate();
+		// else
+		// 	KThread.finish();
 
 		return 0;
 	}
@@ -520,7 +520,7 @@ public class UserProcess {
 		return totalc;
 	}
 
-	private int handleClose(int description) {
+	private int closeHandler(int description) {
 		if (description >= maxSize || description < 0)
 			return -1;
 		else if (files[description] == null)
@@ -707,6 +707,11 @@ public class UserProcess {
 	// concurrently open files per process.
 	private int maxSize = 16;
 	private OpenFile[] files = new OpenFile[maxSize]; // Array of files
+
+	//TODO understand
+	public int pid;
+	public UserProcess parent;
+	public LinkedList<Integer> childrenList = new LinkedList<Integer>();
 
 	/** The program being run by this process. */
 	protected Coff coff;
