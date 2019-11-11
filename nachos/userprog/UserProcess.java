@@ -416,14 +416,14 @@ public class UserProcess {
 		for (int i = 2; i < maxSize; i++) {
 			// Find first space in array where there is an empty space
 			if (files[i] == null) {
-				DebugLogger("Here for " + fileLoc);
+				Lib.debug("Here for " + fileLoc);
 
 				// Read a null-terminated string from this process's virtual memory.
 				// Read at most maxLength + 1 bytes from the specified address
 				String fileNameFromMemory = readVirtualMemoryString(fileLoc, 256);
 
-				DebugLogger(fileNameFromMemory);
-				if (s == null)
+				Lib.debug(fileNameFromMemory);
+				if (fileNameFromMemory == null)
 					return -1;
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
 				if (openFile == null)
