@@ -563,7 +563,9 @@ public class UserProcess {
 			bytesLeftToWrite = bytesLeftToWrite - bytesWritten;
 			totalBytesWritten = totalBytesWritten - bytesWritten;
 			currentPos = currentPos + bytesWritten;
-			System.out.println("current Pos"+currentPoss);
+			System.out.println("bytesLeftToWrite - "+bytesLeftToWrite);
+			System.out.println("totalBytesWritten"+totalBytesWritten);
+			System.out.println("currentPos"+currentPos);
 
 			if (bytesWritten < numToLoad)
 				break;
