@@ -36,8 +36,11 @@ int open2()
     printf("\nRunning Open2\n\n");
     printf("Opening File test.txt\n");
     char *name = "test.txt";
-    int val = open(name);
+    
+    int val = open(*name);
+    
     printf("The file descriptor is - ");
     printf(val);
+    
     return 0;
 }

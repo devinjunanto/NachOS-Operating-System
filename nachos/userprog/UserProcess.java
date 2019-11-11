@@ -33,6 +33,9 @@ public class UserProcess {
 		// standard input and standard output.
 		files[0] = UserKernel.console.openForReading();
 		files[1] = UserKernel.console.openForWriting();
+
+		//acquire lock
+		UserKernel.
 	}
 
 	/**
