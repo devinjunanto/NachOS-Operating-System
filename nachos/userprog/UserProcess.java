@@ -7,8 +7,6 @@ import nachos.vm.*;
 
 import java.io.EOFException;
 
-import jdk.nashorn.internal.runtime.logging.DebugLogger;
-
 /**
  * Encapsulates the state of a user process that is not contained in its user
  * thread (or threads). This includes its address translation state, a file
@@ -424,6 +422,8 @@ public class UserProcess {
 				if (fileNameFromMemory == null)
 					return -1;
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
+
+				Lib.debug(dbgProcess, "in openHandler opened - "+fileNameFromMemory);
 				if (openFile == null)
 					return -1;
 				files[i] = openFile;
