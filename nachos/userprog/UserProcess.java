@@ -469,11 +469,11 @@ public class UserProcess {
 		int currentPos = 0;
 		if (fileDescriptor >= maxSize || fileDescriptor < 0)
 			return -1; // Base check for descriptor validity
-		else if (files[description] == null)
+		else if (files[fileDescriptor] == null)
 			return -1; // File DNE
 		else if (count < 0)
 			return -1;
-		OpenFile openFile = files[description];
+		OpenFile openFile = files[fileDescriptor];
 		if (openFile == null)
 			return -1;
 
@@ -522,7 +522,7 @@ public class UserProcess {
 		int bytesLeftToWrite;
 		int totalBytesWritten;
 		int currentPos = 0;
-		//System.out.println(currentPos+"\n"+);
+		// System.out.println(currentPos+"\n"+);
 
 		if (description >= maxSize || description < 0)
 			return -1;
@@ -542,7 +542,7 @@ public class UserProcess {
 		currentPos = pointer;
 
 		while (bytesLeftToWrite > 0) {
-			//System.out.println(currentPos+"\n"+);
+			// System.out.println(currentPos+"\n"+);
 			byte[] buffer = new byte[pageSizeCopy];
 			int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
 			int numLoaded = readVirtualMemory(currentPos, buffer, 0, numToLoad);
@@ -555,7 +555,7 @@ public class UserProcess {
 			bytesLeftToWrite = bytesLeftToWrite - bytesWritten;
 			totalBytesWritten = totalBytesWritten - bytesWritten;
 			currentPos = currentPos + bytesWritten;
-			//System.out.println(currentPos+"\n"+);
+			// System.out.println(currentPos+"\n"+);
 
 			if (bytesWritten < numToLoad)
 				break;
