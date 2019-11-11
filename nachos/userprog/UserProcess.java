@@ -668,7 +668,6 @@ public class UserProcess {
 			return openHandler(a0, false);
 		case syscallClose:
 			return closeHandler(a0);
-		case sys
 
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
