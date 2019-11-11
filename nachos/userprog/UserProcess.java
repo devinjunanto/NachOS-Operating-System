@@ -7,6 +7,8 @@ import nachos.vm.*;
 
 import java.io.EOFException;
 
+import jdk.nashorn.internal.runtime.logging.DebugLogger;
+
 /**
  * Encapsulates the state of a user process that is not contained in its user
  * thread (or threads). This includes its address translation state, a file
@@ -410,17 +412,20 @@ public class UserProcess {
 	 *
 	 * Returns the new file descriptor, or -1 if an error occurred.
 	 */
-	private int openHandler(int fileName, boolean createFileIfTrue) {
-		for (int i = 0; i < maxSize; i++) {
+	private int openHandler(int fileLoc, boolean createFileIfTrue) {
+		for (int i = 2; i < maxSize; i++) {
 			// Find first space in array where there is an empty space
 			if (files[i] == null) {
+				DebugLogger("Here for " + fileLoc);
 
 				// Read a null-terminated string from this process's virtual memory.
 				// Read at most maxLength + 1 bytes from the specified address
-				String s = readVirtualMemoryString(fileName, 256);
+				String fileNameFromMemory = readVirtualMemoryString(fileLoc, 256);
+
+				DebugLogger(fileNameFromMemory);
 				if (s == null)
 					return -1;
-				OpenFile openFile = ThreadedKernel.fileSystem.open(s, createFileIfTrue);
+				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
 				if (openFile == null)
 					return -1;
 				files[i] = openFile;
