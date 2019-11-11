@@ -5,6 +5,7 @@ import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
 
+import java.awt.image.Kernel;
 import java.io.EOFException;
 
 /**
@@ -380,6 +381,9 @@ public class UserProcess {
 		unloadSections();
 
 		coff.close();
+
+		KThread.finish();
+		//Kernel.kernel.terminate();
 
 		// if (pid == 0)
 		// Kernel.kernel.terminate();
