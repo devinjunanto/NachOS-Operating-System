@@ -415,17 +415,17 @@ public class UserProcess {
 		for (int i = 2; i < maxSize; i++) {
 			// Find first space in array where there is an empty space
 			if (files[i] == null) {
-				Lib.debug(dbgProcess, "in openHandler ");
+				System.out.println("in openHandler ");
 
 				// Read a null-terminated string from this process's virtual memory.
 				// Read at most maxLength + 1 bytes from the specified address
 				String fileNameFromMemory = readVirtualMemoryString(fileLoc, 256);
-				Lib.debug(dbgProcess, "in openHandler opened - " + fileNameFromMemory);
+				System.out.println("in openHandler opened - " + fileNameFromMemory);
 				if (fileNameFromMemory == null)
 					return -1;
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
 
-				Lib.debug(dbgProcess, "in openHandler opened2 - " + fileNameFromMemory);
+				System.out.println("in openHandler opened2 - " + fileNameFromMemory);
 				if (openFile == null)
 					return -1;
 				files[i] = openFile;
@@ -692,6 +692,7 @@ public class UserProcess {
 			break;
 
 		default:
+			System.out.println("Cause of exception - "+cause);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
