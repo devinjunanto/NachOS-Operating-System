@@ -623,9 +623,13 @@ public class UserProcess {
 		case syscallHalt:
 			return handleHalt();
 		case syscallExit:
-			return handleExit(a0);
+			return exitHandler(a0);
+		case syscallWrite:
+			return writeHandler(a0, a1, a2); // int fileDescriptor, void *buffer, int count
 		case syscallCreate:
-			return handleCreate(a0);
+			return createHandler(a0); // char *name
+		case syscallOpen:
+			return openHandler(a0, false);
 
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
@@ -635,8 +639,8 @@ public class UserProcess {
 	}
 
 	/**
-	 * Handle a user exception. Called by <tt>UserKernel.exceptionHandler()</tt>
-	 * . The <i>cause</i> argument identifies which exception occurred; see the
+	 * Handle a user exception. Called by <tt>UserKernel.exceptionHandler()</tt> .
+	 * The <i>cause</i> argument identifies which exception occurred; see the
 	 * <tt>Processor.exceptionZZZ</tt> constants.
 	 * 
 	 * @param cause the user exception that occurred.
@@ -646,23 +650,36 @@ public class UserProcess {
 
 		switch (cause) {
 		case Processor.exceptionSyscall:
-			int result = handleSyscall(processor.readRegister(Processor.regV0),
-					processor.readRegister(Processor.regA0),
-					processor.readRegister(Processor.regA1),
-					processor.readRegister(Processor.regA2),
+			int result = handleSyscall(processor.readRegister(Processor.regV0), processor.readRegister(Processor.regA0),
+					processor.readRegister(Processor.regA1), processor.readRegister(Processor.regA2),
 					processor.readRegister(Processor.regA3));
 			processor.writeRegister(Processor.regV0, result);
 			processor.advancePC();
 			break;
 
 		default:
-			Lib.debug(dbgProcess, "Unexpected exception: "
-					+ Processor.exceptionNames[cause]);
+			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
 	}
 
+	// From Writeup
+	// Each file that a process opens should have a unique file descriptor
+	// associated with it (see syscall.h for details).
+	// The file descriptor should be a non-negative integer that is simply used to
+	// index into a table of currently-open files by that process.
+	// Your implementation should have a file table size of 16, supporting up to 16
+	// concurrently open files per process.
+	// Note that a given file descriptor can be reused if the file associated with
+	// it is closed,
+	// and that different processes can use the same file descriptor value to refer
+	// to different files
+	// (e.g., in every process file descriptor 0 refers to stdin).
 
+	// Your implementation should have a file table size of 16, supporting up to 16
+	// concurrently open files per process.
+	private int maxSize = 16;
+	private OpenFile[] files = new OpenFile[maxSize]; // Array of files
 
 	/** The program being run by this process. */
 	protected Coff coff;
