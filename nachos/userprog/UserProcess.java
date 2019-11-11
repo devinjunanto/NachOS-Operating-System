@@ -663,6 +663,8 @@ public class UserProcess {
 			return createHandler(a0); // char *name
 		case syscallOpen:
 			return openHandler(a0, false);
+		case syscallClose:
+			return closeHandler(a0);
 
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
