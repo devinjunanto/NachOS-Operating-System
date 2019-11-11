@@ -430,10 +430,11 @@ public class UserProcess {
 					return -1;
 				System.out.println("Attempting to open file");
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
-				System.out.println("opened file");
 
 				if (openFile == null)
 					return -1;
+
+				System.out.println("opened file");
 
 				System.out.println("in openHandler opened 2 File is not null - " + fileNameFromMemory);
 
