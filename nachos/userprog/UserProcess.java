@@ -425,9 +425,11 @@ public class UserProcess {
 					return -1;
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
 
-				System.out.println("in openHandler opened2 - " + fileNameFromMemory);
 				if (openFile == null)
 					return -1;
+
+				System.out.println("in openHandler opened 2 File is not null - " + fileNameFromMemory);
+
 				files[i] = openFile;
 				return i;
 			}
