@@ -477,6 +477,9 @@ public class UserProcess {
 		if (openFile == null)
 			return -1;
 
+		System.out.println("Successfully opened file " + fileDescriptor + " to write");
+		System.out.println("Attempting to write " + count + " bytes");
+
 		bytesLeftToRead = count;
 		totalBytesRead = 0;
 		currentPos = pointer;
@@ -518,15 +521,15 @@ public class UserProcess {
 	 *                       Returns the new file descriptor, or -1 if an error
 	 *                       occurred.
 	 */
-	private int writeHandler(int description, int pointer, int count) {
+	private int writeHandler(int fileDescriptor, int pointer, int count) {
 		int bytesLeftToWrite;
 		int totalBytesWritten;
 		int currentPos = 0;
 		// System.out.println(currentPos+"\n"+);
 
-		if (description >= maxSize || description < 0)
+		if (fileDescriptor >= maxSize || fileDescriptor < 0)
 			return -1;
-		else if (files[description] == null)
+		else if (files[fileDescriptor] == null)
 			return -1;
 		else if (pointer <= 0)
 			return -1;
@@ -534,11 +537,11 @@ public class UserProcess {
 			return -1;
 
 		// Check if file exists
-		OpenFile openFile = files[description];
+		OpenFile openFile = files[fileDescriptor];
 		if (openFile == null)
 			return -1;
-		System.out.println("Successfully opened file "+description+" to write");
-		System.out.println("Attempting to write "+count+" bytes");
+		System.out.println("Successfully opened file " + fileDescriptor + " to write");
+		System.out.println("Attempting to write " + count + " bytes");
 
 		bytesLeftToWrite = count;
 		totalBytesWritten = 0;
