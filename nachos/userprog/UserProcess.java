@@ -428,7 +428,9 @@ public class UserProcess {
 				System.out.println("in openHandler opened - " + fileNameFromMemory);
 				if (fileNameFromMemory == null)
 					return -1;
+				System.out.println("Attempting to open file");
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
+				System.out.println("opened file");
 
 				if (openFile == null)
 					return -1;
