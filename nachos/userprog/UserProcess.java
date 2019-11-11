@@ -509,23 +509,34 @@ public class UserProcess {
 	 * 
 	 * @param fileDescriptor
 	 * @param *buffer
-	 * @param int            count Attempt to open the named disk file, creating it
-	 *                       if it does not exist, and return a file descriptor that
-	 *                       can be used to access the file. If the file already
-	 *                       exists, creat truncates it.
+	 * @param int
+	 * 
+	 *                       Attempt to write up to count bytes from buffer to the
+	 *                       file or stream referred to by fileDescriptor. write()
+	 *                       can return before the bytes are actually flushed to the
+	 *                       file or stream. A write to a stream can block, however,
+	 *                       if kernel queues are temporarily full.
 	 *
-	 *                       Note that creat() can only be used to create files on
-	 *                       disk; creat() will never return a file descriptor
-	 *                       referring to a stream.
+	 *                       On success, the number of bytes written is returned
+	 *                       (zero indicates nothing was written), and the file
+	 *                       position is advanced by this number. It IS an error if
+	 *                       this number is smaller than the number of bytes
+	 *                       requested. For disk files, this indicates that the disk
+	 *                       is full. For streams, this indicates the stream was
+	 *                       terminated by the remote host before all the data was
+	 *                       transferred.
 	 *
-	 *                       Returns the new file descriptor, or -1 if an error
-	 *                       occurred.
+	 *                       On error, -1 is returned, and the new file position is
+	 *                       undefined. This can happen if fileDescriptor is
+	 *                       invalid, if part of the buffer is invalid, or if a
+	 *                       network stream has already been terminated by the
+	 *                       remote host.
+	 * 
 	 */
 	private int writeHandler(int fileDescriptor, int pointer, int count) {
-		int bytesLeftToWrite;
-		int totalBytesWritten;
-		int currentPos = 0;
-		// System.out.println(currentPos+"\n"+);
+		// int bytesLeftToWrite;
+		int totalBytesWritten = 0;
+		int retVal = 0; // This is to be returned
 
 		if (fileDescriptor >= maxSize || fileDescriptor < 0)
 			return -1;
@@ -543,34 +554,35 @@ public class UserProcess {
 		System.out.println("Successfully opened file " + fileDescriptor + " to WRITE");
 		System.out.println("Attempting to WRITE " + count + " bytes");
 
-		bytesLeftToWrite = count;
-		totalBytesWritten = 0;
-		currentPos = pointer;
+		// bytesLeftToWrite = count;
+		// currentPos = pointer;
 
-		while (bytesLeftToWrite > 0) {
-			System.out.println("Left to write - "+bytesLeftToWrite);
-			// System.out.println(currentPos+"\n"+);
-			byte[] buffer = new byte[pageSizeCopy];
-			int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
-			int numLoaded = readVirtualMemory(currentPos, buffer, 0, numToLoad);
-			System.out.println("numLoaded - "+numLoaded);
-			if (numLoaded < 0)
-				return -1;
-			int bytesWritten = openFile.write(buffer, 0, numLoaded);
+		// while (bytesLeftToWrite > 0) {
+		// System.out.println("Left to write - " + bytesLeftToWrite);
+		// System.out.println(currentPos+"\n"+);
+		byte[] buffer = new byte[count];
+		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
+		int numLoaded = readVirtualMemory(pointer, buffer, 0, numToLoad);
 
-			if (bytesWritten == -1 && totalBytesWritten == 0)
-				return -1;
-			bytesLeftToWrite = bytesLeftToWrite - bytesWritten;
-			totalBytesWritten = totalBytesWritten - bytesWritten;
-			currentPos = currentPos + bytesWritten;
-			System.out.println("bytesLeftToWrite - "+bytesLeftToWrite);
-			System.out.println("totalBytesWritten"+totalBytesWritten);
-			System.out.println("currentPos"+currentPos);
+		// System.out.println("numLoaded - " + numLoaded);
+		if (numLoaded < 0)
+			return -1;
 
-			if (bytesWritten < numToLoad)
-				break;
-		}
-		return bytesLeftToWrite;
+		retVal = openFile.write(buffer, 0, numLoaded);
+
+		// if (bytesWritten == -1 && totalBytesWritten == 0)
+		// return -1;
+		// bytesLeftToWrite = bytesLeftToWrite - bytesWritten;
+		// totalBytesWritten = totalBytesWritten - bytesWritten;
+		// currentPos = currentPos + bytesWritten;
+		// System.out.println("bytesLeftToWrite - " + bytesLeftToWrite);
+		// System.out.println("totalBytesWritten" + totalBytesWritten);
+		// System.out.println("currentPos" + currentPos);
+
+		// if (bytesWritten < numToLoad)
+		// break;
+		// }
+		return retVal;
 	}
 
 	private int closeHandler(int description) {
