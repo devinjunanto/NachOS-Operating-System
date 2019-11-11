@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     int val = 0;
-    val = open1();
+    //val = open1();
     val = open2();
     return 0;
 }
@@ -37,7 +37,7 @@ int open2()
     printf("Opening File test.txt\n");
     char *name = "test.txt";
     
-    int val = open(*name);
+    int val = open(name);
     
     printf("The file descriptor is - ");
     printf(val);
