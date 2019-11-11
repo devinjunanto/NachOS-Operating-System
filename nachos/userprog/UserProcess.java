@@ -383,7 +383,7 @@ public class UserProcess {
 		coff.close();
 
 		KThread.finish();
-		//Kernel.kernel.terminate();
+		// Kernel.kernel.terminate();
 
 		// if (pid == 0)
 		// Kernel.kernel.terminate();
@@ -422,14 +422,14 @@ public class UserProcess {
 				// Read a null-terminated string from this process's virtual memory.
 				// Read at most maxLength + 1 bytes from the specified address
 				String fileNameFromMemory = readVirtualMemoryString(fileLoc, 256);
-				System.out.println("Attempting to Open - " + fileNameFromMemory);
+				//System.out.println("Attempting to Open - " + fileNameFromMemory);
 				if (fileNameFromMemory == null)
 					return -1;
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
 
 				if (openFile == null)
 					return -1;
-				System.out.println("Successfully Opened - " + fileNameFromMemory);
+				//System.out.println("Successfully Opened - " + fileNameFromMemory);
 
 				files[i] = openFile;
 				return i;
@@ -698,7 +698,7 @@ public class UserProcess {
 
 		default:
 			System.out.println("\nCause of exception - " + cause);
-			System.out.println("data - \n"+Processor.exceptionNames[cause]);
+			System.out.println("data - \n" + Processor.exceptionNames[cause]);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
