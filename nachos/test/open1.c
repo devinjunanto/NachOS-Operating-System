@@ -9,10 +9,14 @@
 int main(int argc, char *argv[])
 {
     printf("\nRunning Open1\n\n");
+    printf("Opening non existent file");
     char *name = "nonExistentFile.txt";
 
     int val = open(name);
-    assert(val == -1);
+    if (val == -1)
+        printf("OKAY - unable to open file");
+    else
+        printf("BAD - -1 not returned");
 
     return 0;
 }
