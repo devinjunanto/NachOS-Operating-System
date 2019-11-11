@@ -412,7 +412,7 @@ public class UserProcess {
 	 *
 	 * Returns the new file descriptor, or -1 if an error occurred.
 	 */
-	private int openHandler(int fileLoc, boolean createFileIfTrue) {
+	public int openHandler(int fileLoc, boolean createFileIfTrue) {
 		for (int i = 2; i < maxSize; i++) {
 			// Find first space in array where there is an empty space
 			if (files[i] == null) {
