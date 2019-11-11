@@ -548,10 +548,12 @@ public class UserProcess {
 		currentPos = pointer;
 
 		while (bytesLeftToWrite > 0) {
+			System.out.println("Left to write - "+bytesLeftToWrite);
 			// System.out.println(currentPos+"\n"+);
 			byte[] buffer = new byte[pageSizeCopy];
 			int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
 			int numLoaded = readVirtualMemory(currentPos, buffer, 0, numToLoad);
+			System.out.println("numLoaded - "+numLoaded);
 			if (numLoaded < 0)
 				return -1;
 			int bytesWritten = openFile.write(buffer, 0, numLoaded);
