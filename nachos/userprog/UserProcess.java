@@ -375,6 +375,7 @@ public class UserProcess {
 
 		// Close all files
 		for (int i = 0; i < maxSize; i++) {
+			System.out.println("Here in exitHandler closing i="+i);
 			if (files[i] != null)
 				closeHandler(i);
 		}
