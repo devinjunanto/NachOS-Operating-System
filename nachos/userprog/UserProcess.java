@@ -34,7 +34,7 @@ public class UserProcess {
 		files[0] = UserKernel.console.openForReading();
 		files[1] = UserKernel.console.openForWriting();
 
-		//acquire lock
+		// acquire lock
 	}
 
 	/**
@@ -528,11 +528,13 @@ public class UserProcess {
 	private int closeHandler(int description) {
 		if (description >= maxSize || description < 0)
 			return -1;
-		else if (files[description] == null)
-			return -1;
-		files[description].close();
-		files[description] = null;
-		return 0;
+		if (files[description] != null) {
+			files[description].close();
+			files[description] = null;
+			return 0;
+		}
+		return -1;
+
 	}
 
 	// private int handleUnlink(int virtualMem) {
@@ -664,6 +666,7 @@ public class UserProcess {
 			return openHandler(a0, false);
 		case syscallClose:
 			return closeHandler(a0);
+		case sys
 
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
@@ -692,7 +695,7 @@ public class UserProcess {
 			break;
 
 		default:
-			System.out.println("Cause of exception - "+cause);
+			System.out.println("Cause of exception - " + cause);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}

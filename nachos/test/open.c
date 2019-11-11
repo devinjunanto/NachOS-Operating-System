@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     int val = 0;
-    //val = open1();
+    val = open1();
     val = open2();
     return 0;
 }
