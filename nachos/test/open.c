@@ -41,6 +41,7 @@ int open2()
     
     printf("The file descriptor is - ");
     printf(val);
+    printf("done with open2");
     
     return 0;
 }
