@@ -35,7 +35,6 @@ public class UserProcess {
 		files[1] = UserKernel.console.openForWriting();
 
 		//acquire lock
-		UserKernel.
 	}
 
 	/**
