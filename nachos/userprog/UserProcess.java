@@ -5,6 +5,7 @@ import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
 
+import java.awt.image.Kernel;
 import java.io.EOFException;
 
 /**
@@ -33,6 +34,8 @@ public class UserProcess {
 		// standard input and standard output.
 		files[0] = UserKernel.console.openForReading();
 		files[1] = UserKernel.console.openForWriting();
+
+		// acquire lock
 	}
 
 	/**
@@ -379,10 +382,13 @@ public class UserProcess {
 
 		coff.close();
 
+		KThread.finish();
+		//Kernel.kernel.terminate();
+
 		// if (pid == 0)
-		// 	Kernel.kernel.terminate();
+		// Kernel.kernel.terminate();
 		// else
-		// 	KThread.finish();
+		// KThread.finish();
 
 		return 0;
 	}
@@ -400,7 +406,6 @@ public class UserProcess {
 	private int createHandler(int a1) {
 		return openHandler(a1, true); // This is the same as opn except it will create file
 	}
-	
 
 	/**
 	 * Attempt to open the named file and return a file descriptor.
@@ -410,19 +415,22 @@ public class UserProcess {
 	 *
 	 * Returns the new file descriptor, or -1 if an error occurred.
 	 */
-	private int openHandler(int fileName, boolean createFileIfTrue) {
-		for (int i = 0; i < maxSize; i++) {
+	private int openHandler(int fileLoc, boolean createFileIfTrue) {
+		for (int i = 2; i < maxSize; i++) {
 			// Find first space in array where there is an empty space
 			if (files[i] == null) {
-
 				// Read a null-terminated string from this process's virtual memory.
 				// Read at most maxLength + 1 bytes from the specified address
-				String s = readVirtualMemoryString(fileName, 256);
-				if (s == null)
+				String fileNameFromMemory = readVirtualMemoryString(fileLoc, 256);
+				System.out.println("Attempting to Open - " + fileNameFromMemory);
+				if (fileNameFromMemory == null)
 					return -1;
-				OpenFile openFile = ThreadedKernel.fileSystem.open(s, createFileIfTrue);
+				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
+
 				if (openFile == null)
 					return -1;
+				System.out.println("Successfully Opened - " + fileNameFromMemory);
+
 				files[i] = openFile;
 				return i;
 			}
@@ -523,62 +531,64 @@ public class UserProcess {
 	private int closeHandler(int description) {
 		if (description >= maxSize || description < 0)
 			return -1;
-		else if (files[description] == null)
-			return -1;
-		files[description].close();
-		files[description] = null;
-		return 0;
+		if (files[description] != null) {
+			files[description].close();
+			files[description] = null;
+			return 0;
+		}
+		return -1;
+
 	}
 
 	// private int handleUnlink(int virtualMem) {
-	// 	String s = readVirtualMemoryString(virtualMem, 256);
-	// 	if (s == null)
-	// 		return -1;
-	// 	else if (ThreadedKernel.fileSystem.remove(f))
-	// 		return 0;
-	// 	else
-	// 		return -1;
+	// String s = readVirtualMemoryString(virtualMem, 256);
+	// if (s == null)
+	// return -1;
+	// else if (ThreadedKernel.fileSystem.remove(f))
+	// return 0;
+	// else
+	// return -1;
 	// }
 
 	// private int handleExec(int adder, int count, int pointer) {
-	// 	String s = readVirtualMemoryString(adder, 256);
+	// String s = readVirtualMemoryString(adder, 256);
 
-	// 	if (s == null)
-	// 		return -1;
-	// 	else if (count < 0 || argc > 16)
-	// 		return -1;
-	// 	int newCount = count * 4;
-	// 	byte[] buffer = new byte[newCount];
-	// 	int read = readVirtualMemory(pointer, buffer, 0, newCount);
-	// 	if (read < buffer.length)
-	// 		return -1;
-	// 	int[] address = new int[count];
-	// 	String[] s1 = new String[count];
-	// 	for (int i = 0; i < count; i++) {
-	// 		address[i] = Lib.bytesToInt(buffer, i * 4);
-	// 	}
-	// 	for (int j = 0; j < count; j++) {
-	// 		s1[i] = readVirtualMemoryString(address[i], 256);
-	// 		if (s1[i] == null)
-	// 			return -1;
-	// 	}
+	// if (s == null)
+	// return -1;
+	// else if (count < 0 || argc > 16)
+	// return -1;
+	// int newCount = count * 4;
+	// byte[] buffer = new byte[newCount];
+	// int read = readVirtualMemory(pointer, buffer, 0, newCount);
+	// if (read < buffer.length)
+	// return -1;
+	// int[] address = new int[count];
+	// String[] s1 = new String[count];
+	// for (int i = 0; i < count; i++) {
+	// address[i] = Lib.bytesToInt(buffer, i * 4);
+	// }
+	// for (int j = 0; j < count; j++) {
+	// s1[i] = readVirtualMemoryString(address[i], 256);
+	// if (s1[i] == null)
+	// return -1;
+	// }
 
-	// 	UserProcess child = newUserProcess();
-	// 	child.parent = this;
-	// 	int childID = -1;
-	// 	UserKernel.pidLock.acquire();
+	// UserProcess child = newUserProcess();
+	// child.parent = this;
+	// int childID = -1;
+	// UserKernel.pidLock.acquire();
 
-	// 	if (child.execute(file, s1)) {
-	// 		childID = child.pid;
-	// 		childrenList.add(childID);
-	// 	}
+	// if (child.execute(file, s1)) {
+	// childID = child.pid;
+	// childrenList.add(childID);
+	// }
 
-	// 	UserKernel.pidLock.release();
-	// 	return childID;
+	// UserKernel.pidLock.release();
+	// return childID;
 	// }
 
 	// private int handleJoin() {
-	// 	return 0;
+	// return 0;
 	// }
 
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2, syscallJoin = 3, syscallCreate = 4,
@@ -657,6 +667,8 @@ public class UserProcess {
 			return createHandler(a0); // char *name
 		case syscallOpen:
 			return openHandler(a0, false);
+		case syscallClose:
+			return closeHandler(a0);
 
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
@@ -685,6 +697,8 @@ public class UserProcess {
 			break;
 
 		default:
+			System.out.println("\nCause of exception - " + cause);
+			System.out.println("data - \n"+Processor.exceptionNames[cause]);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
@@ -708,10 +722,10 @@ public class UserProcess {
 	private int maxSize = 16;
 	private OpenFile[] files = new OpenFile[maxSize]; // Array of files
 
-	//TODO understand
+	// TODO understand
 	public int pid;
 	public UserProcess parent;
-	//public LinkedList<Integer> childrenList = new LinkedList<Integer>();
+	// public LinkedList<Integer> childrenList = new LinkedList<Integer>();
 
 	/** The program being run by this process. */
 	protected Coff coff;
