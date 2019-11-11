@@ -43,6 +43,3 @@ int create2()
 
     return 0;
 }
-
-//TODO - use read and write to test truncate functionality! tested manually, works
-
