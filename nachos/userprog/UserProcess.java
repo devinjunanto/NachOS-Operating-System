@@ -537,6 +537,9 @@ public class UserProcess {
 		OpenFile openFile = files[description];
 		if (openFile == null)
 			return -1;
+		System.out.println("Successfully opened file "+description+" to write");
+		System.out.println("Attempting to write "+count+" bytes");
+
 		bytesLeftToWrite = count;
 		totalBytesWritten = 0;
 		currentPos = pointer;
