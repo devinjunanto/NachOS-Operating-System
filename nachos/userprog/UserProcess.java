@@ -28,35 +28,39 @@ public class UserProcess {
 		pageTable = new TranslationEntry[numPhysPages];
 		for (int i = 0; i < numPhysPages; i++)
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
+
+		// When any process is started, its file descriptors 0 and 1 must refer to
+		// standard input and standard output.
+		files[0] = UserKernel.console.openForReading();
+		files[1] = UserKernel.console.openForWriting();
 	}
 
 	/**
 	 * Allocate and return a new process of the correct class. The class name is
-	 * specified by the <tt>nachos.conf</tt> key
-	 * <tt>Kernel.processClassName</tt>.
+	 * specified by the <tt>nachos.conf</tt> key <tt>Kernel.processClassName</tt>.
 	 * 
 	 * @return a new process of the correct class.
 	 */
 	public static UserProcess newUserProcess() {
-	        String name = Machine.getProcessClassName ();
+		String name = Machine.getProcessClassName();
 
 		// If Lib.constructObject is used, it quickly runs out
 		// of file descriptors and throws an exception in
-		// createClassLoader.  Hack around it by hard-coding
+		// createClassLoader. Hack around it by hard-coding
 		// creating new processes of the appropriate type.
 
-		if (name.equals ("nachos.userprog.UserProcess")) {
-		    return new UserProcess ();
-		} else if (name.equals ("nachos.vm.VMProcess")) {
-		    return new VMProcess ();
+		if (name.equals("nachos.userprog.UserProcess")) {
+			return new UserProcess();
+		} else if (name.equals("nachos.vm.VMProcess")) {
+			return new VMProcess();
 		} else {
-		    return (UserProcess) Lib.constructObject(Machine.getProcessClassName());
+			return (UserProcess) Lib.constructObject(Machine.getProcessClassName());
 		}
 	}
 
 	/**
-	 * Execute the specified program with the specified arguments. Attempts to
-	 * load the program, and then forks a thread to run it.
+	 * Execute the specified program with the specified arguments. Attempts to load
+	 * the program, and then forks a thread to run it.
 	 * 
 	 * @param name the name of the file containing the executable.
 	 * @param args the arguments to pass to the executable.
@@ -73,8 +77,8 @@ public class UserProcess {
 	}
 
 	/**
-	 * Save the state of this process in preparation for a context switch.
-	 * Called by <tt>UThread.saveState()</tt>.
+	 * Save the state of this process in preparation for a context switch. Called by
+	 * <tt>UThread.saveState()</tt>.
 	 */
 	public void saveState() {
 	}
@@ -89,16 +93,15 @@ public class UserProcess {
 
 	/**
 	 * Read a null-terminated string from this process's virtual memory. Read at
-	 * most <tt>maxLength + 1</tt> bytes from the specified address, search for
-	 * the null terminator, and convert it to a <tt>java.lang.String</tt>,
-	 * without including the null terminator. If no null terminator is found,
-	 * returns <tt>null</tt>.
+	 * most <tt>maxLength + 1</tt> bytes from the specified address, search for the
+	 * null terminator, and convert it to a <tt>java.lang.String</tt>, without
+	 * including the null terminator. If no null terminator is found, returns
+	 * <tt>null</tt>.
 	 * 
-	 * @param vaddr the starting virtual address of the null-terminated string.
+	 * @param vaddr     the starting virtual address of the null-terminated string.
 	 * @param maxLength the maximum number of characters in the string, not
-	 * including the null terminator.
-	 * @return the string read, or <tt>null</tt> if no null terminator was
-	 * found.
+	 *                  including the null terminator.
+	 * @return the string read, or <tt>null</tt> if no null terminator was found.
 	 */
 	public String readVirtualMemoryString(int vaddr, int maxLength) {
 		Lib.assertTrue(maxLength >= 0);
@@ -120,7 +123,7 @@ public class UserProcess {
 	 * array. Same as <tt>readVirtualMemory(vaddr, data, 0, data.length)</tt>.
 	 * 
 	 * @param vaddr the first byte of virtual memory to read.
-	 * @param data the array where the data will be stored.
+	 * @param data  the array where the data will be stored.
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int readVirtualMemory(int vaddr, byte[] data) {
@@ -128,22 +131,20 @@ public class UserProcess {
 	}
 
 	/**
-	 * Transfer data from this process's virtual memory to the specified array.
-	 * This method handles address translation details. This method must
-	 * <i>not</i> destroy the current process if an error occurs, but instead
-	 * should return the number of bytes successfully copied (or zero if no data
-	 * could be copied).
+	 * Transfer data from this process's virtual memory to the specified array. This
+	 * method handles address translation details. This method must <i>not</i>
+	 * destroy the current process if an error occurs, but instead should return the
+	 * number of bytes successfully copied (or zero if no data could be copied).
 	 * 
-	 * @param vaddr the first byte of virtual memory to read.
-	 * @param data the array where the data will be stored.
+	 * @param vaddr  the first byte of virtual memory to read.
+	 * @param data   the array where the data will be stored.
 	 * @param offset the first byte to write in the array.
 	 * @param length the number of bytes to transfer from virtual memory to the
-	 * array.
+	 *               array.
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
-		Lib.assertTrue(offset >= 0 && length >= 0
-				&& offset + length <= data.length);
+		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
 
@@ -158,11 +159,11 @@ public class UserProcess {
 	}
 
 	/**
-	 * Transfer all data from the specified array to this process's virtual
-	 * memory. Same as <tt>writeVirtualMemory(vaddr, data, 0, data.length)</tt>.
+	 * Transfer all data from the specified array to this process's virtual memory.
+	 * Same as <tt>writeVirtualMemory(vaddr, data, 0, data.length)</tt>.
 	 * 
 	 * @param vaddr the first byte of virtual memory to write.
-	 * @param data the array containing the data to transfer.
+	 * @param data  the array containing the data to transfer.
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int writeVirtualMemory(int vaddr, byte[] data) {
@@ -170,22 +171,20 @@ public class UserProcess {
 	}
 
 	/**
-	 * Transfer data from the specified array to this process's virtual memory.
-	 * This method handles address translation details. This method must
-	 * <i>not</i> destroy the current process if an error occurs, but instead
-	 * should return the number of bytes successfully copied (or zero if no data
-	 * could be copied).
+	 * Transfer data from the specified array to this process's virtual memory. This
+	 * method handles address translation details. This method must <i>not</i>
+	 * destroy the current process if an error occurs, but instead should return the
+	 * number of bytes successfully copied (or zero if no data could be copied).
 	 * 
-	 * @param vaddr the first byte of virtual memory to write.
-	 * @param data the array containing the data to transfer.
+	 * @param vaddr  the first byte of virtual memory to write.
+	 * @param data   the array containing the data to transfer.
 	 * @param offset the first byte to transfer from the array.
 	 * @param length the number of bytes to transfer from the array to virtual
-	 * memory.
+	 *               memory.
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
-		Lib.assertTrue(offset >= 0 && length >= 0
-				&& offset + length <= data.length);
+		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
 
@@ -200,10 +199,10 @@ public class UserProcess {
 	}
 
 	/**
-	 * Load the executable with the specified name into this process, and
-	 * prepare to pass it the specified arguments. Opens the executable, reads
-	 * its header information, and copies sections and arguments into this
-	 * process's virtual memory.
+	 * Load the executable with the specified name into this process, and prepare to
+	 * pass it the specified arguments. Opens the executable, reads its header
+	 * information, and copies sections and arguments into this process's virtual
+	 * memory.
 	 * 
 	 * @param name the name of the file containing the executable.
 	 * @param args the arguments to pass to the executable.
@@ -220,8 +219,7 @@ public class UserProcess {
 
 		try {
 			coff = new Coff(executable);
-		}
-		catch (EOFException e) {
+		} catch (EOFException e) {
 			executable.close();
 			Lib.debug(dbgProcess, "\tcoff load failed");
 			return false;
@@ -287,9 +285,9 @@ public class UserProcess {
 	}
 
 	/**
-	 * Allocates memory for this process, and loads the COFF sections into
-	 * memory. If this returns successfully, the process will definitely be run
-	 * (this is the last step in process initialization that can fail).
+	 * Allocates memory for this process, and loads the COFF sections into memory.
+	 * If this returns successfully, the process will definitely be run (this is the
+	 * last step in process initialization that can fail).
 	 * 
 	 * @return <tt>true</tt> if the sections were successfully loaded.
 	 */
@@ -304,8 +302,8 @@ public class UserProcess {
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
 
-			Lib.debug(dbgProcess, "\tinitializing " + section.getName()
-					+ " section (" + section.getLength() + " pages)");
+			Lib.debug(dbgProcess,
+					"\tinitializing " + section.getName() + " section (" + section.getLength() + " pages)");
 
 			for (int i = 0; i < section.getLength(); i++) {
 				int vpn = section.getFirstVPN() + i;
@@ -325,11 +323,11 @@ public class UserProcess {
 	}
 
 	/**
-	 * Initialize the processor's registers in preparation for running the
-	 * program loaded into this process. Set the PC register to point at the
-	 * start function, set the stack pointer register to point at the top of the
-	 * stack, set the A0 and A1 registers to argc and argv, respectively, and
-	 * initialize all other registers to 0.
+	 * Initialize the processor's registers in preparation for running the program
+	 * loaded into this process. Set the PC register to point at the start function,
+	 * set the stack pointer register to point at the top of the stack, set the A0
+	 * and A1 registers to argc and argv, respectively, and initialize all other
+	 * registers to 0.
 	 */
 	public void initRegisters() {
 		Processor processor = Machine.processor();
@@ -359,27 +357,29 @@ public class UserProcess {
 	}
 
 	/**
-	 * Handle the exit() system call.
+	 * Terminate the current process immediately. Any open file descriptor belonging
+	 * to the process are closed. Any children of the process no longer have a
+	 * parent process. status is returned to the parent process as this process's
+	 * exit status and can be collected using the join syscall.
+	 *
+	 * exit() never returns.
 	 */
-	private int handleExit(int status) {
-	        // Do not remove this call to the autoGrader...
+	private int exitHandler(int status) {
+		// Do not remove this call to the autoGrader...
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
 
-		//Lib.debug(dbgProcess, "UserProcess.handleExit (" + status + ")");
-		// for now, unconditionally terminate with just one process
-		//Kernel.kernel.terminate();
-		for(int i = 0; i < openSize; i++)
-		{
-			if(openFiles[i] != null)
-				handleClose(i);
+		// Close all files
+		for (int i = 0; i < maxSize; i++) {
+			if (files[i] != null)
+				closeHandler(i);
 		}
 		unloadSections();
 
 		coff.close();
 
-		if(pid == 0)
+		if (pid == 0)
 			Kernel.kernel.terminate();
 		else
 			KThread.finish();
@@ -387,45 +387,67 @@ public class UserProcess {
 		return 0;
 	}
 
-	private int handleOpen (int a, boolean created)
-	{
-		for (int i = 0; i < openSize - 2; i++)
-		{
-			if(openFiles[i-2] == null)
-					{
-						String s = readVirtualMemoryString(a, 256);
-						if (s == null)
-							return -1;
-						OpenFile open = ThreadedKernel.fileSystem.open(s, created);
-						if (open == null)
-							return -1;
-						openFiles[i-2] = open;
-						return i - 2;
-					}
+	/**
+	 * Attempt to open the named disk file, creating it if it does not exist, and
+	 * return a file descriptor that can be used to access the file. If the file
+	 * already exists, creat truncates it.
+	 *
+	 * Note that creat() can only be used to create files on disk; creat() will
+	 * never return a file descriptor referring to a stream.
+	 *
+	 * Returns the new file descriptor, or -1 if an error occurred.
+	 */
+	private int createHandler(int a1) {
+		return openHandler(a1, true); // This is the same as opn except it will create file
+	}
+	
+
+	/**
+	 * Attempt to open the named file and return a file descriptor.
+	 *
+	 * Note that open() can only be used to open files on disk; open() will never
+	 * return a file descriptor referring to a stream.
+	 *
+	 * Returns the new file descriptor, or -1 if an error occurred.
+	 */
+	private int openHandler(int fileName, boolean createFileIfTrue) {
+		for (int i = 0; i < maxSize; i++) {
+			// Find first space in array where there is an empty space
+			if (files[i] == null) {
+
+				// Read a null-terminated string from this process's virtual memory.
+				// Read at most maxLength + 1 bytes from the specified address
+				String s = readVirtualMemoryString(fileName, 256);
+				if (s == null)
+					return -1;
+				OpenFile openFile = ThreadedKernel.fileSystem.open(s, createFileIfTrue);
+				if (openFile == null)
+					return -1;
+				files[i] = openFile;
+				return i;
+			}
 		}
 		return -1;
 	}
 
-	private int handleRead(int description, int pointer, int count)
-	{
+	private int handleRead(int description, int pointer, int count) {
 		int totalc = 0;
 		int totalr = 0;
 		int current = 0;
-		if (description >= openSize || description < 0)
+		if (description >= maxSize || description < 0)
 			return -1;
-		else if (openFiles[description] == null)
+		else if (files[description] == null)
 			return -1;
 		else if (count < 0)
 			return -1;
-		OpenFile open = openFiles[description];
+		OpenFile open = files[description];
 		if (open == null)
 			return -1;
 		totalc = count;
 		totalr = 0;
 		current = pointer;
 
-		while (totalc > 0)
-		{
+		while (totalc > 0) {
 			byte[] buffer = new byte[1024];
 			int willWrite = Math.min(1024, totalc);
 			int writed = open.read(buffer, 0, willWrite);
@@ -436,98 +458,108 @@ public class UserProcess {
 			totalr = totalr + writeda;
 			current = current + writeda;
 
-			if(writeda < willWrite)
+			if (writeda < willWrite)
 				break;
 		}
 		return totalr;
 	}
 
-	private int handleWrite(int description, int pointer, int count)
-	{
+	/**
+	 * Helper function to handle write file operation
+	 * 
+	 * @param fileDescriptor
+	 * @param *buffer
+	 * @param int            count Attempt to open the named disk file, creating it
+	 *                       if it does not exist, and return a file descriptor that
+	 *                       can be used to access the file. If the file already
+	 *                       exists, creat truncates it.
+	 *
+	 *                       Note that creat() can only be used to create files on
+	 *                       disk; creat() will never return a file descriptor
+	 *                       referring to a stream.
+	 *
+	 *                       Returns the new file descriptor, or -1 if an error
+	 *                       occurred.
+	 */
+	private int writeHandler(int description, int pointer, int count) {
 		int totalc = 0;
 		int totalr = 0;
 		int current = 0;
-		if(description >= openSize || description < 0)
+		if (description >= maxSize || description < 0)
 			return -1;
-		else if(openFiles[description] == null)
+		else if (files[description] == null)
 			return -1;
-		else if(pointer <= 0)
+		else if (pointer <= 0)
 			return -1;
-		else if(count < 0)
+		else if (count < 0)
 			return -1;
-		OpenFile open = openFiles[description];
-		if(open == null)
+		OpenFile open = files[description];
+		if (open == null)
 			return -1;
 		totalc = count;
 		totalr = 0;
 		current = pointer;
 
-		while(totalc > 0)
-		{
+		while (totalc > 0) {
 			byte[] buffer = new byte[1024];
 			int readc = Math.min(totalc, 1024);
-			int read = readVirtualMemory(current,buffer,0,readc);
-			if(read < 0)
+			int read = readVirtualMemory(current, buffer, 0, readc);
+			if (read < 0)
 				return -1;
-			int reada = open.write(buffer,0,read);
+			int reada = open.write(buffer, 0, read);
 
-			if(reada == -1 && totalr == 0)
+			if (reada == -1 && totalr == 0)
 				return -1;
 			totalc = totalc - reada;
 			totalr = totalr - reada;
 			current = current + reada;
 
-			if(reada < readc)
+			if (reada < readc)
 				break;
 		}
 		return totalc;
 	}
 
-	private int handleClose (int description)
-	{
-		if(description >= openSize || description < 0)
+	private int handleClose(int description) {
+		if (description >= maxSize || description < 0)
 			return -1;
-		else if(openFiles[description] == null)
+		else if (files[description] == null)
 			return -1;
-		openFiles[description].close();
-		openFiles[description] = null;
+		files[description].close();
+		files[description] = null;
 		return 0;
 	}
 
-	private int handleUnlink (int virtualMem)
-	{
-		String s = readVirtualMemoryString(virtualMem,256);
+	private int handleUnlink(int virtualMem) {
+		String s = readVirtualMemoryString(virtualMem, 256);
 		if (s == null)
 			return -1;
-		else if(ThreadedKernel.fileSystem.remove(f))
+		else if (ThreadedKernel.fileSystem.remove(f))
 			return 0;
 		else
 			return -1;
 	}
 
-	private int handleExec (int adder, int count, int pointer)
-	{
+	private int handleExec(int adder, int count, int pointer) {
 		String s = readVirtualMemoryString(adder, 256);
 
 		if (s == null)
 			return -1;
-		else if(count < 0 || argc > 16)
+		else if (count < 0 || argc > 16)
 			return -1;
 		int newCount = count * 4;
 		byte[] buffer = new byte[newCount];
 		int read = readVirtualMemory(pointer, buffer, 0, newCount);
-		if(read < buffer.length)
+		if (read < buffer.length)
 			return -1;
 		int[] address = new int[count];
 		String[] s1 = new String[count];
-		for (int i = 0; i < count; i++)
-		{
-			address[i] = Lib.bytesToInt(buffer, i*4);
+		for (int i = 0; i < count; i++) {
+			address[i] = Lib.bytesToInt(buffer, i * 4);
 		}
-		for (int j = 0; j < count; j++)
-		{
+		for (int j = 0; j < count; j++) {
 			s1[i] = readVirtualMemoryString(address[i], 256);
-			if(s1[i] == null)
+			if (s1[i] == null)
 				return -1;
 		}
 
@@ -536,8 +568,7 @@ public class UserProcess {
 		int childID = -1;
 		UserKernel.pidLock.acquire();
 
-		if(child.execute(file, s1))
-		{
+		if (child.execute(file, s1)) {
 			childID = child.pid;
 			childrenList.add(childID);
 		}
@@ -546,16 +577,12 @@ public class UserProcess {
 		return childID;
 	}
 
-	private int handleJoin()
-	{
+	private int handleJoin() {
 		return 0;
 	}
 
-
-	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2,
-			syscallJoin = 3, syscallCreate = 4, syscallOpen = 5,
-			syscallRead = 6, syscallWrite = 7, syscallClose = 8,
-			syscallUnlink = 9;
+	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2, syscallJoin = 3, syscallCreate = 4,
+			syscallOpen = 5, syscallRead = 6, syscallWrite = 7, syscallClose = 8, syscallUnlink = 9;
 
 	/**
 	 * Handle a syscall exception. Called by <tt>handleException()</tt>. The
@@ -612,10 +639,10 @@ public class UserProcess {
 	 * </table>
 	 * 
 	 * @param syscall the syscall number.
-	 * @param a0 the first syscall argument.
-	 * @param a1 the second syscall argument.
-	 * @param a2 the third syscall argument.
-	 * @param a3 the fourth syscall argument.
+	 * @param a0      the first syscall argument.
+	 * @param a1      the second syscall argument.
+	 * @param a2      the third syscall argument.
+	 * @param a3      the fourth syscall argument.
 	 * @return the value to be returned to the user.
 	 */
 	public int handleSyscall(int syscall, int a0, int a1, int a2, int a3) {
@@ -694,8 +721,8 @@ public class UserProcess {
 	protected final int stackPages = 8;
 
 	/** The thread that executes the user-level program. */
-        protected UThread thread;
-    
+	protected UThread thread;
+
 	private int initialPC, initialSP;
 
 	private int argc, argv;
