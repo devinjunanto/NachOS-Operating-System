@@ -562,7 +562,7 @@ public class UserProcess {
 		// System.out.println(currentPos+"\n"+);
 		byte[] buffer = new byte[count];
 		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
-		int numLoaded = readVirtualMemory(pointer, buffer, 0, numToLoad);
+		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
 
 		// System.out.println("numLoaded - " + numLoaded);
 		if (numLoaded < 0)
