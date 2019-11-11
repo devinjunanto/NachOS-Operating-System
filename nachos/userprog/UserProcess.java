@@ -380,9 +380,9 @@ public class UserProcess {
 		coff.close();
 
 		// if (pid == 0)
-		// 	Kernel.kernel.terminate();
+		// Kernel.kernel.terminate();
 		// else
-		// 	KThread.finish();
+		// KThread.finish();
 
 		return 0;
 	}
@@ -400,7 +400,6 @@ public class UserProcess {
 	private int createHandler(int a1) {
 		return openHandler(a1, true); // This is the same as opn except it will create file
 	}
-	
 
 	/**
 	 * Attempt to open the named file and return a file descriptor.
@@ -414,16 +413,17 @@ public class UserProcess {
 		for (int i = 2; i < maxSize; i++) {
 			// Find first space in array where there is an empty space
 			if (files[i] == null) {
+				Lib.debug(dbgProcess, "in openHandler ");
 
 				// Read a null-terminated string from this process's virtual memory.
 				// Read at most maxLength + 1 bytes from the specified address
 				String fileNameFromMemory = readVirtualMemoryString(fileLoc, 256);
-
+				Lib.debug(dbgProcess, "in openHandler opened - " + fileNameFromMemory);
 				if (fileNameFromMemory == null)
 					return -1;
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
 
-				Lib.debug(dbgProcess, "in openHandler opened - "+fileNameFromMemory);
+				Lib.debug(dbgProcess, "in openHandler opened2 - " + fileNameFromMemory);
 				if (openFile == null)
 					return -1;
 				files[i] = openFile;
@@ -534,54 +534,54 @@ public class UserProcess {
 	}
 
 	// private int handleUnlink(int virtualMem) {
-	// 	String s = readVirtualMemoryString(virtualMem, 256);
-	// 	if (s == null)
-	// 		return -1;
-	// 	else if (ThreadedKernel.fileSystem.remove(f))
-	// 		return 0;
-	// 	else
-	// 		return -1;
+	// String s = readVirtualMemoryString(virtualMem, 256);
+	// if (s == null)
+	// return -1;
+	// else if (ThreadedKernel.fileSystem.remove(f))
+	// return 0;
+	// else
+	// return -1;
 	// }
 
 	// private int handleExec(int adder, int count, int pointer) {
-	// 	String s = readVirtualMemoryString(adder, 256);
+	// String s = readVirtualMemoryString(adder, 256);
 
-	// 	if (s == null)
-	// 		return -1;
-	// 	else if (count < 0 || argc > 16)
-	// 		return -1;
-	// 	int newCount = count * 4;
-	// 	byte[] buffer = new byte[newCount];
-	// 	int read = readVirtualMemory(pointer, buffer, 0, newCount);
-	// 	if (read < buffer.length)
-	// 		return -1;
-	// 	int[] address = new int[count];
-	// 	String[] s1 = new String[count];
-	// 	for (int i = 0; i < count; i++) {
-	// 		address[i] = Lib.bytesToInt(buffer, i * 4);
-	// 	}
-	// 	for (int j = 0; j < count; j++) {
-	// 		s1[i] = readVirtualMemoryString(address[i], 256);
-	// 		if (s1[i] == null)
-	// 			return -1;
-	// 	}
+	// if (s == null)
+	// return -1;
+	// else if (count < 0 || argc > 16)
+	// return -1;
+	// int newCount = count * 4;
+	// byte[] buffer = new byte[newCount];
+	// int read = readVirtualMemory(pointer, buffer, 0, newCount);
+	// if (read < buffer.length)
+	// return -1;
+	// int[] address = new int[count];
+	// String[] s1 = new String[count];
+	// for (int i = 0; i < count; i++) {
+	// address[i] = Lib.bytesToInt(buffer, i * 4);
+	// }
+	// for (int j = 0; j < count; j++) {
+	// s1[i] = readVirtualMemoryString(address[i], 256);
+	// if (s1[i] == null)
+	// return -1;
+	// }
 
-	// 	UserProcess child = newUserProcess();
-	// 	child.parent = this;
-	// 	int childID = -1;
-	// 	UserKernel.pidLock.acquire();
+	// UserProcess child = newUserProcess();
+	// child.parent = this;
+	// int childID = -1;
+	// UserKernel.pidLock.acquire();
 
-	// 	if (child.execute(file, s1)) {
-	// 		childID = child.pid;
-	// 		childrenList.add(childID);
-	// 	}
+	// if (child.execute(file, s1)) {
+	// childID = child.pid;
+	// childrenList.add(childID);
+	// }
 
-	// 	UserKernel.pidLock.release();
-	// 	return childID;
+	// UserKernel.pidLock.release();
+	// return childID;
 	// }
 
 	// private int handleJoin() {
-	// 	return 0;
+	// return 0;
 	// }
 
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2, syscallJoin = 3, syscallCreate = 4,
@@ -711,10 +711,10 @@ public class UserProcess {
 	private int maxSize = 16;
 	private OpenFile[] files = new OpenFile[maxSize]; // Array of files
 
-	//TODO understand
+	// TODO understand
 	public int pid;
 	public UserProcess parent;
-	//public LinkedList<Integer> childrenList = new LinkedList<Integer>();
+	// public LinkedList<Integer> childrenList = new LinkedList<Integer>();
 
 	/** The program being run by this process. */
 	protected Coff coff;
