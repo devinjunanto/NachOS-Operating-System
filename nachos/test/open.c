@@ -39,9 +39,7 @@ int open2()
     
     int val = open(name);
     
-    printf("The file descriptor is - ");
-    printf(val);
-    printf("done with open2");
+    printf("The file descriptor is - %d", val);
     
     return 0;
 }

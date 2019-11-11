@@ -375,7 +375,6 @@ public class UserProcess {
 
 		// Close all files
 		for (int i = 0; i < maxSize; i++) {
-			System.out.println("Here in exitHandler closing i="+i);
 			if (files[i] != null)
 				closeHandler(i);
 		}
@@ -420,23 +419,17 @@ public class UserProcess {
 		for (int i = 2; i < maxSize; i++) {
 			// Find first space in array where there is an empty space
 			if (files[i] == null) {
-				System.out.println("in openHandler ");
-
 				// Read a null-terminated string from this process's virtual memory.
 				// Read at most maxLength + 1 bytes from the specified address
 				String fileNameFromMemory = readVirtualMemoryString(fileLoc, 256);
-				System.out.println("in openHandler opened - " + fileNameFromMemory);
+				System.out.println("Attempting to Open - " + fileNameFromMemory);
 				if (fileNameFromMemory == null)
 					return -1;
-				System.out.println("Attempting to open file");
 				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
 
 				if (openFile == null)
 					return -1;
-
-				System.out.println("opened file");
-
-				System.out.println("in openHandler opened 2 File is not null - " + fileNameFromMemory);
+				System.out.println("Successfully Opened - " + fileNameFromMemory);
 
 				files[i] = openFile;
 				return i;
