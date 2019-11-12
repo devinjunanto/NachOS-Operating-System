@@ -58,7 +58,7 @@ int write2()
 		}
 		str++;
 	}
-	printf("Finished writing to file");
+	printf("Finished writing to file\n");
 
 	return 0;
 }
@@ -72,6 +72,7 @@ int write3()
 	{
 		strcat(str, 'a');
 	}
+	strcat(str, '\n'); // new line !
 	printf(str);
 }
 
@@ -91,6 +92,7 @@ int write3()
 
 int write4()
 {
+	printf("\nRunning Write4\n\n");
 	char buffer[80];
 	char prompt[4];
 	int i, n;
