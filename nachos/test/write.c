@@ -77,7 +77,7 @@ int write3()
 
 	int fileDesc = creat("LONGwriteTest.txt");
 	int r = write(fileDesc, str, writeCount);
-	printf("Just wrote %d bytes to file number %d", writeCount, fileDesc);
+	printf("Just wrote %d bytes to file number %d", r, fileDesc);
 }
 
 /*
