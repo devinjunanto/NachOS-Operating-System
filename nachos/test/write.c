@@ -68,13 +68,14 @@ int write2()
 //Writes a really long strong into the file
 int write3()
 {
-	char str[2000];
+	char str[(2000+100)];
 	int writeCount = 2000;
+	char add[] = 'A';
 
 	printf("\nRunning Write3\n\n");
 	for (int i = 0; i < writeCount; i++)
 	{
-		strcat(str, 'a');
+		strcat(str, add);
 	}
 	strcat(str, '\n'); // new line !
 
