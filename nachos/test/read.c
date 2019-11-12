@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 {
     int val = 0;
     val = read1();
+    val = read2();
     return val;
 }
 
@@ -26,7 +27,7 @@ int read1()
 }
 
 // read large file and print
-int read1()
+int read2()
 {
     int len = 3000;
     char buffer[len];
