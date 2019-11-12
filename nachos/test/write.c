@@ -66,14 +66,18 @@ int write2()
 int write3()
 {
 	char str[2000];
+	int writeCount = 1000;
 
 	printf("\nRunning Write3\n\n");
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < writeCount; i++)
 	{
 		strcat(str, 'a');
 	}
 	strcat(str, '\n'); // new line !
-	printf(str);
+
+	int fileDesc = creat("LONGwriteTest.txt");
+	int r = write(fileDesc, str, writeCount);
+	printf("Just wrote %d bytes to file number %d", writeCount, fileDesc);
 }
 
 /*
