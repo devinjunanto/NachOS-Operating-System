@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     return val;
 }
 
-// Create a file that doesnt exist
+// Open an existing file and load its contents with count greater than text in file
 int read1()
 {
     int len = 500;
@@ -24,3 +24,16 @@ int read1()
     printf(buffer);
     return val;
 }
+
+// read large file and print
+int read1()
+{
+    int len = 3000;
+    char buffer[len];
+    printf("\nRunning Read1\n\n");
+    int fd = open("LONGwriteTest.txt");
+    int val = read(fd, buffer, len);
+    printf(buffer);
+    return val;
+}
+
