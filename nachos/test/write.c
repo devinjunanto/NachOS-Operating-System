@@ -53,6 +53,7 @@ int write2()
 		}
 		str++;
 	}
+	printf("Finished writing to file");
 
 	return 0;
 }
