@@ -551,7 +551,7 @@ public class UserProcess {
 		OpenFile openFile = files[fileDescriptor];
 		if (openFile == null)
 			return -1;
-		System.out.println("Successfully opened file " + fileDescriptor + " to WRITE");
+		System.out.println("\n\nSuccessfully opened file " + fileDescriptor + " to WRITE");
 		System.out.println("Attempting to WRITE " + count + " bytes \n");
 
 		// bytesLeftToWrite = count;
