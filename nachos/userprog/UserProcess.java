@@ -477,8 +477,9 @@ public class UserProcess {
 		if (openFile == null)
 			return -1;
 
-		//System.out.println("Successfully opened file " + fileDescriptor + " to READ");
-		//System.out.println("Attempting to READ " + count + " bytes");
+		// System.out.println("Successfully opened file " + fileDescriptor + " to
+		// READ");
+		// System.out.println("Attempting to READ " + count + " bytes");
 
 		bytesLeftToRead = count;
 		totalBytesRead = 0;
@@ -549,16 +550,17 @@ public class UserProcess {
 
 		OpenFile openFile = files[fileDescriptor];
 		if (openFile == null)
-			return -1; 	// Check if file exists
+			return -1; // Check if file exists
 
 		byte[] buffer = new byte[count];
-		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy); // to prevent page faults
+		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy); // to prevent page
+		// faults
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
 		if (numLoaded < 0)
-			return -1; 
+			return -1;
 		retVal = openFile.write(buffer, 0, numLoaded);
 
-		if( count != retVal)
+		if (count != retVal)
 			return -1; // number of bytes written matches count.
 
 		return retVal;
@@ -576,15 +578,26 @@ public class UserProcess {
 
 	}
 
-	// private int handleUnlink(int virtualMem) {
-	// String s = readVirtualMemoryString(virtualMem, 256);
-	// if (s == null)
-	// return -1;
-	// else if (ThreadedKernel.fileSystem.remove(f))
-	// return 0;
-	// else
-	// return -1;
-	// }
+	/**
+	 * Delete a file from the file system.
+	 *
+	 * If another process has the file open, the underlying file system
+	 * implementation in StubFileSystem will cleanly handle this situation (this
+	 * process will ask the file system to remove the file, but the file will not
+	 * actually be deleted by the file system until all other processes are done
+	 * with the file).
+	 *
+	 * Returns 0 on success, or -1 if an error occurred.
+	 */
+	private int unlinkHandler(int virtualMem) {
+		String s = readVirtualMemoryString(virtualMem, 256);
+		if (s == null)
+			return -1;
+		else if (ThreadedKernel.fileSystem.remove(f))
+			return 0;
+		else
+			return -1;
+	}
 
 	// private int handleExec(int adder, int count, int pointer) {
 	// String s = readVirtualMemoryString(adder, 256);
