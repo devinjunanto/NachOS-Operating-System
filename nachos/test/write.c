@@ -62,6 +62,7 @@ int write3()
 {
 	char *str = "a";
 
+	printf("\nRunning Write3\n\n");
 	for (int i = 0; i < 1030; i++)
 	{
 		str = str + 'a';
