@@ -70,9 +70,8 @@ int write3()
 	printf("\nRunning Write3\n\n");
 	for (int i = 0; i < 1000; i++)
 	{
-		str = str + 'a';
+		strcat(str, 'a');
 	}
-
 	printf(str);
 }
 
