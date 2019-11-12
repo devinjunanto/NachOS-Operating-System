@@ -70,7 +70,7 @@ int write3()
 {
 	char str[(2000+100)];
 	int writeCount = 2000;
-	char add[] = "A";
+	char add[] = "B";
 
 	printf("\nRunning Write3\n\n");
 	for (int i = 0; i < writeCount; i++)

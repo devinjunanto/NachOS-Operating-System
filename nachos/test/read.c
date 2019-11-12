@@ -36,7 +36,7 @@ int read2()
     int val = read(fd, buffer, len);
     //printf(buffer);
     printf("just Read - %d/%d ",val, len);
-    int file2 = create("LONGwriteTestCopy.text");
+    int file2 = creat("LONGwriteTestCopy.text");
     val = write(file2, buffer, len);
     printf("just wrote - %d/%d in file number ", val, len, file2 );
     return 0;
