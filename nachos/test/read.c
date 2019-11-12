@@ -10,13 +10,17 @@ int main(int argc, char *argv[])
 {
     int val = 0;
     val = read1();
-    //val = create2();
     return val;
 }
 
 // Create a file that doesnt exist
 int read1()
 {
-    char buffer[80];
-    
+    int len = 500;
+    char buffer[len];
+    printf("\nRunning Read1\n\n");
+    int fd = open("writeTest.txt");
+    int val = read(fd, buffer, len);
+    printf(buffer);
+    return val;
 }
