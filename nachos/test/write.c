@@ -42,10 +42,9 @@ int write2()
 {
 	printf("\nRunning Write2\n\n");
 	char *str = "\nroses are red\nviolets are blue\nI hate Nachos\nand so do you\n\n";
-
+	int fileDesc = creat("writeTest.txt");
 	while (*str)
 	{
-		int fileDesc = creat("writeTest.txt");
 		int r = write(fileDesc, str, 1);
 		if (r != 1)
 		{
