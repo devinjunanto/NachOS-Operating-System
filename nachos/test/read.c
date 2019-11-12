@@ -23,7 +23,7 @@ int read1()
     int fd = open("writeTest.txt");
     int val = read(fd, buffer, len);
     printf(buffer);
-    return val;
+    return 0;
 }
 
 // read large file and print
@@ -35,6 +35,7 @@ int read2()
     int fd = open("LONGwriteTest.txt");
     int val = read(fd, buffer, len);
     printf(buffer);
-    return val;
+    printf("Val - %d/2000 ",val);
+    return 0;
 }
 
