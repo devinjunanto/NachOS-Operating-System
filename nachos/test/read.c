@@ -34,8 +34,11 @@ int read2()
     printf("\nRunning Read1\n\n");
     int fd = open("LONGwriteTest.txt");
     int val = read(fd, buffer, len);
-    printf(buffer);
-    printf("Val - %d/2000 ",val);
+    //printf(buffer);
+    printf("just Read - %d/%d ",val, len);
+    int file2 = create("LONGwriteTestCopy.text");
+    val = write(file2, buffer, len);
+    printf("just wrote - %d/%d in file number ", val, len, file2 );
     return 0;
 }
 
