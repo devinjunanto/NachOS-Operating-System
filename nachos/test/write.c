@@ -63,6 +63,7 @@ int write2()
 	return 0;
 }
 
+//Writes a really long strong into the file
 int write3()
 {
 	char str[2000];

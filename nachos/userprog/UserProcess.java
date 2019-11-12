@@ -478,7 +478,7 @@ public class UserProcess {
 			return -1;
 
 		//System.out.println("Successfully opened file " + fileDescriptor + " to READ");
-		System.out.println("Attempting to READ " + count + " bytes");
+		//System.out.println("Attempting to READ " + count + " bytes");
 
 		bytesLeftToRead = count;
 		totalBytesRead = 0;
