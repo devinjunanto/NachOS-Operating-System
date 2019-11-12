@@ -547,41 +547,20 @@ public class UserProcess {
 		else if (count < 0)
 			return -1;
 
-		// Check if file exists
 		OpenFile openFile = files[fileDescriptor];
 		if (openFile == null)
-			return -1;
-		// System.out.println("\n\nSuccessfully opened file " + fileDescriptor + " to WRITE");
-		// System.out.println("Attempting to WRITE " + count + " bytes \n");
+			return -1; 	// Check if file exists
 
-		// bytesLeftToWrite = count;
-		// currentPos = pointer;
-
-		// while (bytesLeftToWrite > 0) {
-		// System.out.println("Left to write - " + bytesLeftToWrite);
-		// System.out.println(currentPos+"\n"+);
 		byte[] buffer = new byte[count];
-		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
+		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy); // to prevent page faults
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
-
-		// System.out.println("numLoaded - " + numLoaded);
 		if (numLoaded < 0)
-			return -1;
-
+			return -1; 
 		retVal = openFile.write(buffer, 0, numLoaded);
 
-		// if (bytesWritten == -1 && totalBytesWritten == 0)
-		// return -1;
-		// bytesLeftToWrite = bytesLeftToWrite - bytesWritten;
-		// totalBytesWritten = totalBytesWritten - bytesWritten;
-		// currentPos = currentPos + bytesWritten;
-		// System.out.println("bytesLeftToWrite - " + bytesLeftToWrite);
-		// System.out.println("totalBytesWritten" + totalBytesWritten);
-		// System.out.println("currentPos" + currentPos);
+		if( count != retVal)
+			return -1; // number of bytes written matches count.
 
-		// if (bytesWritten < numToLoad)
-		// break;
-		// }
 		return retVal;
 	}
 
