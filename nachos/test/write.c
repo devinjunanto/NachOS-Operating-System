@@ -66,7 +66,7 @@ int write2()
 int write3()
 {
 	char str[2000];
-	int writeCount = 1000;
+	int writeCount = 2000;
 
 	printf("\nRunning Write3\n\n");
 	for (int i = 0; i < writeCount; i++)
