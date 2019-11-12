@@ -5,6 +5,7 @@ import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
 
+import java.awt.image.Kernel;
 import java.io.EOFException;
 
 /**
@@ -33,6 +34,8 @@ public class UserProcess {
 		// standard input and standard output.
 		files[0] = UserKernel.console.openForReading();
 		files[1] = UserKernel.console.openForWriting();
+
+		// acquire lock
 	}
 
 	/**
@@ -379,10 +382,13 @@ public class UserProcess {
 
 		coff.close();
 
+		KThread.finish();
+		// Kernel.kernel.terminate();
+
 		// if (pid == 0)
-		// 	Kernel.kernel.terminate();
+		// Kernel.kernel.terminate();
 		// else
-		// 	KThread.finish();
+		// KThread.finish();
 
 		return 0;
 	}
@@ -398,9 +404,8 @@ public class UserProcess {
 	 * Returns the new file descriptor, or -1 if an error occurred.
 	 */
 	private int createHandler(int a1) {
-		return openHandler(a1, true); // This is the same as opn except it will create file
+		return openCreateJointHandler(a1, true); // This is the same as opn except it will create file
 	}
-	
 
 	/**
 	 * Attempt to open the named file and return a file descriptor.
@@ -410,19 +415,27 @@ public class UserProcess {
 	 *
 	 * Returns the new file descriptor, or -1 if an error occurred.
 	 */
-	private int openHandler(int fileName, boolean createFileIfTrue) {
-		for (int i = 0; i < maxSize; i++) {
+	private int openHandler(int a1) {
+		return openCreateJointHandler(a1, false);
+	}
+
+	// Since they both have same functionality
+	private int openCreateJointHandler(int fileLoc, boolean createFileIfTrue) {
+		for (int i = 2; i < maxSize; i++) {
 			// Find first space in array where there is an empty space
 			if (files[i] == null) {
-
 				// Read a null-terminated string from this process's virtual memory.
 				// Read at most maxLength + 1 bytes from the specified address
-				String s = readVirtualMemoryString(fileName, 256);
-				if (s == null)
+				String fileNameFromMemory = readVirtualMemoryString(fileLoc, 256);
+				// System.out.println("Attempting to Open - " + fileNameFromMemory);
+				if (fileNameFromMemory == null)
 					return -1;
-				OpenFile openFile = ThreadedKernel.fileSystem.open(s, createFileIfTrue);
+				OpenFile openFile = ThreadedKernel.fileSystem.open(fileNameFromMemory, createFileIfTrue);
+
 				if (openFile == null)
 					return -1;
+				// System.out.println("Successfully Opened - " + fileNameFromMemory);
+
 				files[i] = openFile;
 				return i;
 			}
@@ -430,38 +443,66 @@ public class UserProcess {
 		return -1;
 	}
 
-	private int handleRead(int description, int pointer, int count) {
-		int totalc = 0;
-		int totalr = 0;
-		int current = 0;
-		if (description >= maxSize || description < 0)
-			return -1;
-		else if (files[description] == null)
-			return -1;
+	/**
+	 * Attempt to read up to count bytes into buffer from the file or stream
+	 * referred to by fileDescriptor.
+	 *
+	 * On success, the number of bytes read is returned. If the file descriptor
+	 * refers to a file on disk, the file position is advanced by this number.
+	 *
+	 * It is not necessarily an error if this number is smaller than the number of
+	 * bytes requested. If the file descriptor refers to a file on disk, this
+	 * indicates that the end of the file has been reached. If the file descriptor
+	 * refers to a stream, this indicates that the fewer bytes are actually
+	 * available right now than were requested, but more bytes may become available
+	 * in the future. Note that read() never waits for a stream to have more data;
+	 * it always returns as much as possible immediately.
+	 *
+	 * On error, -1 is returned, and the new file position is undefined. This can
+	 * happen if fileDescriptor is invalid, if part of the buffer is read-only or
+	 * invalid, or if a network stream has been terminated by the remote host and no
+	 * more data is available.
+	 */
+	private int readHandler(int fileDescriptor, int pointer, int count) {
+		int bytesLeftToRead = 0;
+		int totalBytesRead = 0;
+		int currentPos = 0;
+		if (fileDescriptor >= maxSize || fileDescriptor < 0)
+			return -1; // Base check for descriptor validity
+		else if (files[fileDescriptor] == null)
+			return -1; // File DNE
 		else if (count < 0)
 			return -1;
-		OpenFile open = files[description];
-		if (open == null)
+		OpenFile openFile = files[fileDescriptor];
+		if (openFile == null)
 			return -1;
-		totalc = count;
-		totalr = 0;
-		current = pointer;
 
-		while (totalc > 0) {
-			byte[] buffer = new byte[1024];
-			int willWrite = Math.min(1024, totalc);
-			int writed = open.read(buffer, 0, willWrite);
-			if (writed == -1)
+		// System.out.println("Successfully opened file " + fileDescriptor + " to
+		// READ");
+		// System.out.println("Attempting to READ " + count + " bytes");
+
+		bytesLeftToRead = count;
+		totalBytesRead = 0;
+		currentPos = pointer;
+
+		while (bytesLeftToRead > 0) {
+			byte[] buffer = new byte[pageSizeCopy];
+			int numToLoad = Math.min(pageSizeCopy, bytesLeftToRead);
+			int numLoaded = openFile.read(buffer, 0, numToLoad);
+			if (numLoaded == -1)
 				return -1;
-			int writeda = writeVirtualMemory(current, buffer, 0, writed);
-			totalc = totalc - writeda;
-			totalr = totalr + writeda;
-			current = current + writeda;
 
-			if (writeda < willWrite)
+			// Transfer data from the buffer array to currentPos process's virtual memory of
+			// length numLoaded
+			int bytesRead = writeVirtualMemory(currentPos, buffer, 0, numLoaded);
+			bytesLeftToRead = bytesLeftToRead - bytesRead;
+			totalBytesRead = totalBytesRead + bytesRead;
+			currentPos = currentPos + bytesRead;
+
+			if (bytesRead < numToLoad)
 				break;
 		}
-		return totalr;
+		return totalBytesRead;
 	}
 
 	/**
@@ -469,116 +510,134 @@ public class UserProcess {
 	 * 
 	 * @param fileDescriptor
 	 * @param *buffer
-	 * @param int            count Attempt to open the named disk file, creating it
-	 *                       if it does not exist, and return a file descriptor that
-	 *                       can be used to access the file. If the file already
-	 *                       exists, creat truncates it.
+	 * @param int
+	 * 
+	 *                       Attempt to write up to count bytes from buffer to the
+	 *                       file or stream referred to by fileDescriptor. write()
+	 *                       can return before the bytes are actually flushed to the
+	 *                       file or stream. A write to a stream can block, however,
+	 *                       if kernel queues are temporarily full.
 	 *
-	 *                       Note that creat() can only be used to create files on
-	 *                       disk; creat() will never return a file descriptor
-	 *                       referring to a stream.
+	 *                       On success, the number of bytes written is returned
+	 *                       (zero indicates nothing was written), and the file
+	 *                       position is advanced by this number. It IS an error if
+	 *                       this number is smaller than the number of bytes
+	 *                       requested. For disk files, this indicates that the disk
+	 *                       is full. For streams, this indicates the stream was
+	 *                       terminated by the remote host before all the data was
+	 *                       transferred.
 	 *
-	 *                       Returns the new file descriptor, or -1 if an error
-	 *                       occurred.
+	 *                       On error, -1 is returned, and the new file position is
+	 *                       undefined. This can happen if fileDescriptor is
+	 *                       invalid, if part of the buffer is invalid, or if a
+	 *                       network stream has already been terminated by the
+	 *                       remote host.
+	 * 
 	 */
-	private int writeHandler(int description, int pointer, int count) {
-		int totalc = 0;
-		int totalr = 0;
-		int current = 0;
-		if (description >= maxSize || description < 0)
+	private int writeHandler(int fileDescriptor, int pointer, int count) {
+		// int bytesLeftToWrite;
+		int totalBytesWritten = 0;
+		int retVal = 0; // This is to be returned
+
+		if (fileDescriptor >= maxSize || fileDescriptor < 0)
 			return -1;
-		else if (files[description] == null)
+		else if (files[fileDescriptor] == null)
 			return -1;
 		else if (pointer <= 0)
 			return -1;
 		else if (count < 0)
 			return -1;
-		OpenFile open = files[description];
-		if (open == null)
+
+		OpenFile openFile = files[fileDescriptor];
+		if (openFile == null)
+			return -1; // Check if file exists
+
+		byte[] buffer = new byte[count];
+		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy); // to prevent page
+		// faults
+		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
+		if (numLoaded < 0)
 			return -1;
-		totalc = count;
-		totalr = 0;
-		current = pointer;
+		retVal = openFile.write(buffer, 0, numLoaded);
 
-		while (totalc > 0) {
-			byte[] buffer = new byte[1024];
-			int readc = Math.min(totalc, 1024);
-			int read = readVirtualMemory(current, buffer, 0, readc);
-			if (read < 0)
-				return -1;
-			int reada = open.write(buffer, 0, read);
+		if (count != retVal)
+			return -1; // number of bytes written matches count.
 
-			if (reada == -1 && totalr == 0)
-				return -1;
-			totalc = totalc - reada;
-			totalr = totalr - reada;
-			current = current + reada;
-
-			if (reada < readc)
-				break;
-		}
-		return totalc;
+		return retVal;
 	}
 
 	private int closeHandler(int description) {
 		if (description >= maxSize || description < 0)
 			return -1;
-		else if (files[description] == null)
-			return -1;
-		files[description].close();
-		files[description] = null;
-		return 0;
+		if (files[description] != null) {
+			files[description].close();
+			files[description] = null;
+			return 0;
+		}
+		return -1;
+
 	}
 
-	// private int handleUnlink(int virtualMem) {
-	// 	String s = readVirtualMemoryString(virtualMem, 256);
-	// 	if (s == null)
-	// 		return -1;
-	// 	else if (ThreadedKernel.fileSystem.remove(f))
-	// 		return 0;
-	// 	else
-	// 		return -1;
-	// }
+	/**
+	 * Delete a file from the file system.
+	 *
+	 * If another process has the file open, the underlying file system
+	 * implementation in StubFileSystem will cleanly handle this situation (this
+	 * process will ask the file system to remove the file, but the file will not
+	 * actually be deleted by the file system until all other processes are done
+	 * with the file).
+	 *
+	 * Returns 0 on success, or -1 if an error occurred.
+	 */
+	private int unlinkHandler(int virtualMem) {
+		String s = readVirtualMemoryString(virtualMem, 256);
+		if (s == null)
+			return -1;
+		else if (ThreadedKernel.fileSystem.remove(f))
+			return 0;
+		else
+			return -1;
+	}
 
 	// private int handleExec(int adder, int count, int pointer) {
-	// 	String s = readVirtualMemoryString(adder, 256);
+	// String s = readVirtualMemoryString(adder, 256);
 
-	// 	if (s == null)
-	// 		return -1;
-	// 	else if (count < 0 || argc > 16)
-	// 		return -1;
-	// 	int newCount = count * 4;
-	// 	byte[] buffer = new byte[newCount];
-	// 	int read = readVirtualMemory(pointer, buffer, 0, newCount);
-	// 	if (read < buffer.length)
-	// 		return -1;
-	// 	int[] address = new int[count];
-	// 	String[] s1 = new String[count];
-	// 	for (int i = 0; i < count; i++) {
-	// 		address[i] = Lib.bytesToInt(buffer, i * 4);
-	// 	}
-	// 	for (int j = 0; j < count; j++) {
-	// 		s1[i] = readVirtualMemoryString(address[i], 256);
-	// 		if (s1[i] == null)
-	// 			return -1;
-	// 	}
+	// if (s == null)
+	// return -1;
+	// else if (count < 0 || argc > 16)
+	// return -1;
+	// int newCount = count * 4;
+	// byte[] buffer = new byte[newCount];
+	// int read = readVirtualMemory(pointer, buffer, 0, newCount);
+	// if (read < buffer.length)
+	// return -1;
+	// int[] address = new int[count];
+	// String[] s1 = new String[count];
+	// for (int i = 0; i < count; i++) {
+	// address[i] = Lib.bytesToInt(buffer, i * 4);
+	// }
+	// for (int j = 0; j < count; j++) {
+	// s1[i] = readVirtualMemoryString(address[i], 256);
+	// if (s1[i] == null)
+	// return -1;
+	// }
 
-	// 	UserProcess child = newUserProcess();
-	// 	child.parent = this;
-	// 	int childID = -1;
-	// 	UserKernel.pidLock.acquire();
+	// UserProcess child = newUserProcess();
+	// child.parent = this;
+	// int childID = -1;
+	// UserKernel.pidLock.acquire();
 
-	// 	if (child.execute(file, s1)) {
-	// 		childID = child.pid;
-	// 		childrenList.add(childID);
-	// 	}
+	// if (child.execute(file, s1)) {
+	// childID = child.pid;
+	// childrenList.add(childID);
+	// }
 
-	// 	UserKernel.pidLock.release();
-	// 	return childID;
+	// UserKernel.pidLock.release();
+	// return childID;
 	// }
 
 	// private int handleJoin() {
-	// 	return 0;
+	// return 0;
 	// }
 
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2, syscallJoin = 3, syscallCreate = 4,
@@ -656,7 +715,11 @@ public class UserProcess {
 		case syscallCreate:
 			return createHandler(a0); // char *name
 		case syscallOpen:
-			return openHandler(a0, false);
+			return openHandler(a0);
+		case syscallClose:
+			return closeHandler(a0);
+		case syscallRead:
+			return readHandler(a0, a1, a2);
 
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
@@ -685,6 +748,8 @@ public class UserProcess {
 			break;
 
 		default:
+			System.out.println("\nCause of exception - " + cause);
+			System.out.println("data - \n" + Processor.exceptionNames[cause]);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
@@ -708,10 +773,12 @@ public class UserProcess {
 	private int maxSize = 16;
 	private OpenFile[] files = new OpenFile[maxSize]; // Array of files
 
-	//TODO understand
+	// TODO understand
 	public int pid;
 	public UserProcess parent;
-	//public LinkedList<Integer> childrenList = new LinkedList<Integer>();
+
+	final int pageSizeCopy = 1024;
+	// public LinkedList<Integer> childrenList = new LinkedList<Integer>();
 
 	/** The program being run by this process. */
 	protected Coff coff;

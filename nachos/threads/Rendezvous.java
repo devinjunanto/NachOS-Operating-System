@@ -357,10 +357,10 @@ public class Rendezvous {
 
     public static void selfTest() {
         // place calls to your Rendezvous tests that you implement here
-        rendezTest1(); //Simple test
-        rendezTest2(); //Test multiple tags and sync
-        rendezTest3(); //Test multiple instances and sync
-        rendezTest4(); //Test if same tag can also be used repeatedly for multiple exchanges
-        rendezTest5(); //Test if same tag can also be used repeatedly for multiple exchanges
+        // rendezTest1(); //Simple test
+        // rendezTest2(); //Test multiple tags and sync
+        // rendezTest3(); //Test multiple instances and sync
+        // rendezTest4(); //Test if same tag can also be used repeatedly for multiple exchanges
+        // rendezTest5(); //Test if same tag can also be used repeatedly for multiple exchanges
     }
 }
