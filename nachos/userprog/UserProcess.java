@@ -578,7 +578,7 @@ public class UserProcess {
 
 	}
 
-	public bool hasFile(int fileDescriptor){
+	public boolean hasFile(int fileDescriptor){
 		return files[fileDescriptor]!=null;
 	}
 
