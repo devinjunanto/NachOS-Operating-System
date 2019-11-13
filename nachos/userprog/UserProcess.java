@@ -594,8 +594,8 @@ public class UserProcess {
 		if (fileName == null)
 			return -1;
 		if (ThreadedKernel.fileSystem.remove(fileName)) {
-			freeFromFiles(fileName);
-			return 0;
+			return freeFromFiles(fileName);
+			//return 0;
 		}
 		return -1;
 	}
@@ -603,6 +603,8 @@ public class UserProcess {
 	//Helper function to free up filedescriptor in unlink so others can open on it
 	private int freeFromFiles(String fileName){
 		System.out.println("Attempting to free Filename - "+fileName);
+
+		return 0;
 	}
 
 	// private int handleExec(int adder, int count, int pointer) {
