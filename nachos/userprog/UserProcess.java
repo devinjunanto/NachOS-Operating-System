@@ -594,6 +594,7 @@ public class UserProcess {
 	 * Returns 0 on success, or -1 if an error occurred.
 	 */
 	private int unlinkHandler(int virtualMem) {
+		System.out.println("\n\nHere in unlink 1 with mem - "+virtualMem);
 		String fileName = readVirtualMemoryString(virtualMem, 256);
 		System.out.println("Here in unlink with "+fileName);
 		if (fileName == null)
