@@ -6,6 +6,7 @@
 #include "syscall.h"
 #include "stdlib.h"
 
+// reading or writing to a file descriptor that was closed returns an error.
 int main(int argc, char *argv[])
 {
     int val = 0;
@@ -33,7 +34,7 @@ int close1()
     return 0;
 }
 
-// Open existing file and print fileDescriptor
+// test if it frees up the file descriptor so that it can be used again;
 int close2()
 {
     printf("\nRunning Close2\n\n");
@@ -45,46 +46,11 @@ int close2()
 
     printf("The file descriptor is - %d\n", val);
     int closeVal = close(val);
-    printf("Closeing File test.txt - %d\n",val);
+    printf("Closing File test.txt - %d\n",val);
 
-    int newVal = creat(name2);
-    printf("Opening/Creating File test2.txt\n");
+    int newVal = open(name2);
+    printf("Opening File test2.txt\n");
     printf("The file descriptor is - %d\n", newVal);
     assert(val == newVal);
-    return 0;
-}
-
-// Open existing file twice and verify that different file descriptors are returned
-int open3()
-{
-    printf("\nRunning Open3\n\n");
-    printf("Opening File test.txt\n");
-    char *name = "test.txt";
-    int val = open(name);
-    printf("Opening File test.txt again!!\n");
-    int val2 = open(name);
-
-    assert(val != val2);
-    printf("The file descriptors are - %d and %d\n", val, val2);
-
-    return 0;
-}
-
-//each process can use 16 file descriptors.
-int open4()
-{
-    printf("\nRunning Open4\n\n");
-    int i = 5;
-    printf("Opening File test.txt multiple times\n");
-    char *name = "test.txt";
-    while (i < 17)
-    {
-        int val = open(name);
-        if (val != -1)
-            printf("The file descriptor is - %d\n", val);
-        else
-            printf("Unable to open file number %d [MAX size is 16]\n", i);
-        i++;
-    }
     return 0;
 }
