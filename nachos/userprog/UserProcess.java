@@ -570,6 +570,7 @@ public class UserProcess {
 		if (description >= maxSize || description < 0)
 			return -1;
 		if (files[description] != null) {
+			System.out.println("Here Closing - "+description);
 			files[description].close();
 			files[description] = null;
 			return 0;
