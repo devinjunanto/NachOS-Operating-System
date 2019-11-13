@@ -39,7 +39,7 @@ int close2()
     printf("\nRunning Close2\n\n");
     printf("Opening File test.txt\n");
     char *name = "test.txt";
-    char *name = "test2.txt";
+    char *name2 = "test2.txt";
 
     int val = open(name);
 
@@ -47,7 +47,7 @@ int close2()
     int closeVal = close(val);
     printf("Closeing File test.txt - %d\n",val);
 
-    int newVal = creat(name);
+    int newVal = creat(name2);
     printf("Opening/Creating File test2.txt\n");
     printf("The file descriptor is - %d\n", val);
     assert(val == newVal);
