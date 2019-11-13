@@ -35,13 +35,13 @@ int unlink2()
     printf("\nRunning Unlink2\n\n");
     printf("Opening/Creating File test.txt\n");
     char *name = "test.txt";
-    char *name2 = "test2.txt";
+    //char *name2 = "test2.txt";
 
     int fileDesc = creat(name);
     assert(fileDesc == 2);
 
-    int fileDesc2 = open(name);
-    assert(fileDesc2 == 3);
+   // int fileDesc2 = open(name);
+    //assert(fileDesc2 == 3);
 
     int unlinkSuccess = unlink(name);
     assert(unlinkSuccess == 0);
