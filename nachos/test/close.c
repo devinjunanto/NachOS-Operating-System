@@ -43,15 +43,16 @@ int close2()
     char *name2 = "test2.txt";
 
     int val = open(name);
-
     printf("The file descriptor is - %d\n", val);
-    int closeVal = close(val);
-    printf("Closing File test.txt - %d\n",val);
 
-    int newVal = open(name2);
-    printf("Opening File test2.txt\n");
+    printf("Closing File test.txt - %d\n",val);
+    int closeVal = close(val);
+    assert(closeVal == 0);
+
+    int newVal = open(name);
+    printf("Opening File test.txt again\n");
     printf("The file descriptor is - %d\n", newVal);
-    assert(hasFile(val) == false);
+    //assert(hasFile(val) == false);
     //assert(val == newVal);
     return 0;
 }
