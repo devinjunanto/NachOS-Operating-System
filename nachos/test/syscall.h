@@ -190,8 +190,6 @@ int write(int fileDescriptor, void *buffer, int count);
  */
 int close(int fileDescriptor);
 
-//TODO REMOVE
-//int hasFile(int fileDescriptor);
 
 /**
  * Delete a file from the file system. 

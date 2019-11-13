@@ -23,13 +23,7 @@ int close1()
     printf("Closing non existent openfile num - 7 \n");
 
     int val = close(7);
-    if (val == -1)
-        printf("OKAY - Unable to close file(-1 returned)\n");
-    else
-        printf("BAD - -1 not returned\n");
-
     assert(val == -1);
-
     return 0;
 }
 
@@ -42,8 +36,6 @@ int close2()
     char *name2 = "test2.txt";
 
     int val = creat(name);
-    printf("The file descriptor is - %d\n", val);
-
     printf("Closing File test.txt - %d\n", val);
     int closeVal = close(val);
     assert(closeVal == 0);
@@ -51,7 +43,6 @@ int close2()
     int newVal = open(name);
     printf("Opening/Creating File test2.txt \n");
     printf("The file descriptor is - %d\n", newVal);
-    //assert(hasFile(val) == false);
     assert(val == newVal);
     return 0;
 }
@@ -65,12 +56,13 @@ int close3()
     int fileDesc = creat(name);
     char *str = "Roses are Red\nI am Ded\n";
     int numWritten = write(fileDesc, str, 22);
-    printf("numWritten - %d", numWritten);
     assert(numWritten == 22);
 
+    printf("Closing File test.txt\n");
     int closed = close(fileDesc);
     assert(closed == 0);
 
+    printf("Attempting to Write to closed file test.txt\n");
     int numWrittenAgain = write(fileDesc, str, 30);
     assert(numWrittenAgain == -1);
     return 0;

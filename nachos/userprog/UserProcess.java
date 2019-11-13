@@ -567,11 +567,9 @@ public class UserProcess {
 	}
 
 	private int closeHandler(int description) {
-		System.out.println("Attempting to close file - "+description);
 		if (description >= maxSize || description < 0)
 			return -1;
 		if (files[description] != null) {
-			System.out.println("Here Closing - "+description);
 			files[description].close();
 			files[description] = null;
 			return 0;
