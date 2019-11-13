@@ -590,12 +590,19 @@ public class UserProcess {
 	 * Returns 0 on success, or -1 if an error occurred.
 	 */
 	private int unlinkHandler(int virtualMem) {
-		String filleName = readVirtualMemoryString(virtualMem, 256);
-		if (filleName == null)
+		String fileName = readVirtualMemoryString(virtualMem, 256);
+		if (fileName == null)
 			return -1;
-		if (ThreadedKernel.fileSystem.remove(filleName))
+		if (ThreadedKernel.fileSystem.remove(fileName)) {
+			freeFromFiles(fileName);
 			return 0;
+		}
 		return -1;
+	}
+
+	//Helper function to free up filedescriptor in unlink so others can open on it
+	private int freeFromFiles(String fileName){
+		System.out.println("Attempting to free Filename - "+fileName);
 	}
 
 	// private int handleExec(int adder, int count, int pointer) {
