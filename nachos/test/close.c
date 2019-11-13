@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     val = close2();
     val = close3();
     // val = open4();
+    printf("\n\nALL GOOD PASSED\n\n");
     return val;
 }
 
