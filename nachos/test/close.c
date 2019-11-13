@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     int val = 0;
     val = close1();
     val = close2();
-    // val = open3();
+    val = close3();
     // val = open4();
     return val;
 }
