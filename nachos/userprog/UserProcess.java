@@ -591,7 +591,7 @@ public class UserProcess {
 	 */
 	private int unlinkHandler(int virtualMem) {
 		String filleName = readVirtualMemoryString(virtualMem, 256);
-		if (s == null)
+		if (filleName == null)
 			return -1;
 		if (ThreadedKernel.fileSystem.remove(filleName))
 			return 0;
