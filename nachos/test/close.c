@@ -65,6 +65,7 @@ int close3()
     int fileDesc = creat(name);
     char *str = "Roses are Red\nI am Ded\n";
     int numWritten = write(fileDesc, str, 30);
+    printf("numWritten - %d", numWritten);
     assert(numWritten == 22);
 
     int closed = close(fileDesc);
