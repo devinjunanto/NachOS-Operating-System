@@ -231,43 +231,43 @@ public class UserProcess {
 		if (vaddr < 0 || vaddr >= memory.length)
 			return 0;
 
-			System.out.println("\nHere in Write 1");
-		int amount = Math.min(length, memory.length - vaddr);
-		System.arraycopy(data, offset, memory, vaddr, amount);
-		return amount;
+		// 	System.out.println("\nHere in Write 1");
+		// int amount = Math.min(length, memory.length - vaddr);
+		// System.arraycopy(data, offset, memory, vaddr, amount);
+		// return amount;
 
-		// int transferredCount = 0;// Counter for bytes transferred from mem
-		// int leftToRead = length; // Counter for bytes left to read
+		int transferredCount = 0;// Counter for bytes transferred from mem
+		int leftToRead = length; // Counter for bytes left to read
 
-		// int currLocation = vaddr;
-		// int lastLocationToCopy = vaddr + length;
+		int currLocation = vaddr;
+		int lastLocationToCopy = vaddr + length;
 
-		// while (currLocation <= lastLocationToCopy) {
-		// 	// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
-		// 	int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
-		// 	// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
-		// 	int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
+		while (currLocation < lastLocationToCopy) {
+			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
+			int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
+			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
+			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
-		// 	if (pageTable[currentBytePageIndex] == null) {
-		// 		return 0; // Error ? TODO Check how to handle
-		// 	}
+			if (pageTable[currentBytePageIndex] == null) {
+				return 0; // Error ? TODO Check how to handle
+			}
 
-		// 	// Get ppn from the page table entry at vpn
-		// 	int physPageNum = pageTable[currentBytePageIndex].ppn;
+			// Get ppn from the page table entry at vpn
+			int physPageNum = pageTable[currentBytePageIndex].ppn;
 
-		// 	// Compute physical address -- (pageSize x ppn) + pageOffset
-		// 	int physAddress = (physPageNum * pageSize) + currentPageOffset;
+			// Compute physical address -- (pageSize x ppn) + pageOffset
+			int physAddress = (physPageNum * pageSize) + currentPageOffset;
 
-		// 	// Either read all in this page, or read num left in this operation
-		// 	int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
+			// Either read all in this page, or read num left in this operation
+			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
 
-		// 	// Now Arraycopy should work
-		// 	System.arraycopy(data, currLocation, memory, physAddress, numToCopy);
+			// Now Arraycopy should work
+			System.arraycopy(data, currLocation, memory, physAddress, numToCopy);
 
-		// 	currLocation = currLocation + numToCopy; // inc current counter
-		// 	transferredCount += numToCopy;
-		// }
-		// return transferredCount;
+			currLocation = currLocation + numToCopy; // inc current counter
+			transferredCount += numToCopy;
+		}
+		return transferredCount;
 	}
 
 	/**
