@@ -51,6 +51,7 @@ int close2()
     int newVal = open(name2);
     printf("Opening File test2.txt\n");
     printf("The file descriptor is - %d\n", newVal);
-    assert(val == newVal);
+    assert(hasFile(val) == false);
+    //assert(val == newVal);
     return 0;
 }
