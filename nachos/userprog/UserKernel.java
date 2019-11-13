@@ -1,5 +1,7 @@
 package nachos.userprog;
 
+import java.util.LinkedList;
+
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
@@ -24,6 +26,14 @@ public class UserKernel extends ThreadedKernel {
 
 		console = new SynchConsole(Machine.console());
 
+		if (physPagesAvailable == null) {// initialize linkedlist of page mapping
+			int numPages = Machine.processor().getNumPhysPages();
+			physPagesAvailable = new LinkedList<Integer>();
+			for (int i=0; i< numPages; i++){
+				physPagesAvailable.add(i);
+			}
+		}
+		physicalLock = new Lock();
 		Machine.processor().setExceptionHandler(new Runnable() {
 			public void run() {
 				exceptionHandler();
@@ -68,12 +78,11 @@ public class UserKernel extends ThreadedKernel {
 	 * 
 	 * <p>
 	 * When the exception handler is invoked, interrupts are enabled, and the
-	 * processor's cause register contains an integer identifying the cause of
-	 * the exception (see the <tt>exceptionZZZ</tt> constants in the
-	 * <tt>Processor</tt> class). If the exception involves a bad virtual
-	 * address (e.g. page fault, TLB miss, read-only, bus error, or address
-	 * error), the processor's BadVAddr register identifies the virtual address
-	 * that caused the exception.
+	 * processor's cause register contains an integer identifying the cause of the
+	 * exception (see the <tt>exceptionZZZ</tt> constants in the <tt>Processor</tt>
+	 * class). If the exception involves a bad virtual address (e.g. page fault, TLB
+	 * miss, read-only, bus error, or address error), the processor's BadVAddr
+	 * register identifies the virtual address that caused the exception.
 	 */
 	public void exceptionHandler() {
 		Lib.assertTrue(KThread.currentThread() instanceof UThread);
@@ -97,15 +106,13 @@ public class UserKernel extends ThreadedKernel {
 
 		String shellProgram = Machine.getShellProgramName();
 		if (!process.execute(shellProgram, new String[] {})) {
-		    System.out.println ("Could not find executable '" +
-					shellProgram + "', trying '" +
-					shellProgram + ".coff' instead.");
-		    shellProgram += ".coff";
-		    if (!process.execute(shellProgram, new String[] {})) {
-			System.out.println ("Also could not find '" +
-					    shellProgram + "', aborting.");
-			Lib.assertTrue(false);
-		    }
+			System.out.println(
+					"Could not find executable '" + shellProgram + "', trying '" + shellProgram + ".coff' instead.");
+			shellProgram += ".coff";
+			if (!process.execute(shellProgram, new String[] {})) {
+				System.out.println("Also could not find '" + shellProgram + "', aborting.");
+				Lib.assertTrue(false);
+			}
 
 		}
 
@@ -118,6 +125,12 @@ public class UserKernel extends ThreadedKernel {
 	public void terminate() {
 		super.terminate();
 	}
+
+	// Globally Acessible Physical memory availability
+	public static LinkedList<Integer> physPagesAvailable;
+	
+	// Lock for Physical pages
+	public static Lock physicalLock;
 
 	/** Globally accessible reference to the synchronized console. */
 	public static SynchConsole console;
