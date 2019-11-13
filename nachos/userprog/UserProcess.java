@@ -590,13 +590,12 @@ public class UserProcess {
 	 * Returns 0 on success, or -1 if an error occurred.
 	 */
 	private int unlinkHandler(int virtualMem) {
-		String s = readVirtualMemoryString(virtualMem, 256);
+		String filleName = readVirtualMemoryString(virtualMem, 256);
 		if (s == null)
 			return -1;
-		else if (ThreadedKernel.fileSystem.remove(f))
+		if (ThreadedKernel.fileSystem.remove(filleName))
 			return 0;
-		else
-			return -1;
+		return -1;
 	}
 
 	// private int handleExec(int adder, int count, int pointer) {
