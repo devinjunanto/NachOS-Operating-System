@@ -49,7 +49,7 @@ int close2()
 
     int newVal = creat(name2);
     printf("Opening/Creating File test2.txt\n");
-    printf("The file descriptor is - %d\n", val);
+    printf("The file descriptor is - %d\n", newVal);
     assert(val == newVal);
     return 0;
 }
