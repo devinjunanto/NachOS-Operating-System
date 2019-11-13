@@ -595,6 +595,7 @@ public class UserProcess {
 	 */
 	private int unlinkHandler(int virtualMem) {
 		String fileName = readVirtualMemoryString(virtualMem, 256);
+		System.out.println("Here in unlink with "+fileName);
 		if (fileName == null)
 			return -1;
 		if (ThreadedKernel.fileSystem.remove(fileName)) {
