@@ -741,7 +741,8 @@ public class UserProcess {
 	 */
 	public void handleException(int cause) {
 		Processor processor = Machine.processor();
-
+		System.out.println("\nCause of exception - " + cause);
+		System.out.println("data - \n" + Processor.exceptionNames[cause]);
 		switch (cause) {
 		case Processor.exceptionSyscall:
 			int result = handleSyscall(processor.readRegister(Processor.regV0), processor.readRegister(Processor.regA0),
@@ -752,8 +753,6 @@ public class UserProcess {
 			break;
 
 		default:
-			System.out.println("\nCause of exception - " + cause);
-			System.out.println("data - \n" + Processor.exceptionNames[cause]);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
