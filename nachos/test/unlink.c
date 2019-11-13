@@ -54,6 +54,7 @@ int unlink2()
     assert(fileDesc3 == -1);
 
     int fileDesc4 = creat(name);
+    printf("val - %d - Should be %d", fileDesc4, fileDesc1);
     assert(fileDesc4 == fileDesc1);
 
     int fileDesc5 = creat(name2);
