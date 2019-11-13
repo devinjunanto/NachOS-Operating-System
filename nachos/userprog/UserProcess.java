@@ -578,9 +578,6 @@ public class UserProcess {
 
 	}
 
-	public boolean hasFile(int fileDescriptor){
-		return files[fileDescriptor]!=null;
-	}
 
 	/**
 	 * Delete a file from the file system.
