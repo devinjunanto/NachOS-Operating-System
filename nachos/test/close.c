@@ -64,7 +64,7 @@ int close3()
     char *name = "test.txt";
     int fileDesc = creat(name);
     char *str = "Roses are Red\nI am Ded\n";
-    int numWritten = write(fileDesc, str, 30);
+    int numWritten = write(fileDesc, str, 22);
     printf("numWritten - %d", numWritten);
     assert(numWritten == 22);
 
