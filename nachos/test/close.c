@@ -38,11 +38,11 @@ int close1()
 int close2()
 {
     printf("\nRunning Close2\n\n");
-    printf("Opening File test.txt\n");
+    printf("Opening/Creating File test.txt\n");
     char *name = "test.txt";
     char *name2 = "test2.txt";
 
-    int val = open(name);
+    int val = creat(name);
     printf("The file descriptor is - %d\n", val);
 
     printf("Closing File test.txt - %d\n",val);
