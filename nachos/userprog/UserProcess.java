@@ -158,6 +158,9 @@ public class UserProcess {
 		// int amount = Math.min(length, memory.length - vaddr);
 		// System.arraycopy(memory, vaddr, data, offset, amount); -- This doesnt work !
 
+		System.out.println("\nHere in READ 1");
+
+
 		int transferredCount = 0;// Counter for bytes transferred from mem
 		int leftToRead = length; // Counter for bytes left to read
 
@@ -166,6 +169,7 @@ public class UserProcess {
 
 		// Now we copy from first byte to last byte inclusively
 		while (currLocation <= lastLocationToCopy) {
+			System.out.println("\nHere in READ 2 currLoc - "+currLocation);
 			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
 			int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
 			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
@@ -226,6 +230,7 @@ public class UserProcess {
 		if (vaddr < 0 || vaddr >= memory.length)
 			return 0;
 
+			System.out.println("\nHere in Write 1");
 		int amount = Math.min(length, memory.length - vaddr);
 		System.arraycopy(data, offset, memory, vaddr, amount);
 		return amount;
