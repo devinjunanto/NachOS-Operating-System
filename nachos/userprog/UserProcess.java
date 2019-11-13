@@ -158,7 +158,7 @@ public class UserProcess {
 		// int amount = Math.min(length, memory.length - vaddr);
 		// System.arraycopy(memory, vaddr, data, offset, amount); -- This doesnt work !
 
-		System.out.println("\nHere in READ 1");
+		System.out.println("\nHere in READ VM \nNum to read - "+length);
 
 
 		int transferredCount = 0;// Counter for bytes transferred from mem
@@ -189,6 +189,7 @@ public class UserProcess {
 			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
 
 			// Now Arraycopy should work
+			System.out.println("\nCopying "+numToCopy+" into data of size - "+data.length);
 			System.arraycopy(memory, physAddress, data, currentPageOffset, numToCopy);
 
 			currLocation = currLocation + numToCopy; // inc current counter
@@ -644,6 +645,7 @@ public class UserProcess {
 		byte[] buffer = new byte[count];
 		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy); // to prevent page
 		// faults
+		System.out.println("In Write - going to read "+count+" into buffer");
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
 		if (numLoaded < 0)
 			return -1;
