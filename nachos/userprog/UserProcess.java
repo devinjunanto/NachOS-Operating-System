@@ -166,10 +166,11 @@ public class UserProcess {
 
 		int currLocation = vaddr;
 		int lastLocationToCopy = vaddr + length;
+		System.out.println("\nHere in READ 2 currLoc - "+currLocation+" , lastLoc - "+lastLocationToCopy);
 
 		// Now we copy from first byte to last byte inclusively
 		while (currLocation <= lastLocationToCopy) {
-			System.out.println("\nHere in READ 2 currLoc - "+currLocation);
+			//System.out.println("\nHere in READ 2 currLoc - "+currLocation);
 			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
 			int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
 			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
