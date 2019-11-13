@@ -171,7 +171,7 @@ public class UserProcess {
 			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
-			if (!pageTable[currentBytePageIndex]) {
+			if (pageTable[currentBytePageIndex] == null) {
 				return 0; // Error ? TODO Check how to handle
 			}
 			// Get ppn from the page table entry at vpn
@@ -241,7 +241,7 @@ public class UserProcess {
 			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
-			if (!pageTable[currentBytePageIndex]) {
+			if (pageTable[currentBytePageIndex] == null) {
 				return 0; // Error ? TODO Check how to handle
 			}
 
@@ -249,7 +249,7 @@ public class UserProcess {
 			int physPageNum = pageTable[currentBytePageIndex].ppn;
 
 			// Compute physical address -- (pageSize x ppn) + pageOffset
-			int physAddress = (ppn * pageSize) + currentPageOffset;
+			int physAddress = (physPageNum * pageSize) + currentPageOffset;
 
 			// Either read all in this page, or read num left in this operation
 			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
