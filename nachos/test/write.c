@@ -38,6 +38,7 @@ int write1()
 			printf("failed to write character (r = %d)\n", r);
 			exit(-1);
 		}
+		assert(r ==1);
 		str++;
 	}
 
@@ -50,6 +51,7 @@ int write2()
 	printf("\nRunning Write2\n\n");
 	char *str = "\nroses are red\nviolets are blue\nI hate Nachos\nand so do you\n\n";
 	int fileDesc = creat("writeTest.txt");
+	assert(fileDesc == 2);
 	while (*str)
 	{
 		int r = write(fileDesc, str, 1);
@@ -58,6 +60,7 @@ int write2()
 			printf("failed to write character (r = %d)\n", r);
 			exit(-1);
 		}
+		assert(r==1);
 		str++;
 	}
 	printf("Finished writing to file\n");
@@ -68,8 +71,8 @@ int write2()
 //Writes a really long strong into the file
 int write3()
 {
-	char str[(2000+100)];
-	int writeCount = 2000;
+	int writeCount = 10000;
+	char str[(writeCount+5)];
 	char add[] = "B";
 
 	printf("\nRunning Write3\n\n");
@@ -78,7 +81,9 @@ int write3()
 		strcat(str, add);
 	}
 	int fileDesc = creat("LONGwriteTest.txt");
+	assert(fileDesc == 3);
 	int r = write(fileDesc, str, writeCount);
+	assert(r == writeCount);
 	printf("Just wrote %d bytes to file number %d", r, fileDesc);
 }
 
