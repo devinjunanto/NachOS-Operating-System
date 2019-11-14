@@ -155,10 +155,50 @@ public class UserProcess {
 		if (vaddr < 0 || vaddr >= memory.length)
 			return 0;
 
-		int amount = Math.min(length, memory.length - vaddr);
-		System.arraycopy(memory, vaddr, data, offset, amount);
+		// int amount = Math.min(length, memory.length - vaddr);
+		// System.arraycopy(memory, vaddr, data, offset, amount); -- This doesnt work !
 
-		return amount;
+		int transferredCount = 0;// Counter for bytes transferred from mem
+		int leftToRead = length; // Counter for bytes left to read
+		int firstByteToWrite = offset;
+
+		int currLocation = vaddr;
+		int lastLocationToCopy = vaddr + length;
+		// System.out.println("\nHere in READ 2 currLoc - "+currLocation+" , lastLoc -
+		// "+lastLocationToCopy);
+
+		// Now we copy from first byte to last byte inclusively
+		while (currLocation < lastLocationToCopy) {
+			// System.out.println("\nHere in READ 2 currLoc - "+currLocation);
+			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
+			int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
+			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
+			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
+
+			if (pageTable[currentBytePageIndex] == null) {
+				return 0; // Error ? TODO Check how to handle
+			}
+			// Get ppn from the page table entry at vpn
+			int ppn = pageTable[currentBytePageIndex].ppn;
+
+			// Compute physical address -- (pageSize x ppn) + pageOffset
+			int physAddress = (ppn * pageSize) + currentPageOffset;
+
+			// Either read all in this page, or read num left in this operation
+			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
+
+			// Now Arraycopy should work
+			// System.out.println("\n\nDEBUG\n\nSrc Size - "+memory.length+"\nPosToLoad -
+			// "+physAddress
+			// +"\nDest Size - "+data.length+"\nPosToLoad - "+firstByteToWrite+"\nNum to
+			// copy - "+numToCopy);
+			System.arraycopy(memory, physAddress, data, firstByteToWrite, numToCopy);
+
+			currLocation = currLocation + numToCopy; // inc current counter
+			transferredCount += numToCopy;
+			firstByteToWrite = firstByteToWrite + numToCopy;
+		}
+		return transferredCount;
 	}
 
 	/**
@@ -195,10 +235,40 @@ public class UserProcess {
 		if (vaddr < 0 || vaddr >= memory.length)
 			return 0;
 
-		int amount = Math.min(length, memory.length - vaddr);
-		System.arraycopy(data, offset, memory, vaddr, amount);
+		int transferredCount = 0;// Counter for bytes transferred from mem
+		int leftToRead = length; // Counter for bytes left to read
 
-		return amount;
+		int currLocation = vaddr;
+		int lastLocationToCopy = vaddr + length;
+		int firstByteToWrite = offset;
+
+		while (currLocation < lastLocationToCopy) {
+			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
+			int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
+			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
+			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
+
+			if (pageTable[currentBytePageIndex] == null) {
+				return 0; // Error ? TODO Check how to handle
+			}
+
+			// Get ppn from the page table entry at vpn
+			int physPageNum = pageTable[currentBytePageIndex].ppn;
+
+			// Compute physical address -- (pageSize x ppn) + pageOffset
+			int physAddress = (physPageNum * pageSize) + currentPageOffset;
+
+			// Either read all in this page, or read num left in this operation
+			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
+
+			// Now Arraycopy should work
+			System.arraycopy(data, firstByteToWrite, memory, physAddress, numToCopy);
+
+			currLocation = currLocation + numToCopy; // inc current counter
+			transferredCount += numToCopy;
+			firstByteToWrite = firstByteToWrite + numToCopy;
+		}
+		return transferredCount;
 	}
 
 	/**
@@ -301,6 +371,18 @@ public class UserProcess {
 			return false;
 		}
 
+		UserKernel.physicalLock.acquire(); // Acquire physical pages lock
+		// Allocates the pageTable and the number of physical pages based on the size of
+		// numpages - address space required to load and run the user program (and no
+		// larger).
+		for (int i = 0; i < numPages; i++) {
+			// Find next available page
+			int freePageIndex = UserKernel.physPagesAvailable.poll();
+			TranslationEntry entry = new TranslationEntry(i, freePageIndex, true, false, false, false);
+			pageTable[i] = entry;
+		}
+		UserKernel.physicalLock.release();
+
 		// load sections
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
@@ -323,6 +405,19 @@ public class UserProcess {
 	 * Release any resources allocated by <tt>loadSections()</tt>.
 	 */
 	protected void unloadSections() {
+		UserKernel.physicalLock.acquire();
+		// Deallocate all numPages pages being used and make them available again
+		for (int i = 0; i < numPages; i++) {
+			UserKernel.physPagesAvailable.push(i);
+		}
+		UserKernel.physicalLock.release();
+
+		// Part 2 Moved this here because this may be called without exit being called
+		// Close all files
+		for (int i = 0; i < maxSize; i++) {
+			if (files[i] != null)
+				closeHandler(i);
+		}
 	}
 
 	/**
@@ -373,11 +468,6 @@ public class UserProcess {
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
 
-		// Close all files
-		for (int i = 0; i < maxSize; i++) {
-			if (files[i] != null)
-				closeHandler(i);
-		}
 		unloadSections();
 
 		coff.close();
@@ -553,8 +643,8 @@ public class UserProcess {
 			return -1; // Check if file exists
 
 		byte[] buffer = new byte[count];
-		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy); // to prevent page
-		// faults
+		// To prevent page faults
+		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
 		if (numLoaded < 0)
 			return -1;
@@ -590,13 +680,13 @@ public class UserProcess {
 	 * Returns 0 on success, or -1 if an error occurred.
 	 */
 	private int unlinkHandler(int virtualMem) {
-		String s = readVirtualMemoryString(virtualMem, 256);
-		if (s == null)
+		String fileName = readVirtualMemoryString(virtualMem, 256);
+		if (fileName == null)
 			return -1;
-		else if (ThreadedKernel.fileSystem.remove(f))
+		if (ThreadedKernel.fileSystem.remove(fileName)) {
 			return 0;
-		else
-			return -1;
+		}
+		return -1;
 	}
 
 	// private int handleExec(int adder, int count, int pointer) {
@@ -720,7 +810,8 @@ public class UserProcess {
 			return closeHandler(a0);
 		case syscallRead:
 			return readHandler(a0, a1, a2);
-
+		case syscallUnlink:
+			return unlinkHandler(a0);
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
 			Lib.assertNotReached("Unknown system call!");
@@ -737,7 +828,6 @@ public class UserProcess {
 	 */
 	public void handleException(int cause) {
 		Processor processor = Machine.processor();
-
 		switch (cause) {
 		case Processor.exceptionSyscall:
 			int result = handleSyscall(processor.readRegister(Processor.regV0), processor.readRegister(Processor.regA0),
@@ -748,8 +838,6 @@ public class UserProcess {
 			break;
 
 		default:
-			System.out.println("\nCause of exception - " + cause);
-			System.out.println("data - \n" + Processor.exceptionNames[cause]);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
@@ -773,9 +861,8 @@ public class UserProcess {
 	private int maxSize = 16;
 	private OpenFile[] files = new OpenFile[maxSize]; // Array of files
 
-	// TODO understand
 	public int pid;
-	public UserProcess parent;
+	private UserProcess parent;
 
 	final int pageSizeCopy = 1024;
 	// public LinkedList<Integer> childrenList = new LinkedList<Integer>();
