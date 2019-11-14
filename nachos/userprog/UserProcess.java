@@ -189,7 +189,8 @@ public class UserProcess {
 			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
 
 			// Now Arraycopy should work
-			System.out.println("\nCopying "+numToCopy+" into data of size - "+data.length);
+			System.out.println("\n\nDEBUG\n\nSrc Size - "+memory.length+"\nPosToLoad - "+physAddress
+			+"\nDest Size - "+data.length+"\nPosToLoad - "+currentPageOffset+"\nNum to copy - "+numToCopy);
 			System.arraycopy(memory, physAddress, data, currentPageOffset, numToCopy);
 
 			currLocation = currLocation + numToCopy; // inc current counter
