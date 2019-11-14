@@ -163,6 +163,7 @@ public class UserProcess {
 
 		int transferredCount = 0;// Counter for bytes transferred from mem
 		int leftToRead = length; // Counter for bytes left to read
+		int currOffset = offset;
 
 		int currLocation = vaddr;
 		int lastLocationToCopy = vaddr + length;
@@ -190,11 +191,12 @@ public class UserProcess {
 
 			// Now Arraycopy should work
 			System.out.println("\n\nDEBUG\n\nSrc Size - "+memory.length+"\nPosToLoad - "+physAddress
-			+"\nDest Size - "+data.length+"\nPosToLoad - "+currentPageOffset+"\nNum to copy - "+numToCopy);
-			System.arraycopy(memory, physAddress, data, currentPageOffset, numToCopy);
+			+"\nDest Size - "+data.length+"\nPosToLoad - "+currOffset+"\nNum to copy - "+numToCopy);
+			System.arraycopy(memory, physAddress, data, currOffset, numToCopy);
 
 			currLocation = currLocation + numToCopy; // inc current counter
 			transferredCount += numToCopy;
+			currOffset = currOffset + numToCopy;
 		}
 		return transferredCount;
 	}
