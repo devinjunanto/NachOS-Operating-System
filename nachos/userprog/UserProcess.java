@@ -163,7 +163,7 @@ public class UserProcess {
 
 		int transferredCount = 0;// Counter for bytes transferred from mem
 		int leftToRead = length; // Counter for bytes left to read
-		int currOffset = offset;
+		int firstByteToWrite = offset;
 
 		int currLocation = vaddr;
 		int lastLocationToCopy = vaddr + length;
@@ -191,12 +191,12 @@ public class UserProcess {
 
 			// Now Arraycopy should work
 			System.out.println("\n\nDEBUG\n\nSrc Size - "+memory.length+"\nPosToLoad - "+physAddress
-			+"\nDest Size - "+data.length+"\nPosToLoad - "+currOffset+"\nNum to copy - "+numToCopy);
-			System.arraycopy(memory, physAddress, data, currOffset, numToCopy);
+			+"\nDest Size - "+data.length+"\nPosToLoad - "+firstByteToWrite+"\nNum to copy - "+numToCopy);
+			System.arraycopy(memory, physAddress, data, firstByteToWrite, numToCopy);
 
 			currLocation = currLocation + numToCopy; // inc current counter
 			transferredCount += numToCopy;
-			currOffset = currOffset + numToCopy;
+			firstByteToWrite = firstByteToWrite + numToCopy;
 		}
 		return transferredCount;
 	}
@@ -235,16 +235,12 @@ public class UserProcess {
 		if (vaddr < 0 || vaddr >= memory.length)
 			return 0;
 
-		// 	System.out.println("\nHere in Write 1");
-		// int amount = Math.min(length, memory.length - vaddr);
-		// System.arraycopy(data, offset, memory, vaddr, amount);
-		// return amount;
-
 		int transferredCount = 0;// Counter for bytes transferred from mem
 		int leftToRead = length; // Counter for bytes left to read
 
 		int currLocation = vaddr;
 		int lastLocationToCopy = vaddr + length;
+		int firstByteToWrite = offset;
 
 		while (currLocation < lastLocationToCopy) {
 			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
@@ -266,10 +262,11 @@ public class UserProcess {
 			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
 
 			// Now Arraycopy should work
-			System.arraycopy(data, currLocation, memory, physAddress, numToCopy);
+			System.arraycopy(data, firstByteToWrite, memory, physAddress, numToCopy);
 
 			currLocation = currLocation + numToCopy; // inc current counter
 			transferredCount += numToCopy;
+			firstByteToWrite = firstByteToWrite + numToCopy;
 		}
 		return transferredCount;
 	}
