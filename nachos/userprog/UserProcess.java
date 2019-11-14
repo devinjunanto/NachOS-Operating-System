@@ -158,20 +158,18 @@ public class UserProcess {
 		// int amount = Math.min(length, memory.length - vaddr);
 		// System.arraycopy(memory, vaddr, data, offset, amount); -- This doesnt work !
 
-		System.out.println("\nHere in READ VM \nNum to read - "+length);
-
-
 		int transferredCount = 0;// Counter for bytes transferred from mem
 		int leftToRead = length; // Counter for bytes left to read
 		int firstByteToWrite = offset;
 
 		int currLocation = vaddr;
 		int lastLocationToCopy = vaddr + length;
-		System.out.println("\nHere in READ 2 currLoc - "+currLocation+" , lastLoc - "+lastLocationToCopy);
+		// System.out.println("\nHere in READ 2 currLoc - "+currLocation+" , lastLoc -
+		// "+lastLocationToCopy);
 
 		// Now we copy from first byte to last byte inclusively
 		while (currLocation < lastLocationToCopy) {
-			System.out.println("\nHere in READ 2 currLoc - "+currLocation);
+			// System.out.println("\nHere in READ 2 currLoc - "+currLocation);
 			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
 			int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
 			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
@@ -190,8 +188,10 @@ public class UserProcess {
 			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
 
 			// Now Arraycopy should work
-			System.out.println("\n\nDEBUG\n\nSrc Size - "+memory.length+"\nPosToLoad - "+physAddress
-			+"\nDest Size - "+data.length+"\nPosToLoad - "+firstByteToWrite+"\nNum to copy - "+numToCopy);
+			// System.out.println("\n\nDEBUG\n\nSrc Size - "+memory.length+"\nPosToLoad -
+			// "+physAddress
+			// +"\nDest Size - "+data.length+"\nPosToLoad - "+firstByteToWrite+"\nNum to
+			// copy - "+numToCopy);
 			System.arraycopy(memory, physAddress, data, firstByteToWrite, numToCopy);
 
 			currLocation = currLocation + numToCopy; // inc current counter
@@ -643,9 +643,8 @@ public class UserProcess {
 			return -1; // Check if file exists
 
 		byte[] buffer = new byte[count];
-		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy); // to prevent page
-		// faults
-		System.out.println("In Write - going to read "+count+" into buffer");
+		// To prevent page faults
+		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
 		if (numLoaded < 0)
 			return -1;
