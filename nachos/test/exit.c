@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-    return exit1;
+    return exit1();
 }
 
 int exit1()
