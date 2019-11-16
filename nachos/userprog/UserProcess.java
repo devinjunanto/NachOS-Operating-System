@@ -705,6 +705,8 @@ public class UserProcess {
 	private int execHandler(int address, int count, int pointer) {
 		String fileName = readVirtualMemoryString(address, 256);
 		int newCount = count * 4;
+		System.out.println("Count - " + count);
+		System.out.println("newCount - " + newCount);
 		byte[] buffer = new byte[newCount];
 		child = newUserProcess();
 		childExitedStatus = -1; // reinitialize exit status for child
