@@ -867,6 +867,8 @@ public class UserProcess {
 			return unlinkHandler(a0);
 		case syscallExec:
 			return execHandler(a0, a1, a2);
+		case syscallJoin:
+			return joinHandler(a0, a1);
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
 			Lib.assertNotReached("Unknown system call!");
