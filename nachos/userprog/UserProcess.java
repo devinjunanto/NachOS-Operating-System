@@ -448,6 +448,10 @@ public class UserProcess {
 	 * Handle the halt() system call.
 	 */
 	private int handleHalt() {
+		if (pid == 0) {
+			// Is root process
+
+		}
 
 		Machine.halt();
 
@@ -470,9 +474,10 @@ public class UserProcess {
 		// can grade your implementation.
 		System.out.println("\nIn Exit Handler");
 
-		System.out.println("Adding status - " + status + " To parent\n");
-		if (parent != null)
+		if (parent != null) {
 			parent.childExitedStatus = status;
+			System.out.println("Adding status - " + status + " To parent\n");
+		}
 		unloadSections();
 
 		coff.close();
@@ -568,10 +573,6 @@ public class UserProcess {
 		OpenFile openFile = files[fileDescriptor];
 		if (openFile == null)
 			return -1;
-
-		// System.out.println("Successfully opened file " + fileDescriptor + " to
-		// READ");
-		// System.out.println("Attempting to READ " + count + " bytes");
 
 		bytesLeftToRead = count;
 		totalBytesRead = 0;
