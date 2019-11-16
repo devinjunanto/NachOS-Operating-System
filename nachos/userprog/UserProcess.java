@@ -468,10 +468,12 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
+		System.out.println("In Exit Handler");
 
 		unloadSections();
 
 		coff.close();
+		System.out.println("PID - "+pid);
 
 		KThread.finish();
 
