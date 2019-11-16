@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
 int join1()
 {
-    char *prog = "exit1.coff";
+    char *prog = "exit.coff";
     int pid, r, status = 0;
 
     printf("execing %s...\n", prog);
