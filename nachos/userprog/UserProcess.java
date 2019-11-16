@@ -703,7 +703,7 @@ public class UserProcess {
 		String fileName = readVirtualMemoryString(address, 256);
 		int newCount = count * 4;
 		byte[] buffer = new byte[newCount];
-		UserProcess child = newUserProcess();
+		child = newUserProcess();
 		int childID = 0;
 
 		if (fileName == null)
@@ -737,6 +737,38 @@ public class UserProcess {
 
 			// UserKernel.physicalLock.release();
 			return childID;
+		}
+	}
+
+	/**
+	 * Suspend execution of the current process until the child process specified by
+	 * the processID argument has exited. If the child has already exited by the
+	 * time of the call, returns immediately. When the current process resumes, it
+	 * disowns the child process, so that join() cannot be used on that process
+	 * again.
+	 *
+	 * If the child exited normally, returns 1. If the child exited as a result of
+	 * an unhandled exception, returns 0. If processID does not refer to a child
+	 * process of the current process, returns -1.
+	 */
+	private int joinHandler(int pid, int statusLoc) {
+		if (pid < 0)
+			return -1;
+
+		if (pid == child.pid) {
+			// This is a child process
+			if (child == null)
+				return -1;
+			int joinStatus = child.thread.join();
+			child = null;
+			child.parent = null;
+
+			byte[] joinStatusBytes = Lib.bytesFromInt(joinStatus);
+			int writeStatus = writeVirtualMemory(statusLoc, joinStatusBytes);
+
+			if (writeStatus != 4)
+				return -1;
+
 		}
 	}
 
@@ -875,6 +907,7 @@ public class UserProcess {
 
 	public int pid;
 	private UserProcess parent;
+	private UserProcess child;
 
 	final int pageSizeCopy = 1024;
 	public LinkedList<Integer> children = new LinkedList<Integer>();
