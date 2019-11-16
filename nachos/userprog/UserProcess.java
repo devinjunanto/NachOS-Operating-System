@@ -4,6 +4,7 @@ import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
+import java.util.*;
 
 import java.awt.image.Kernel;
 import java.io.EOFException;
@@ -467,12 +468,23 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
+		
+		for (int i = 0; i < maxSize; i++)
+		{
+			if(files[i] == null)
+			{
+				continue;
+			}
+			closeHandler(i);
+		}
+
 
 		unloadSections();
 
 		coff.close();
 
 		KThread.finish();
+		
 		// Kernel.kernel.terminate();
 
 		// if (pid == 0)
@@ -689,42 +701,50 @@ public class UserProcess {
 		return -1;
 	}
 
-	// private int handleExec(int adder, int count, int pointer) {
-	// String s = readVirtualMemoryString(adder, 256);
+	private int execHandler(int adress, int count, int pointer) {
+	String s = readVirtualMemoryString(adress, 256);
+	int newCount = count * 4;
+	byte[] buffer = new byte[newCount];
+	UserProcess child = newUserProcess();
+	int childID = 0;
 
-	// if (s == null)
-	// return -1;
-	// else if (count < 0 || argc > 16)
-	// return -1;
-	// int newCount = count * 4;
-	// byte[] buffer = new byte[newCount];
-	// int read = readVirtualMemory(pointer, buffer, 0, newCount);
-	// if (read < buffer.length)
-	// return -1;
-	// int[] address = new int[count];
-	// String[] s1 = new String[count];
-	// for (int i = 0; i < count; i++) {
-	// address[i] = Lib.bytesToInt(buffer, i * 4);
-	// }
-	// for (int j = 0; j < count; j++) {
-	// s1[i] = readVirtualMemoryString(address[i], 256);
-	// if (s1[i] == null)
-	// return -1;
-	// }
+	if (s == null)
+		return -1;
+	else if (count < 0 || argc > 16)
+		return -1;
 
-	// UserProcess child = newUserProcess();
-	// child.parent = this;
-	// int childID = -1;
-	// UserKernel.pidLock.acquire();
+	int read = readVirtualMemory(pointer, buffer, 0, newCount);
+	if (read < buffer.length)
+		return -1;
+	else
+	{
+		int[] address = new int[count];
+		String[] s1 = new String[count];
+		for (int i = 0; i < count; i++)
+		{
+			int k = i * 4;
+			address[i] = Lib.bytesToInt(buffer, k);
+		}
+		for (int j = 0; j < count; j++)
+		{
+			s1[j] = readVirtualMemoryString(address[j], 256);
+			if (s1[j] == null)
+				return -1;
+		}
+		child.parent = this;
+		childID = -1;
+		UserKernel.physicalLock.acquire();
 
-	// if (child.execute(file, s1)) {
-	// childID = child.pid;
-	// childrenList.add(childID);
-	// }
+		if (child.execute(s, s1))
+		{
+			childID = child.pid;
+			children.add(childID);
+		}
 
-	// UserKernel.pidLock.release();
-	// return childID;
-	// }
+		UserKernel.physicalLock.release();
+		return childID;
+	}
+	}
 
 	// private int handleJoin() {
 	// return 0;
@@ -865,7 +885,7 @@ public class UserProcess {
 	private UserProcess parent;
 
 	final int pageSizeCopy = 1024;
-	// public LinkedList<Integer> childrenList = new LinkedList<Integer>();
+	public LinkedList<Integer> children = new LinkedList<Integer>();
 
 	/** The program being run by this process. */
 	protected Coff coff;
