@@ -473,14 +473,13 @@ public class UserProcess {
 		unloadSections();
 
 		coff.close();
-		System.out.println("PID - "+pid);
-		if(pid == 0){
+		System.out.println("PID - " + pid);
+		if (pid == 0) {
 			UserKernel.kernel.terminate();
-		}
+		} else
+			KThread.finish();
 
-		KThread.finish();
-
-		return 0;
+		return 0;// Shouldnt reach here
 	}
 
 	/**
@@ -697,9 +696,8 @@ public class UserProcess {
 	 *
 	 * file is a null-terminated string that specifies the name of the file
 	 * containing the executable. Note that this string must include the ".coff"
-	 * extension.
-	 * exec() returns the child process's process ID, which can be passed to join().
-	 * On error, returns -1.
+	 * extension. exec() returns the child process's process ID, which can be passed
+	 * to join(). On error, returns -1.
 	 */
 	private int execHandler(int address, int count, int pointer) {
 		String fileName = readVirtualMemoryString(address, 256);
