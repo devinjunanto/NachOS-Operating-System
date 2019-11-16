@@ -717,26 +717,27 @@ public class UserProcess {
 		else if (count < 0 || argc > 16)
 			return -1;
 
-		int read = readVirtualMemory(pointer, buffer, 0, newCount);
-		if (read < buffer.length)
-			return -1;
+		// //
+		// int read = readVirtualMemory(pointer, buffer, 0, newCount);
+		// if (read < buffer.length)
+		// 	return -1;
 		else {
 			int[] paramsLoc = new int[count];
-			String[] s1 = new String[count];
+			String[] argsToExec = new String[count];
 			for (int i = 0; i < count; i++) {
 				int k = i * 4;
 				paramsLoc[i] = Lib.bytesToInt(buffer, k);
 			}
 			for (int j = 0; j < count; j++) {
-				s1[j] = readVirtualMemoryString(paramsLoc[j], 256);
-				if (s1[j] == null)
+				argsToExec[j] = readVirtualMemoryString(paramsLoc[j], 256);
+				if (argsToExec[j] == null)
 					return -1;
 			}
 			child.parent = this;
 			childID = -1; // Default error value
 			// UserKernel.physicalLock.acquire();
 
-			if (child.execute(fileName, s1)) {
+			if (child.execute(fileName, argsToExec)) {
 				childID = child.pid;
 				children.add(childID);
 			}
