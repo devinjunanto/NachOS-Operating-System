@@ -468,29 +468,12 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
-		
-		for (int i = 0; i < maxSize; i++)
-		{
-			if(files[i] == null)
-			{
-				continue;
-			}
-			closeHandler(i);
-		}
-
 
 		unloadSections();
 
 		coff.close();
 
 		KThread.finish();
-		
-		// Kernel.kernel.terminate();
-
-		// if (pid == 0)
-		// Kernel.kernel.terminate();
-		// else
-		// KThread.finish();
 
 		return 0;
 	}
@@ -701,54 +684,58 @@ public class UserProcess {
 		return -1;
 	}
 
-	private int execHandler(int adress, int count, int pointer) {
-	String s = readVirtualMemoryString(adress, 256);
-	int newCount = count * 4;
-	byte[] buffer = new byte[newCount];
-	UserProcess child = newUserProcess();
-	int childID = 0;
+	/**
+	 * Execute the program stored in the specified file, with the specified
+	 * arguments, in a new child process. The child process has a new unique process
+	 * ID, and starts with stdin opened as file descriptor 0, and stdout opened as
+	 * file descriptor 1.
+	 *
+	 * file is a null-terminated string that specifies the name of the file
+	 * containing the executable. Note that this string must include the ".coff"
+	 * extension.
+	 * exec() returns the child process's process ID, which can be passed to join().
+	 * On error, returns -1.
+	 */
+	private int execHandler(int address, int count, int pointer) {
+		String fileName = readVirtualMemoryString(address, 256);
+		int newCount = count * 4;
+		byte[] buffer = new byte[newCount];
+		UserProcess child = newUserProcess();
+		int childID = 0;
 
-	if (s == null)
-		return -1;
-	else if (count < 0 || argc > 16)
-		return -1;
+		if (fileName == null)
+			return -1;
+		else if (count < 0 || argc > 16)
+			return -1;
 
-	int read = readVirtualMemory(pointer, buffer, 0, newCount);
-	if (read < buffer.length)
-		return -1;
-	else
-	{
-		int[] address = new int[count];
-		String[] s1 = new String[count];
-		for (int i = 0; i < count; i++)
-		{
-			int k = i * 4;
-			address[i] = Lib.bytesToInt(buffer, k);
+		int read = readVirtualMemory(pointer, buffer, 0, newCount);
+		if (read < buffer.length)
+			return -1;
+		else {
+			int[] paramsLoc = new int[count];
+			String[] s1 = new String[count];
+			for (int i = 0; i < count; i++) {
+				int k = i * 4;
+				paramsLoc[i] = Lib.bytesToInt(buffer, k);
+			}
+			for (int j = 0; j < count; j++) {
+				s1[j] = readVirtualMemoryString(paramsLoc[j], 256);
+				if (s1[j] == null)
+					return -1;
+			}
+			child.parent = this;
+			childID = -1; // Default error value
+			UserKernel.physicalLock.acquire();
+
+			if (child.execute(fileName, s1)) {
+				childID = child.pid;
+				children.add(childID);
+			}
+
+			UserKernel.physicalLock.release();
+			return childID;
 		}
-		for (int j = 0; j < count; j++)
-		{
-			s1[j] = readVirtualMemoryString(address[j], 256);
-			if (s1[j] == null)
-				return -1;
-		}
-		child.parent = this;
-		childID = -1;
-		UserKernel.physicalLock.acquire();
-
-		if (child.execute(s, s1))
-		{
-			childID = child.pid;
-			children.add(childID);
-		}
-
-		UserKernel.physicalLock.release();
-		return childID;
 	}
-	}
-
-	// private int handleJoin() {
-	// return 0;
-	// }
 
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2, syscallJoin = 3, syscallCreate = 4,
 			syscallOpen = 5, syscallRead = 6, syscallWrite = 7, syscallClose = 8, syscallUnlink = 9;
