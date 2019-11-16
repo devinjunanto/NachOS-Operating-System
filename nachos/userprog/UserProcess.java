@@ -468,8 +468,10 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
-		System.out.println("In Exit Handler");
+		System.out.println("\nIn Exit Handler");
 
+		System.out.println("Adding status - " + status + " To parent\n");
+		parent.childExitedStatus = status;
 		unloadSections();
 
 		coff.close();
@@ -704,6 +706,7 @@ public class UserProcess {
 		int newCount = count * 4;
 		byte[] buffer = new byte[newCount];
 		child = newUserProcess();
+		childExitedStatus = -1; // reinitialize exit status for child
 		int childID = 0;
 
 		if (fileName == null)
@@ -759,11 +762,16 @@ public class UserProcess {
 			// This is a child process
 			if (child == null)
 				return -1;
-			int joinStatus = child.thread.join();
+			child.thread.join();
+
+			// get joinStatus
+			if (childExitedStatus == -1) {
+				return 0;
+			}
 			child = null;
 			child.parent = null;
 
-			byte[] joinStatusBytes = Lib.bytesFromInt(joinStatus);
+			byte[] joinStatusBytes = Lib.bytesFromInt(childExitedStatus);
 			int writeStatus = writeVirtualMemory(statusLoc, joinStatusBytes);
 
 			if (writeStatus != 4)
@@ -908,6 +916,7 @@ public class UserProcess {
 	public int pid;
 	private UserProcess parent;
 	private UserProcess child;
+	private int childExitedStatus = -1;
 
 	final int pageSizeCopy = 1024;
 	public LinkedList<Integer> children = new LinkedList<Integer>();
