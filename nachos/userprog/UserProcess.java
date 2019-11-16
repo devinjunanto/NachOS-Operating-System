@@ -728,14 +728,14 @@ public class UserProcess {
 			}
 			child.parent = this;
 			childID = -1; // Default error value
-			UserKernel.physicalLock.acquire();
+			// UserKernel.physicalLock.acquire();
 
 			if (child.execute(fileName, s1)) {
 				childID = child.pid;
 				children.add(childID);
 			}
 
-			UserKernel.physicalLock.release();
+			// UserKernel.physicalLock.release();
 			return childID;
 		}
 	}
