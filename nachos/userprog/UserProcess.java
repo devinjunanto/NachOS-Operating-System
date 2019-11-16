@@ -720,7 +720,7 @@ public class UserProcess {
 		// //
 		// int read = readVirtualMemory(pointer, buffer, 0, newCount);
 		// if (read < buffer.length)
-		// 	return -1;
+		// return -1;
 		else {
 			int[] paramsLoc = new int[count];
 			String[] argsToExec = new String[count];
@@ -888,6 +888,7 @@ public class UserProcess {
 	 */
 	public void handleException(int cause) {
 		Processor processor = Machine.processor();
+		System.out.println("Cause - " + cause + "\n data - " + Processor.exceptionNames[cause]);
 		switch (cause) {
 		case Processor.exceptionSyscall:
 			int result = handleSyscall(processor.readRegister(Processor.regV0), processor.readRegister(Processor.regA0),
