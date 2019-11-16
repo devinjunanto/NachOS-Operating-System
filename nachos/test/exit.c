@@ -8,10 +8,11 @@
 
 int main(int argc, char *argv[])
 {
-    return exit1();
+    exit1();
 }
 
 int exit1()
 {
+    printf("\n\nRunning exit1\n");
     exit(123);
 }
