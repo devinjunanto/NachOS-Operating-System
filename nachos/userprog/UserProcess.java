@@ -475,7 +475,7 @@ public class UserProcess {
 		coff.close();
 		System.out.println("PID - "+pid);
 		if(pid == 0){
-			Kernel.kernel.terminate();
+			UserKernel.kernel.terminate();
 		}
 
 		KThread.finish();
