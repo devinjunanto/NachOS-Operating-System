@@ -471,7 +471,8 @@ public class UserProcess {
 		System.out.println("\nIn Exit Handler");
 
 		System.out.println("Adding status - " + status + " To parent\n");
-		parent.childExitedStatus = status;
+		if (parent != null)
+			parent.childExitedStatus = status;
 		unloadSections();
 
 		coff.close();
