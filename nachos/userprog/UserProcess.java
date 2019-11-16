@@ -778,6 +778,8 @@ public class UserProcess {
 				return -1;
 
 		}
+
+		return 0;
 	}
 
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2, syscallJoin = 3, syscallCreate = 4,
