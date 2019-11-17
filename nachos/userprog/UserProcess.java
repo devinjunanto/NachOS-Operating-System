@@ -210,7 +210,7 @@ public class UserProcess {
 			transferredCount += numToCopy;
 			firstByteToWrite = firstByteToWrite + numToCopy;
 		}
-		System.out.println("\nHere RETURNING - "+transferredCount);
+		System.out.println("\nHere RETURNING - " + transferredCount);
 		return transferredCount;
 	}
 
@@ -664,9 +664,14 @@ public class UserProcess {
 		// To prevent page faults
 		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
+		System.out.println("\nHere in WRITING after read numLoaded - " + numLoaded);
 		if (numLoaded < 0)
 			return -1;
+
+		System.out.println("\nHere in WRITING after read 2");
+
 		retVal = openFile.write(buffer, 0, numLoaded);
+		System.out.println("\nHere in WRITING after read 3");
 
 		if (count != retVal)
 			return -1; // number of bytes written matches count.
