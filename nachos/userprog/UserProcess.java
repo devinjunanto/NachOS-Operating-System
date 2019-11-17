@@ -408,7 +408,7 @@ public class UserProcess {
 				System.out.println("\n\nLOAD SECTIONS 4");
 			}
 		}
-
+		System.out.println("\n\nLOAD SECTIONS RETURNING");
 		return true;
 	}
 
