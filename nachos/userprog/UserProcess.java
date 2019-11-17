@@ -186,7 +186,7 @@ public class UserProcess {
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
 			if (pageTable[currentBytePageIndex] == null) {
-				if (currLoc == vaddr)
+				if (currLocation == vaddr)
 					return -1;
 				break;
 			}
@@ -260,7 +260,7 @@ public class UserProcess {
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
 			if (pageTable[currentBytePageIndex] == null) {
-				if (currLoc == vaddr)
+				if (currLocation == vaddr)
 					return -1;
 				break;
 			}
