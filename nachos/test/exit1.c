@@ -10,6 +10,5 @@
 
 int main(int argc, char *argv[])
 {
-    printf("HERE exit1");
     exit(123);
 }
