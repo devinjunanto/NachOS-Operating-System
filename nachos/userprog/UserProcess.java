@@ -34,14 +34,23 @@ public class UserProcess {
 		boolean intStatus = Machine.interrupt().disable();
 		// When any process is started, its file descriptors 0 and 1 must refer to
 		// standard input and standard output.
-		files[0] = UserKernel.console.openForReading();
-		files[1] = UserKernel.console.openForWriting();
+		if(this.parent != null){
+			in = parent.in;
+			out = parent.out;
+		}
+		else{
+			in = UserKernel.console.openForReading();
+			out = UserKernel.console.openForWriting();
+		}
+
 
 		//pid = idCounter;
 		//idCounter = idCounter + 1;
 		parent = null;
 
 		Machine.interrupt().restore(intStatus);
+		files[0] = in;
+		files[1] = out;
 		processLock = new Lock();
 		// acquire lock
 	}
@@ -967,6 +976,8 @@ public class UserProcess {
 	private int childExitedStatus = -1;
 	private static int idCounter = 0;
 	private Lock processLock;
+	protected OpenFile in;
+	protected OpenFile out;
 
 	final int pageSizeCopy = 1024;
 	public LinkedList<Integer> children = new LinkedList<Integer>();
