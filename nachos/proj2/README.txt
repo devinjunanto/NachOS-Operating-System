@@ -1,4 +1,4 @@
-Shardul Ssaiya A13964199
+Shardul Saiya A13964199
 Devin Junanto A15754079
 
 openCreateJointHandler
