@@ -481,7 +481,6 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
-		System.out.println("\nIn Exit Handler");
 
 		if (parent != null) {
 
@@ -493,7 +492,6 @@ public class UserProcess {
 		child = null;
 
 		coff.close();
-		System.out.println("PID - " + pid);
 		if (pid == 0) {
 			System.out.println("Calling kernel.terminate since 0 is exiting");
 			UserKernel.kernel.terminate();
@@ -574,6 +572,7 @@ public class UserProcess {
 	 * more data is available.
 	 */
 	private int readHandler(int fileDescriptor, int pointer, int count) {
+		System.out.println("\nin READ");
 		int bytesLeftToRead = 0;
 		int totalBytesRead = 0;
 		int currentPos = 0;
@@ -608,6 +607,7 @@ public class UserProcess {
 			if (bytesRead < numToLoad)
 				break;
 		}
+		System.out.println("\nExit READ");
 		return totalBytesRead;
 	}
 
@@ -641,7 +641,7 @@ public class UserProcess {
 	 * 
 	 */
 	private int writeHandler(int fileDescriptor, int pointer, int count) {
-		System.out.println("\n\nWRITING");
+		System.out.println("\n\nIN WRITING");
 		int totalBytesWritten = 0;
 		int retVal = 0; // This is to be returned
 
@@ -662,23 +662,24 @@ public class UserProcess {
 		// To prevent page faults
 		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
-		System.out.println("\nHere in WRITING after read numLoaded - " + numLoaded);
+		System.out.println("\nin WRITING after read numLoaded - " + numLoaded);
 		if (numLoaded < 0)
 			return -1;// Error from readmemory
 
-		System.out.println("\nHere in WRITING after read 2");
+		System.out.println("\nin WRITING after read 2");
 
 		retVal = openFile.write(buffer, 0, numLoaded);
-		System.out.println("\nHere in WRITING after read 3");
+		System.out.println("\nin WRITING after read 3");
 
 		if (count != retVal)
 			return -1; // number of bytes written matches count.
 
+		System.out.println("\nExiting WRITING");
 		return retVal;
 	}
 
 	private int closeHandler(int description) {
-		System.out.println("\n\nCLOSING");
+		System.out.println("\n\nin CLOSING");
 		if (description >= maxSize || description < 0)
 			return -1;
 		if (files[description] != null) {
