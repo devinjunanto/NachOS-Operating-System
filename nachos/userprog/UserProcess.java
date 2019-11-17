@@ -74,10 +74,10 @@ public class UserProcess {
 		if (!load(name, args))
 			return false;
 
-		System.out.println("\nExecuting - "+name);
+		System.out.println("\nExecuting - " + name);
 		thread = new UThread(this);
 		thread.setName(name).fork();
-		System.out.println("\nDONE ? Executing - "+name);
+		System.out.println("\nDONE ? Executing - " + name);
 
 		return true;
 	}
@@ -426,6 +426,7 @@ public class UserProcess {
 			if (files[i] != null)
 				closeHandler(i);
 		}
+		coff.close();
 	}
 
 	/**
@@ -488,7 +489,6 @@ public class UserProcess {
 			child.parent = null;
 			child = null;
 		}
-		coff.close();
 		System.out.println("\nAbout To Leave EXIT!");
 		if (pid == 0) {
 			System.out.println("Calling kernel.terminate since 0 is exiting");
@@ -762,7 +762,7 @@ public class UserProcess {
 		// UserKernel.physicalLock.acquire();
 		if (child.execute(fileName, argsToExec)) {
 			// If it successfully executes
-			System.out.println("\nHERE IN EXEC prog executed with pid - "+child.pid);
+			System.out.println("\nHERE IN EXEC prog executed with pid - " + child.pid);
 			childID = child.pid;
 			child.parent = this;
 			children.add(childID);
