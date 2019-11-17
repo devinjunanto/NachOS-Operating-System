@@ -483,6 +483,7 @@ public class UserProcess {
 		coff.close();
 		System.out.println("PID - " + pid);
 		if (pid == 0) {
+			System.out.println("Calling kernel.terminate since 0 is exiting");
 			UserKernel.kernel.terminate();
 		} else
 			KThread.finish();
@@ -712,7 +713,7 @@ public class UserProcess {
 		child = newUserProcess();
 		childExitedStatus = -1; // reinitialize exit status for child
 		int childID = 0;
-
+		System.out.println("\nHere 1\n");
 		if (fileName == null)
 			return -1;
 		else if (count < 0 || argc > 16)
@@ -723,17 +724,21 @@ public class UserProcess {
 		// if (read < buffer.length)
 		// return -1;
 		else {
+			System.out.println("\nHere 1\n");
 			int[] paramsLoc = new int[count];
 			String[] argsToExec = new String[count];
+			System.out.println("\nHere 2\n");
 			for (int i = 0; i < count; i++) {
 				int k = i * 4;
 				paramsLoc[i] = Lib.bytesToInt(buffer, k);
 			}
+			System.out.println("\nHere 3\n");
 			for (int j = 0; j < count; j++) {
 				argsToExec[j] = readVirtualMemoryString(paramsLoc[j], 256);
 				if (argsToExec[j] == null)
 					return -1;
 			}
+			System.out.println("\nHere 4\n");
 			child.parent = this;
 			childID = -1; // Default error value
 			// UserKernel.physicalLock.acquire();
