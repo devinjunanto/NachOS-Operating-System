@@ -18,6 +18,7 @@ main (int argc, char *argv[])
 
     printf ("execing %s...\n", prog);
     pid = exec (prog, 0, 0);
+    printf("\n\n\nHERE after EXEC");
     if (pid > 0) {
 	printf ("...passed\n");
     } else {
