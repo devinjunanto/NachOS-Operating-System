@@ -148,6 +148,7 @@ public class UserProcess {
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
+		System.out.println("\n\n IN READ VIRTUAL MEMORY ");
 		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
@@ -228,6 +229,7 @@ public class UserProcess {
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
+		System.out.println("\n\n IN WRITE VIRTUAL MEMORY ");
 		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
@@ -371,6 +373,7 @@ public class UserProcess {
 			Lib.debug(dbgProcess, "\tinsufficient physical memory");
 			return false;
 		}
+		System.out.println("\n\nLOAD SECTIONS");
 
 		UserKernel.physicalLock.acquire(); // Acquire physical pages lock
 		// Allocates the pageTable and the number of physical pages based on the size of
@@ -411,6 +414,7 @@ public class UserProcess {
 		for (int i = 0; i < numPages; i++) {
 			UserKernel.physPagesAvailable.push(i);
 		}
+		System.out.println("\n\nUNLOAD SECTIONS");
 		UserKernel.physicalLock.release();
 
 		// Part 2 Moved this here because this may be called without exit being called
@@ -627,6 +631,7 @@ public class UserProcess {
 	 * 
 	 */
 	private int writeHandler(int fileDescriptor, int pointer, int count) {
+		System.out.println("\n\nWRITING");
 		// int bytesLeftToWrite;
 		int totalBytesWritten = 0;
 		int retVal = 0; // This is to be returned
@@ -659,6 +664,7 @@ public class UserProcess {
 	}
 
 	private int closeHandler(int description) {
+		System.out.println("\n\nCLOSING");
 		if (description >= maxSize || description < 0)
 			return -1;
 		if (files[description] != null) {
@@ -682,6 +688,7 @@ public class UserProcess {
 	 * Returns 0 on success, or -1 if an error occurred.
 	 */
 	private int unlinkHandler(int virtualMem) {
+		System.out.println("\n\nUNLINKING");
 		String fileName = readVirtualMemoryString(virtualMem, 256);
 		if (fileName == null)
 			return -1;
