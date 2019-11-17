@@ -717,10 +717,9 @@ public class UserProcess {
 		else if (count < 0 || argc > 16)
 			return -1;
 
-		// //
-		// int read = readVirtualMemory(pointer, buffer, 0, newCount);
-		// if (read < buffer.length)
-		// return -1;
+		int argsRead = readVirtualMemory(pointer, buffer, 0, newCount);
+		if (argsRead < buffer.length)
+			return -1;
 		else {
 			System.out.println("\nHere 1\n");
 			int[] paramsLoc = new int[count];
