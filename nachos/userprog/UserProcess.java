@@ -758,7 +758,7 @@ public class UserProcess {
 		String[] argsToExec = new String[argCount];
 		for (int i = 0; i < argCount; i++) {
 			byte[] argPointer = new byte[4];
-			int argLoc = (i * 4) + pointer;
+			int argLoc = (i * 4) + pointer + 4;
 
 			int numRead = readVirtualMemory(argLoc, argPointer);
 			if (numRead != 4) {
