@@ -34,18 +34,16 @@ public class UserProcess {
 		boolean intStatus = Machine.interrupt().disable();
 		// When any process is started, its file descriptors 0 and 1 must refer to
 		// standard input and standard output.
-		if(this.parent != null){
+		if (this.parent != null) {
 			in = parent.in;
 			out = parent.out;
-		}
-		else{
+		} else {
 			in = UserKernel.console.openForReading();
 			out = UserKernel.console.openForWriting();
 		}
 
-
-		//pid = idCounter;
-		//idCounter = idCounter + 1;
+		// pid = idCounter;
+		// idCounter = idCounter + 1;
 		parent = null;
 
 		Machine.interrupt().restore(intStatus);
@@ -770,6 +768,7 @@ public class UserProcess {
 			String actualArg = readVirtualMemoryString(virtualAddress, 256);
 			if (actualArg == null)
 				return -1;
+			System.out.println("Got arg - " +actualArg);
 
 			argsToExec[i] = actualArg; // Argument is valid, add it to our string array
 		}
@@ -803,7 +802,7 @@ public class UserProcess {
 	 * process of the current process, returns -1.
 	 */
 	private int joinHandler(int pid, int statusLoc) {
-		//System.out.println("\nIN JOIN");
+		// System.out.println("\nIN JOIN");
 		if (pid < 0)
 			return -1;
 
