@@ -939,7 +939,7 @@ public class UserProcess {
 			break;
 
 		default:
-			// System.out.println("Cause - " + cause + "\n data - " + Processor.exceptionNames[cause]);
+			System.out.println("Cause - " + cause + "\n data - " + Processor.exceptionNames[cause]);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
