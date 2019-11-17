@@ -186,9 +186,9 @@ public class UserProcess {
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
 			if (pageTable[currentBytePageIndex] == null) {
-				if (currLocation == vaddr)
-					return -1;
-				break;
+				// if (currLocation == vaddr)
+				// 	return -1;
+				// break;
 			}
 			// Get ppn from the page table entry at vpn
 			int ppn = pageTable[currentBytePageIndex].ppn;
@@ -260,9 +260,9 @@ public class UserProcess {
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
 			if (pageTable[currentBytePageIndex] == null) {
-				if (currLocation == vaddr)
-					return -1;
-				break;
+				// if (currLocation == vaddr)
+				// 	return -1;
+				// else break;
 			}
 
 			// Get ppn from the page table entry at vpn
