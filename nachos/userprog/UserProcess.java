@@ -793,6 +793,7 @@ public class UserProcess {
 	 * process of the current process, returns -1.
 	 */
 	private int joinHandler(int pid, int statusLoc) {
+		System.out.println("\nIN JOIN");
 		if (pid < 0)
 			return -1;
 
