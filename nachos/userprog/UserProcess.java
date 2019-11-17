@@ -162,13 +162,11 @@ public class UserProcess {
 		int transferredCount = 0;// Counter for bytes transferred from mem
 		int leftToRead = length; // Counter for bytes left to read
 		int firstByteToWrite = offset;
-		System.out.println("\nHere 2");
 
 		int currLocation = vaddr;
 		int lastLocationToCopy = vaddr + length;
 		// System.out.println("\nHere in READ 2 currLoc - "+currLocation+" , lastLoc -
 		// "+lastLocationToCopy);
-		System.out.println("\nHere 3");
 
 		// Now we copy from first byte to last byte inclusively
 		while (currLocation < lastLocationToCopy) {
@@ -197,7 +195,6 @@ public class UserProcess {
 			// copy - "+numToCopy);
 
 			System.arraycopy(memory, physAddress, data, firstByteToWrite, numToCopy);
-			System.out.println("\nHere 7");
 
 			currLocation = currLocation + numToCopy; // inc current counter
 			transferredCount += numToCopy;
@@ -735,16 +732,10 @@ public class UserProcess {
 		child = newUserProcess();
 		childExitedStatus = -1; // reinitialize exit status for child
 		int childID = 0;
-		System.out.println("\nEXEC 1");
 		if (fileName == null)
 			return -1;
 		else if (count < 0 || argc > 16)
 			return -1;
-
-		// int argsRead = readVirtualMemory(pointer, buffer, 0, newCount);
-		// if (argsRead < buffer.length)
-		// return -1;
-		System.out.println("\nEXEC 2");
 
 		String[] argsToExec = new String[count];
 		for (int i = 0; i < count; i++) {
