@@ -769,6 +769,7 @@ public class UserProcess {
 		// UserKernel.physicalLock.acquire();
 		if (child.execute(fileName, argsToExec)) {
 			// If it successfully executes
+			System.out.println("\nHERE IN EXEC prog executed with pid - "+child.pid);
 			childID = child.pid;
 			child.parent = this;
 			children.add(childID);
