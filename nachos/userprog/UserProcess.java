@@ -753,7 +753,7 @@ public class UserProcess {
 		else if (count < 0 || argc > 16)
 			return -1;
 
-		int argCount = count - 1;
+		int argCount = Math.min(count - 1, 0);
 
 		String[] argsToExec = new String[argCount];
 		for (int i = 0; i < argCount; i++) {
