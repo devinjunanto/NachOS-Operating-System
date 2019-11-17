@@ -37,8 +37,8 @@ public class UserProcess {
 		files[0] = UserKernel.console.openForReading();
 		files[1] = UserKernel.console.openForWriting();
 
-		pid = idCounter;
-		idCounter = idCounter + 1;
+		//pid = idCounter;
+		//idCounter = idCounter + 1;
 		parent = null;
 
 		Machine.interrupt().restore(intStatus);
