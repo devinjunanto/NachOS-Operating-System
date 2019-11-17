@@ -753,11 +753,11 @@ public class UserProcess {
 		else if (count < 0 || argc > 16)
 			return -1;
 
-		int argCount = Math.max(count - 1, 0);
+		//int argCount = Math.max(count - 1, 0);
 		int argPoint = pointer+4;
 
-		String[] argsToExec = new String[argCount];
-		for (int i = 0; i < argCount; i++) {
+		String[] argsToExec = new String[count];
+		for (int i = 0; i < count; i++) {
 			byte[] argPointer = new byte[4];
 			int argLoc = (i * 4) + argPoint;
 
