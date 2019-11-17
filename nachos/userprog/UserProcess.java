@@ -754,11 +754,6 @@ public class UserProcess {
 
 			argsToExec[i] = actualArg; // Argument is valid, add it to our string array
 		}
-		// for (int j = 0; j < count; j++) {
-		// argsToExec[j] = readVirtualMemoryString(paramsLoc[j], 256);
-		// if (argsToExec[j] == null)
-		// return -1;
-		// }
 		child = newUserProcess();
 		childID = -1; // Default error value
 		// UserKernel.physicalLock.acquire();

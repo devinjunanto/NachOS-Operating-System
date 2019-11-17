@@ -7,22 +7,15 @@
 
 #include "syscall.h"
 
-int main(int argc, char *argv[])
+int
+main (int argc, char *argv[])
 {
-    exec1();
-}
-
-int exec1()
-{
-    printf("\n\nRunning exec1\n");
-    char *prog = "write1.coff";
+    char *prog = "exit1.coff";
     int pid;
 
-    pid = exec(prog, 0, 0);
-    printf("\nexec returned with val - %d", pid);
-    if (pid < 0)
-    {
-        exit(-1);
+    pid = exec (prog, 0, 0);
+    if (pid < 0) {
+	exit (-1);
     }
-    exit(0);
+    exit (0);
 }
