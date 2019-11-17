@@ -773,10 +773,12 @@ public class UserProcess {
 			childID = child.pid;
 			child.parent = this;
 			children.add(childID);
+			System.out.println("\nEXITING EXEC");
+			return childID;
 		}
 		// UserKernel.physicalLock.release();
 		System.out.println("\nEXITING EXEC");
-		return childID;
+		return -1;
 	}
 
 	/**
