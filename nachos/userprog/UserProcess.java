@@ -724,23 +724,26 @@ public class UserProcess {
 	 * to join(). On error, returns -1.
 	 */
 	private int execHandler(int address, int count, int pointer) {
+		System.out.println("\n IN EXEC ");
+
+		if (address < 0)
+			return -1;
 		String fileName = readVirtualMemoryString(address, 256);
-		int newCount = count * 4;
-		System.out.println("Count - " + count);
-		System.out.println("newCount - " + newCount);
-		byte[] buffer = new byte[newCount];
+		// int newCount = count * 4;
+		// byte[] buffer = new byte[newCount];
 		child = newUserProcess();
 		childExitedStatus = -1; // reinitialize exit status for child
 		int childID = 0;
-		System.out.println("\nHere 1\n");
+		System.out.println("\nEXEC 1");
 		if (fileName == null)
 			return -1;
 		else if (count < 0 || argc > 16)
 			return -1;
 
-		int argsRead = readVirtualMemory(pointer, buffer, 0, newCount);
-		if (argsRead < buffer.length)
-			return -1;
+		// int argsRead = readVirtualMemory(pointer, buffer, 0, newCount);
+		// if (argsRead < buffer.length)
+		// 	return -1;
+		System.out.println("\nEXEC 2");
 
 		String[] argsToExec = new String[count];
 		for (int i = 0; i < count; i++) {
@@ -768,6 +771,7 @@ public class UserProcess {
 			childID = child.pid;
 			child.parent = this;
 			children.add(childID);
+			System.out.println("\nEXITING EXEC");
 			return childID;
 		}
 		// UserKernel.physicalLock.release();
