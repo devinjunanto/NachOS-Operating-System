@@ -12,9 +12,7 @@
 
 int main(int argc, char *argv[])
 {
-    int val = 0;
-    val = join1();
-    return val;
+    join1();
 }
 
 int join1()
