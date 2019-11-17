@@ -394,7 +394,6 @@ public class UserProcess {
 		// load sections
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
-			System.out.println("\n\nLOAD SECTIONS 2 with length - "+section.getLength());
 
 			Lib.debug(dbgProcess,
 					"\tinitializing " + section.getName() + " section (" + section.getLength() + " pages)");
@@ -403,9 +402,7 @@ public class UserProcess {
 				int vpn = section.getFirstVPN() + i;
 
 				// for now, just assume virtual addresses=physical addresses
-				System.out.println("\n\nLOAD SECTIONS 3");
 				section.loadPage(i, vpn);
-				System.out.println("\n\nLOAD SECTIONS 4");
 			}
 		}
 		System.out.println("\n\nLOAD SECTIONS RETURNING");
