@@ -195,6 +195,7 @@ public class KThread {
 		Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
 
 		Machine.interrupt().disable();
+		// System.out.println("\n\nFINISHING KTHREAD");
 
 		Machine.autoGrader().finishingCurrentThread();
 
