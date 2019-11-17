@@ -81,10 +81,10 @@ public class UserProcess {
 		if (!load(name, args))
 			return false;
 
-		System.out.println("\nExecuting - " + name);
+		// System.out.println("\nExecuting - " + name);
 		thread = new UThread(this);
 		thread.setName(name).fork();
-		System.out.println("\nDONE ? Executing - " + name);
+		// System.out.println("\nDONE ? Executing - " + name);
 
 		return true;
 	}
@@ -157,7 +157,7 @@ public class UserProcess {
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
-		System.out.println("\n\n IN READ VIRTUAL MEMORY ");
+		// System.out.println("\n\n IN READ VIRTUAL MEMORY ");
 		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
@@ -209,7 +209,7 @@ public class UserProcess {
 			transferredCount += numToCopy;
 			firstByteToWrite = firstByteToWrite + numToCopy;
 		}
-		System.out.println("\nHere RETURNING - " + transferredCount + " from ReadVirtualMemory");
+		// System.out.println("\nHere RETURNING - " + transferredCount + " from ReadVirtualMemory");
 		return transferredCount;
 	}
 
@@ -239,7 +239,7 @@ public class UserProcess {
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
-		System.out.println("\n\n IN WRITE VIRTUAL MEMORY ");
+		// System.out.println("\n\n IN WRITE VIRTUAL MEMORY ");
 		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
@@ -383,7 +383,7 @@ public class UserProcess {
 			Lib.debug(dbgProcess, "\tinsufficient physical memory");
 			return false;
 		}
-		System.out.println("\n\nLOAD SECTIONS");
+		// System.out.println("\n\nLOAD SECTIONS");
 
 		UserKernel.physicalLock.acquire(); // Acquire physical pages lock
 		// Allocates the pageTable and the number of physical pages based on the size of
@@ -411,7 +411,7 @@ public class UserProcess {
 				section.loadPage(i, vpn);
 			}
 		}
-		System.out.println("\n\nLOAD SECTIONS RETURNING");
+		// System.out.println("\n\nLOAD SECTIONS RETURNING");
 		return true;
 	}
 
@@ -424,7 +424,7 @@ public class UserProcess {
 		for (int i = 0; i < numPages; i++) {
 			UserKernel.physPagesAvailable.push(i);
 		}
-		System.out.println("\n\nUNLOAD SECTIONS");
+		// System.out.println("\n\nUNLOAD SECTIONS");
 		UserKernel.physicalLock.release();
 
 		// Part 2 Moved this here because this may be called without exit being called
@@ -485,12 +485,12 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
-		System.out.println("\nIn Exit !");
+		// System.out.println("\nIn Exit !");
 
 		if (parent != null) {
 			parent.processLock.acquire();
 			parent.childExitedStatus = status;
-			System.out.println("Adding status - " + status + " To parent\n");
+			// System.out.println("Adding status - " + status + " To parent\n");
 			parent.processLock.release();
 		}
 		unloadSections();
@@ -498,9 +498,9 @@ public class UserProcess {
 			child.parent = null;
 			child = null;
 		}
-		System.out.println("\nAbout To Leave EXIT!");
+		// System.out.println("\nAbout To Leave EXIT!");
 		if (pid == 0) {
-			System.out.println("Calling kernel.terminate since 0 is exiting");
+			// System.out.println("Calling kernel.terminate since 0 is exiting");
 			UserKernel.kernel.terminate();
 		} else
 			KThread.finish();
@@ -579,7 +579,7 @@ public class UserProcess {
 	 * more data is available.
 	 */
 	private int readHandler(int fileDescriptor, int pointer, int count) {
-		System.out.println("\nin READ");
+		// System.out.println("\nin READ");
 		int bytesLeftToRead = 0;
 		int totalBytesRead = 0;
 		int currentPos = 0;
@@ -614,7 +614,7 @@ public class UserProcess {
 			if (bytesRead < numToLoad)
 				break;
 		}
-		System.out.println("\nExit READ");
+		// System.out.println("\nExit READ");
 		return totalBytesRead;
 	}
 
@@ -648,7 +648,7 @@ public class UserProcess {
 	 * 
 	 */
 	private int writeHandler(int fileDescriptor, int pointer, int count) {
-		System.out.println("\n\nIN WRITING");
+		// System.out.println("\n\nIN WRITING");
 		int totalBytesWritten = 0;
 		int retVal = 0; // This is to be returned
 
@@ -669,24 +669,24 @@ public class UserProcess {
 		// To prevent page faults
 		// int numToLoad = Math.min(bytesLeftToWrite, pageSizeCopy);
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
-		System.out.println("\nin WRITING after read numLoaded - " + numLoaded);
+		// System.out.println("\nin WRITING after read numLoaded - " + numLoaded);
 		if (numLoaded < 0)
 			return -1;// Error from readmemory
 
-		System.out.println("\nin WRITING after read 2");
+		// System.out.println("\nin WRITING after read 2");
 
 		retVal = openFile.write(buffer, 0, numLoaded);
-		System.out.println("\nin WRITING after read 3");
+		// System.out.println("\nin WRITING after read 3");
 
 		if (count != retVal)
 			return -1; // number of bytes written matches count.
 
-		System.out.println("\nExiting WRITING");
+		// System.out.println("\nExiting WRITING");
 		return retVal;
 	}
 
 	private int closeHandler(int description) {
-		System.out.println("\n\nin CLOSING");
+		// System.out.println("\n\nin CLOSING");
 		if (description >= maxSize || description < 0)
 			return -1;
 		if (files[description] != null) {
@@ -710,7 +710,7 @@ public class UserProcess {
 	 * Returns 0 on success, or -1 if an error occurred.
 	 */
 	private int unlinkHandler(int virtualMem) {
-		System.out.println("\n\nUNLINKING");
+		// System.out.println("\n\nUNLINKING");
 		String fileName = readVirtualMemoryString(virtualMem, 256);
 		if (fileName == null)
 			return -1;
@@ -732,12 +732,12 @@ public class UserProcess {
 	 * to join(). On error, returns -1.
 	 */
 	private int execHandler(int address, int count, int pointer) {
-		System.out.println("\n IN EXEC ");
+		// System.out.println("\n IN EXEC ");
 
 		if (address < 0)
 			return -1;
 		String fileName = readVirtualMemoryString(address, 256);
-		System.out.println("Got file to execute - " + fileName + " with args count - " + count);
+		// System.out.println("Got file to execute - " + fileName + " with args count - " + count);
 		// int newCount = count * 4;
 		// byte[] buffer = new byte[newCount];
 		child = newUserProcess();
@@ -771,15 +771,15 @@ public class UserProcess {
 		// UserKernel.physicalLock.acquire();
 		if (child.execute(fileName, argsToExec)) {
 			// If it successfully executes
-			System.out.println("\nHERE IN EXEC prog executed with pid - " + child.pid);
+			// System.out.println("\nHERE IN EXEC prog executed with pid - " + child.pid);
 			childID = child.pid;
 			child.parent = this;
 			children.add(childID);
-			System.out.println("\nEXITING EXEC");
+			// System.out.println("\nEXITING EXEC");
 			return childID;
 		}
 		// UserKernel.physicalLock.release();
-		System.out.println("\nEXITING EXEC");
+		// System.out.println("\nEXITING EXEC");
 		return -1;
 	}
 
@@ -795,7 +795,7 @@ public class UserProcess {
 	 * process of the current process, returns -1.
 	 */
 	private int joinHandler(int pid, int statusLoc) {
-		System.out.println("\nIN JOIN");
+		// System.out.println("\nIN JOIN");
 		if (pid < 0)
 			return -1;
 
@@ -892,7 +892,7 @@ public class UserProcess {
 		case syscallHalt:
 			return handleHalt();
 		case syscallExit: {
-			System.out.println("\n\nAbout to call EXIT\n\n");
+			// System.out.println("\n\nAbout to call EXIT\n\n");
 			return exitHandler(a0);
 		}
 		case syscallWrite:
@@ -908,7 +908,7 @@ public class UserProcess {
 		case syscallUnlink:
 			return unlinkHandler(a0);
 		case syscallExec: {
-			System.out.println("\nAbout to call Exec");
+			// System.out.println("\nAbout to call Exec");
 			return execHandler(a0, a1, a2);
 		}
 		case syscallJoin:
@@ -939,7 +939,7 @@ public class UserProcess {
 			break;
 
 		default:
-			System.out.println("Cause - " + cause + "\n data - " + Processor.exceptionNames[cause]);
+			// System.out.println("Cause - " + cause + "\n data - " + Processor.exceptionNames[cause]);
 			Lib.debug(dbgProcess, "Unexpected exception: " + Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
 		}
