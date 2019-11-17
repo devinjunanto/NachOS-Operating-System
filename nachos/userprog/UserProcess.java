@@ -390,10 +390,12 @@ public class UserProcess {
 			pageTable[i] = entry;
 		}
 		UserKernel.physicalLock.release();
+		System.out.println("\n\nLOAD SECTIONS 2");
 
 		// load sections
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
+			System.out.println("\n\nLOAD SECTIONS 3");
 
 			Lib.debug(dbgProcess,
 					"\tinitializing " + section.getName() + " section (" + section.getLength() + " pages)");
