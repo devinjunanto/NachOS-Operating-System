@@ -736,7 +736,6 @@ public class UserProcess {
 		if (argsRead < buffer.length)
 			return -1;
 
-		int[] paramsLoc = new int[count];
 		String[] argsToExec = new String[count];
 		for (int i = 0; i < count; i++) {
 			byte[] argPointer = new byte[4];
@@ -747,13 +746,13 @@ public class UserProcess {
 				return -1;
 			}
 			// Get virtual address of this arg
-			int virtualAddress = Lib.bytesToInt(argPointer);
+			int virtualAddress = Lib.bytesToInt(argPointer, 0);
 			// Get Actual argument from its virtual adress ensure it exists
 			String actualArg = readVirtualMemoryString(virtualAddress, 256);
 			if (actualArg == null)
 				return -1;
 
-			paramsLoc[i] = actualArg;
+			argsToExec[i] = actualArg; // Argument is valid, add it to our string array
 		}
 		// for (int j = 0; j < count; j++) {
 		// argsToExec[j] = readVirtualMemoryString(paramsLoc[j], 256);
