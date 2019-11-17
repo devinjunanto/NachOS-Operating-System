@@ -754,7 +754,7 @@ public class UserProcess {
 			return -1;
 
 		String[] argsToExec = new String[count];
-		for (int i = 0; i < count; i++) {
+		for (int i = 1; i < count; i++) {
 			byte[] argPointer = new byte[4];
 			int argLoc = (i * 4) + pointer;
 
