@@ -3,12 +3,12 @@
  *
  * It does not get simpler than this...
  */
-   
-#include "syscall.h"
 
-int
-main (int argc, char *argv[])
+#include "syscall.h"
+#include "stdlib.h"
+#include "stdio.h"
+
+int main(int argc, char *argv[])
 {
-    printf("HERE IN EXIT1");
-    //return 0;
+    exit(123);
 }
