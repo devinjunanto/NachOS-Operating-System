@@ -742,11 +742,15 @@ public class UserProcess {
 			child.parent = this;
 			childID = -1; // Default error value
 			// UserKernel.physicalLock.acquire();
+			System.out.println("\nHere 5\n");
 
 			if (child.execute(fileName, argsToExec)) {
+				System.out.println("\nHere 6\n");
 				childID = child.pid;
 				children.add(childID);
+				System.out.println("\nHere 7\n");
 			}
+			System.out.println("\nHere 8\n");
 
 			// UserKernel.physicalLock.release();
 			return childID;
