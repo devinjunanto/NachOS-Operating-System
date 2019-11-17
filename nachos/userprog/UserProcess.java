@@ -186,9 +186,9 @@ public class UserProcess {
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
 			if (pageTable[currentBytePageIndex] == null) {
-				// if (currLocation == vaddr)
-				// 	return -1;
-				// break;
+				if (currLocation == vaddr)
+					return -1;
+				break;
 			}
 			// Get ppn from the page table entry at vpn
 			int ppn = pageTable[currentBytePageIndex].ppn;
@@ -206,8 +206,6 @@ public class UserProcess {
 			transferredCount += numToCopy;
 			firstByteToWrite = firstByteToWrite + numToCopy;
 		}
-		// System.out.println("\nHere RETURNING - " + transferredCount + " from
-		// ReadVirtualMemory");
 		return transferredCount;
 	}
 
@@ -237,7 +235,6 @@ public class UserProcess {
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
-		// System.out.println("\n\n IN WRITE VIRTUAL MEMORY ");
 		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
@@ -260,9 +257,10 @@ public class UserProcess {
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
 			if (pageTable[currentBytePageIndex] == null) {
-				// if (currLocation == vaddr)
-				// 	return -1;
-				// else break;
+				if (currLocation == vaddr)
+					return -1;
+				else
+					break;
 			}
 
 			// Get ppn from the page table entry at vpn
