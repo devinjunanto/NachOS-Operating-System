@@ -115,7 +115,7 @@ public class UserKernel extends ThreadedKernel {
 			}
 
 		}
-
+		System.out.println("Calling finish from UKernel");
 		KThread.currentThread().finish();
 	}
 
