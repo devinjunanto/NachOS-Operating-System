@@ -19,6 +19,7 @@ int exec1()
     int pid;
 
     pid = exec(prog, 0, 0);
+    printf("\nexec returned with val - %d", pid);
     if (pid < 0)
     {
         exit(-1);
