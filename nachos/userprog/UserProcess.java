@@ -766,15 +766,15 @@ public class UserProcess {
 		}
 		child = newUserProcess();
 		childID = -1; // Default error value
-		UserKernel.physicalLock.acquire();
+		// UserKernel.physicalLock.acquire();
 		if (child.execute(fileName, argsToExec)) {
 			// If it successfully executes
 			childID = child.pid;
 			child.parent = this;
 			children.add(childID);
-			System.out.println("\nEXITING EXEC");
 		}
-		UserKernel.physicalLock.release();
+		// UserKernel.physicalLock.release();
+		System.out.println("\nEXITING EXEC");
 		return childID;
 	}
 
