@@ -484,10 +484,13 @@ public class UserProcess {
 		System.out.println("\nIn Exit Handler");
 
 		if (parent != null) {
+
 			parent.childExitedStatus = status;
 			System.out.println("Adding status - " + status + " To parent\n");
 		}
 		unloadSections();
+		child.parent = null;
+		child = null;
 
 		coff.close();
 		System.out.println("PID - " + pid);
