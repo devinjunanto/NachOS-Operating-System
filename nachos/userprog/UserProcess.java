@@ -737,7 +737,7 @@ public class UserProcess {
 		if (address < 0)
 			return -1;
 		String fileName = readVirtualMemoryString(address, 256);
-		// System.out.println("Got file to execute - " + fileName + " with args count - " + count);
+		System.out.println("Got file to execute - " + fileName + " with args count - " + count);
 		// int newCount = count * 4;
 		// byte[] buffer = new byte[newCount];
 		child = newUserProcess();
@@ -779,7 +779,7 @@ public class UserProcess {
 			return childID;
 		}
 		// UserKernel.physicalLock.release();
-		// System.out.println("\nEXITING EXEC");
+		System.out.println("\nEXITING EXEC");
 		return -1;
 	}
 
