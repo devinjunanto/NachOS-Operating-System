@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     printf("childargv[4]: %d (0x%x)\n", childargv[4], childargv[4]);
 
     r = exec(childargv[0], childargc, childargv);
+    printf("\n\n\n EXECT RETURNED - %d", r);
     if (r < 0)
     {
         printf("exec returned an error: %d\n", r);
