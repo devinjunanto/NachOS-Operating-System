@@ -156,6 +156,7 @@ public class UserProcess {
 		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
 			return 0;
+		System.out.println("\nHere 1");
 
 		// int amount = Math.min(length, memory.length - vaddr);
 		// System.arraycopy(memory, vaddr, data, offset, amount); -- This doesnt work !
@@ -163,11 +164,13 @@ public class UserProcess {
 		int transferredCount = 0;// Counter for bytes transferred from mem
 		int leftToRead = length; // Counter for bytes left to read
 		int firstByteToWrite = offset;
+		System.out.println("\nHere 2");
 
 		int currLocation = vaddr;
 		int lastLocationToCopy = vaddr + length;
 		// System.out.println("\nHere in READ 2 currLoc - "+currLocation+" , lastLoc -
 		// "+lastLocationToCopy);
+		System.out.println("\nHere 3");
 
 		// Now we copy from first byte to last byte inclusively
 		while (currLocation < lastLocationToCopy) {
@@ -177,9 +180,13 @@ public class UserProcess {
 			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
+			System.out.println("\nHere 4");
+
 			if (pageTable[currentBytePageIndex] == null) {
 				return 0; // Error ? TODO Check how to handle
 			}
+			System.out.println("\nHere 5");
+
 			// Get ppn from the page table entry at vpn
 			int ppn = pageTable[currentBytePageIndex].ppn;
 
@@ -194,7 +201,10 @@ public class UserProcess {
 			// "+physAddress
 			// +"\nDest Size - "+data.length+"\nPosToLoad - "+firstByteToWrite+"\nNum to
 			// copy - "+numToCopy);
+			System.out.println("\nHere 6");
+
 			System.arraycopy(memory, physAddress, data, firstByteToWrite, numToCopy);
+			System.out.println("\nHere 7");
 
 			currLocation = currLocation + numToCopy; // inc current counter
 			transferredCount += numToCopy;
@@ -728,33 +738,25 @@ public class UserProcess {
 		if (argsRead < buffer.length)
 			return -1;
 		else {
-			System.out.println("\nHere 1\n");
 			int[] paramsLoc = new int[count];
 			String[] argsToExec = new String[count];
-			System.out.println("\nHere 2\n");
 			for (int i = 0; i < count; i++) {
 				int k = i * 4;
 				paramsLoc[i] = Lib.bytesToInt(buffer, k);
 			}
-			System.out.println("\nHere 3\n");
 			for (int j = 0; j < count; j++) {
 				argsToExec[j] = readVirtualMemoryString(paramsLoc[j], 256);
 				if (argsToExec[j] == null)
 					return -1;
 			}
-			System.out.println("\nHere 4\n");
 			child.parent = this;
 			childID = -1; // Default error value
 			// UserKernel.physicalLock.acquire();
-			System.out.println("\nHere 5\n");
 
 			if (child.execute(fileName, argsToExec)) {
-				System.out.println("\nHere 6\n");
 				childID = child.pid;
 				children.add(childID);
-				System.out.println("\nHere 7\n");
 			}
-			System.out.println("\nHere 8\n");
 
 			// UserKernel.physicalLock.release();
 			return childID;
