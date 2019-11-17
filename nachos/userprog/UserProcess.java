@@ -776,6 +776,7 @@ public class UserProcess {
 		child = newUserProcess();
 		childID = -1; // Default error value
 		// UserKernel.physicalLock.acquire();
+		System.out.println("Executing" + fileName + " with args count - " + count);
 		if (child.execute(fileName, argsToExec)) {
 			// If it successfully executes
 			// System.out.println("\nHERE IN EXEC prog executed with pid - " + child.pid);
