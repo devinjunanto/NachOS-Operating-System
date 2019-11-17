@@ -643,17 +643,16 @@ public class UserProcess {
 	 */
 	private int writeHandler(int fileDescriptor, int pointer, int count) {
 		System.out.println("\n\nWRITING");
-		// int bytesLeftToWrite;
 		int totalBytesWritten = 0;
 		int retVal = 0; // This is to be returned
 
 		if (fileDescriptor >= maxSize || fileDescriptor < 0)
 			return -1;
-		else if (files[fileDescriptor] == null)
+		else if (count < 0)
 			return -1;
 		else if (pointer <= 0)
 			return -1;
-		else if (count < 0)
+		else if (files[fileDescriptor] == null)
 			return -1;
 
 		OpenFile openFile = files[fileDescriptor];
@@ -666,7 +665,7 @@ public class UserProcess {
 		int numLoaded = readVirtualMemory(pointer, buffer, 0, count);
 		System.out.println("\nHere in WRITING after read numLoaded - " + numLoaded);
 		if (numLoaded < 0)
-			return -1;
+			return -1;// Error from readmemory
 
 		System.out.println("\nHere in WRITING after read 2");
 

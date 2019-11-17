@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 int exec1()
 {
     printf("\n\nRunning exec1\n");
-    char *prog = "write.coff";
+    char *prog = "write1.coff";
     int pid;
 
     pid = exec(prog, 0, 0);
