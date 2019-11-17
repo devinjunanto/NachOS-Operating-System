@@ -156,8 +156,6 @@ public class UserProcess {
 		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
 			return 0;
-		System.out.println("\nHere 1");
-
 		// int amount = Math.min(length, memory.length - vaddr);
 		// System.arraycopy(memory, vaddr, data, offset, amount); -- This doesnt work !
 
@@ -180,13 +178,9 @@ public class UserProcess {
 			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
-			System.out.println("\nHere 4");
-
 			if (pageTable[currentBytePageIndex] == null) {
 				return 0; // Error ? TODO Check how to handle
 			}
-			System.out.println("\nHere 5");
-
 			// Get ppn from the page table entry at vpn
 			int ppn = pageTable[currentBytePageIndex].ppn;
 
@@ -201,7 +195,6 @@ public class UserProcess {
 			// "+physAddress
 			// +"\nDest Size - "+data.length+"\nPosToLoad - "+firstByteToWrite+"\nNum to
 			// copy - "+numToCopy);
-			System.out.println("\nHere 6");
 
 			System.arraycopy(memory, physAddress, data, firstByteToWrite, numToCopy);
 			System.out.println("\nHere 7");
@@ -210,7 +203,7 @@ public class UserProcess {
 			transferredCount += numToCopy;
 			firstByteToWrite = firstByteToWrite + numToCopy;
 		}
-		System.out.println("\nHere RETURNING - " + transferredCount);
+		System.out.println("\nHere RETURNING - " + transferredCount + " from ReadVirtualMemory");
 		return transferredCount;
 	}
 
@@ -742,30 +735,43 @@ public class UserProcess {
 		int argsRead = readVirtualMemory(pointer, buffer, 0, newCount);
 		if (argsRead < buffer.length)
 			return -1;
-		else {
-			int[] paramsLoc = new int[count];
-			String[] argsToExec = new String[count];
-			for (int i = 0; i < count; i++) {
-				int k = i * 4;
-				paramsLoc[i] = Lib.bytesToInt(buffer, k);
+
+		int[] paramsLoc = new int[count];
+		String[] argsToExec = new String[count];
+		for (int i = 0; i < count; i++) {
+			byte[] argPointer = new byte[4];
+			int argLoc = (i * 4) + pointer;
+
+			int numRead = readVirtualMemory(argLoc, argPointer);
+			if (numRead != 4) {
+				return -1;
 			}
-			for (int j = 0; j < count; j++) {
-				argsToExec[j] = readVirtualMemoryString(paramsLoc[j], 256);
-				if (argsToExec[j] == null)
-					return -1;
-			}
+			// Get virtual address of this arg
+			int virtualAddress = Lib.bytesToInt(argPointer);
+			// Get Actual argument from its virtual adress ensure it exists
+			String actualArg = readVirtualMemoryString(virtualAddress, 256);
+			if (actualArg == null)
+				return -1;
+
+			paramsLoc[i] = actualArg;
+		}
+		// for (int j = 0; j < count; j++) {
+		// argsToExec[j] = readVirtualMemoryString(paramsLoc[j], 256);
+		// if (argsToExec[j] == null)
+		// return -1;
+		// }
+		child = newUserProcess();
+		childID = -1; // Default error value
+		// UserKernel.physicalLock.acquire();
+		if (child.execute(fileName, argsToExec)) {
+			// If it successfully executes
+			childID = child.pid;
 			child.parent = this;
-			childID = -1; // Default error value
-			// UserKernel.physicalLock.acquire();
-
-			if (child.execute(fileName, argsToExec)) {
-				childID = child.pid;
-				children.add(childID);
-			}
-
-			// UserKernel.physicalLock.release();
+			children.add(childID);
 			return childID;
 		}
+		// UserKernel.physicalLock.release();
+		return -1;
 	}
 
 	/**
