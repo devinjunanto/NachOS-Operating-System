@@ -302,11 +302,14 @@ public class UserProcess {
 	private boolean load(String name, String[] args) {
 		Lib.debug(dbgProcess, "UserProcess.load(\"" + name + "\")");
 
+		System.out.println("Here in load");
+
 		OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
 		if (executable == null) {
 			Lib.debug(dbgProcess, "\topen failed");
 			return false;
 		}
+		System.out.println("Here in load2");
 
 		try {
 			coff = new Coff(executable);
@@ -315,6 +318,7 @@ public class UserProcess {
 			Lib.debug(dbgProcess, "\tcoff load failed");
 			return false;
 		}
+		System.out.println("Here in load3");
 
 		// make sure the sections are contiguous and start at page 0
 		numPages = 0;
@@ -327,6 +331,7 @@ public class UserProcess {
 			}
 			numPages += section.getLength();
 		}
+		System.out.println("Here in load4");
 
 		// make sure the argv array will fit in one page
 		byte[][] argv = new byte[args.length][];
@@ -341,6 +346,7 @@ public class UserProcess {
 			Lib.debug(dbgProcess, "\targuments too long");
 			return false;
 		}
+		System.out.println("Here in load5");
 
 		// program counter initially points at the program entry point
 		initialPC = coff.getEntryPoint();
@@ -361,6 +367,7 @@ public class UserProcess {
 
 		this.argc = args.length;
 		this.argv = entryOffset;
+		System.out.println("Here in load6");
 
 		for (int i = 0; i < argv.length; i++) {
 			byte[] stringOffsetBytes = Lib.bytesFromInt(stringOffset);
@@ -753,7 +760,7 @@ public class UserProcess {
 		else if (count < 0 || argc > 16)
 			return -1;
 
-		String[] argsToExec = new String[count-1];
+		String[] argsToExec = new String[count - 1];
 		for (int i = 1; i < count; i++) {
 			byte[] argPointer = new byte[4];
 			int argLoc = (i * 4) + pointer;
@@ -768,9 +775,9 @@ public class UserProcess {
 			String actualArg = readVirtualMemoryString(virtualAddress, 256);
 			if (actualArg == null)
 				return -1;
-			System.out.println("Got arg - " +actualArg);
+			System.out.println("Got arg - " + actualArg);
 
-			argsToExec[i-1] = actualArg; // Argument is valid, add it to our string array
+			argsToExec[i - 1] = actualArg; // Argument is valid, add it to our string array
 		}
 		child = newUserProcess();
 		childID = -1; // Default error value
