@@ -448,10 +448,8 @@ public class UserProcess {
 	 * Handle the halt() system call.
 	 */
 	private int handleHalt() {
-		if (pid == 0) {
-			// Is root process
-
-		}
+		if (pid != 0)
+			return 0;// Is not root process
 
 		Machine.halt();
 

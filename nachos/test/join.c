@@ -20,7 +20,7 @@ int join1()
     char *prog = "exit.coff";
     int pid, r, status = 0;
 
-    printf("\nExecing %s...\n", prog);
+    printf("execing %s...\n", prog);
     pid = exec(prog, 0, 0);
     if (pid > 0)
     {
