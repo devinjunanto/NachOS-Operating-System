@@ -729,7 +729,7 @@ public class UserProcess {
 		if (address < 0)
 			return -1;
 		String fileName = readVirtualMemoryString(address, 256);
-		System.out.println("Got file to execute - "+fileName+" with args count - "+count);
+		System.out.println("Got file to execute - " + fileName + " with args count - " + count);
 		// int newCount = count * 4;
 		// byte[] buffer = new byte[newCount];
 		child = newUserProcess();
@@ -743,7 +743,7 @@ public class UserProcess {
 
 		// int argsRead = readVirtualMemory(pointer, buffer, 0, newCount);
 		// if (argsRead < buffer.length)
-		// 	return -1;
+		// return -1;
 		System.out.println("\nEXEC 2");
 
 		String[] argsToExec = new String[count];
@@ -766,17 +766,16 @@ public class UserProcess {
 		}
 		child = newUserProcess();
 		childID = -1; // Default error value
-		// UserKernel.physicalLock.acquire();
+		UserKernel.physicalLock.acquire();
 		if (child.execute(fileName, argsToExec)) {
 			// If it successfully executes
 			childID = child.pid;
 			child.parent = this;
 			children.add(childID);
 			System.out.println("\nEXITING EXEC");
-			return childID;
 		}
-		// UserKernel.physicalLock.release();
-		return -1;
+		UserKernel.physicalLock.release();
+		return childID;
 	}
 
 	/**
@@ -886,9 +885,10 @@ public class UserProcess {
 		switch (syscall) {
 		case syscallHalt:
 			return handleHalt();
-		case syscallExit:{
+		case syscallExit: {
 			System.out.println("\n\nAbout to call EXIT\n\n");
-			return exitHandler(a0);}
+			return exitHandler(a0);
+		}
 		case syscallWrite:
 			return writeHandler(a0, a1, a2); // int fileDescriptor, void *buffer, int count
 		case syscallCreate:
@@ -901,9 +901,10 @@ public class UserProcess {
 			return readHandler(a0, a1, a2);
 		case syscallUnlink:
 			return unlinkHandler(a0);
-		case syscallExec:{
+		case syscallExec: {
 			System.out.println("\nAbout to call Exec");
-			return execHandler(a0, a1, a2);}
+			return execHandler(a0, a1, a2);
+		}
 		case syscallJoin:
 			return joinHandler(a0, a1);
 		default:
