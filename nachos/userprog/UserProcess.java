@@ -754,11 +754,12 @@ public class UserProcess {
 			return -1;
 
 		int argCount = Math.max(count - 1, 0);
+		int argPoint = pointer+4;
 
 		String[] argsToExec = new String[argCount];
 		for (int i = 0; i < argCount; i++) {
 			byte[] argPointer = new byte[4];
-			int argLoc = (i * 4) + pointer + 4;
+			int argLoc = (i * 4) + argPoint;
 
 			int numRead = readVirtualMemory(argLoc, argPointer);
 			if (numRead != 4) {
