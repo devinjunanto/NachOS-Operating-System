@@ -478,9 +478,9 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
+		System.out.println("\nIn Exit !");
 
 		if (parent != null) {
-
 			parent.childExitedStatus = status;
 			System.out.println("Adding status - " + status + " To parent\n");
 		}
@@ -489,6 +489,7 @@ public class UserProcess {
 		child = null;
 
 		coff.close();
+		System.out.println("\nAbout To Leave EXIT!");
 		if (pid == 0) {
 			System.out.println("Calling kernel.terminate since 0 is exiting");
 			UserKernel.kernel.terminate();
