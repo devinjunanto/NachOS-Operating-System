@@ -885,8 +885,9 @@ public class UserProcess {
 		switch (syscall) {
 		case syscallHalt:
 			return handleHalt();
-		case syscallExit:
-			return exitHandler(a0);
+		case syscallExit:{
+			System.out.println("\n\nAbout to call EXIT\n\n");
+			return exitHandler(a0);}
 		case syscallWrite:
 			return writeHandler(a0, a1, a2); // int fileDescriptor, void *buffer, int count
 		case syscallCreate:
@@ -899,8 +900,9 @@ public class UserProcess {
 			return readHandler(a0, a1, a2);
 		case syscallUnlink:
 			return unlinkHandler(a0);
-		case syscallExec:
-			return execHandler(a0, a1, a2);
+		case syscallExec:{
+			System.out.println("\nAbout to call Exec");
+			return execHandler(a0, a1, a2);}
 		case syscallJoin:
 			return joinHandler(a0, a1);
 		default:
