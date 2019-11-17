@@ -186,7 +186,9 @@ public class UserProcess {
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
 			if (pageTable[currentBytePageIndex] == null) {
-				return 0; // Error ? TODO Check how to handle
+				if (currLoc == vaddr)
+					return -1;
+				break;
 			}
 			// Get ppn from the page table entry at vpn
 			int ppn = pageTable[currentBytePageIndex].ppn;
@@ -198,18 +200,14 @@ public class UserProcess {
 			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
 
 			// Now Arraycopy should work
-			// System.out.println("\n\nDEBUG\n\nSrc Size - "+memory.length+"\nPosToLoad -
-			// "+physAddress
-			// +"\nDest Size - "+data.length+"\nPosToLoad - "+firstByteToWrite+"\nNum to
-			// copy - "+numToCopy);
-
 			System.arraycopy(memory, physAddress, data, firstByteToWrite, numToCopy);
 
 			currLocation = currLocation + numToCopy; // inc current counter
 			transferredCount += numToCopy;
 			firstByteToWrite = firstByteToWrite + numToCopy;
 		}
-		// System.out.println("\nHere RETURNING - " + transferredCount + " from ReadVirtualMemory");
+		// System.out.println("\nHere RETURNING - " + transferredCount + " from
+		// ReadVirtualMemory");
 		return transferredCount;
 	}
 
@@ -262,7 +260,9 @@ public class UserProcess {
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
 			if (pageTable[currentBytePageIndex] == null) {
-				return 0; // Error ? TODO Check how to handle
+				if (currLoc == vaddr)
+					return -1;
+				break;
 			}
 
 			// Get ppn from the page table entry at vpn
