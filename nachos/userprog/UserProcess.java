@@ -42,7 +42,7 @@ public class UserProcess {
 		parent = null;
 
 		Machine.interrupt().restore(intStatus);
-
+		processLock = new Lock();
 		// acquire lock
 	}
 
@@ -488,8 +488,10 @@ public class UserProcess {
 		System.out.println("\nIn Exit !");
 
 		if (parent != null) {
+			parent.processLock.acquire();
 			parent.childExitedStatus = status;
 			System.out.println("Adding status - " + status + " To parent\n");
+			parent.processLock.release();
 		}
 		unloadSections();
 		if (child != null) {
@@ -966,6 +968,7 @@ public class UserProcess {
 	private UserProcess child;
 	private int childExitedStatus = -1;
 	private static int idCounter = 0;
+	private Lock processLock;
 
 	final int pageSizeCopy = 1024;
 	public LinkedList<Integer> children = new LinkedList<Integer>();
