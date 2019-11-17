@@ -74,8 +74,10 @@ public class UserProcess {
 		if (!load(name, args))
 			return false;
 
+		System.out.println("\nExecuting - "+name);
 		thread = new UThread(this);
 		thread.setName(name).fork();
+		System.out.println("\nDONE ? Executing - "+name);
 
 		return true;
 	}
