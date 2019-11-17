@@ -501,7 +501,7 @@ public class UserProcess {
 		System.out.println("\nAbout To Leave EXIT!");
 		if (pid == 0) {
 			System.out.println("Calling kernel.terminate since 0 is exiting");
-			UserKernel.kernel.terminate();
+			Kernel.kernel.terminate();
 		} else
 			KThread.finish();
 

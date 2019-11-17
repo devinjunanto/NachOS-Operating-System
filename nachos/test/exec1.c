@@ -15,7 +15,7 @@ main (int argc, char *argv[])
 
     pid = exec (prog, 0, 0);
     if (pid < 0) {
-	//exit (-1);
+	exit (-1);
     }
-    //exit (0);
+    exit (0);
 }
