@@ -9,5 +9,6 @@
 int
 main (int argc, char *argv[])
 {
-    exit (123);
+    printf("HERE IN EXIT1");
+    return 0;
 }
