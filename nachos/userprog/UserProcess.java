@@ -394,7 +394,7 @@ public class UserProcess {
 		// load sections
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
-			System.out.println("\n\nLOAD SECTIONS 2");
+			System.out.println("\n\nLOAD SECTIONS 2 with length - "+section.getLength());
 
 			Lib.debug(dbgProcess,
 					"\tinitializing " + section.getName() + " section (" + section.getLength() + " pages)");
