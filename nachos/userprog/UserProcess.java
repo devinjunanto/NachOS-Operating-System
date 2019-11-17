@@ -770,14 +770,12 @@ public class UserProcess {
 			String actualArg = readVirtualMemoryString(virtualAddress, 256);
 			if (actualArg == null)
 				return -1;
-			System.out.println("Got arg - " + actualArg);
 
 			argsToExec[i] = actualArg; // Argument is valid, add it to our string array
 		}
 		child = newUserProcess();
 		childID = -1; // Default error value
 		// UserKernel.physicalLock.acquire();
-		System.out.println("Executing" + fileName + " with args count - " + count);
 		if (child.execute(fileName, argsToExec)) {
 			// If it successfully executes
 			// System.out.println("\nHERE IN EXEC prog executed with pid - " + child.pid);
