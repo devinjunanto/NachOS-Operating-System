@@ -770,7 +770,7 @@ public class UserProcess {
 				return -1;
 			System.out.println("Got arg - " +actualArg);
 
-			argsToExec[i] = actualArg; // Argument is valid, add it to our string array
+			argsToExec[i-1] = actualArg; // Argument is valid, add it to our string array
 		}
 		child = newUserProcess();
 		childID = -1; // Default error value
