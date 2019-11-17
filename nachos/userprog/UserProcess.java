@@ -403,8 +403,9 @@ public class UserProcess {
 				int vpn = section.getFirstVPN() + i;
 
 				// for now, just assume virtual addresses=physical addresses
-				section.loadPage(i, vpn);
 				System.out.println("\n\nLOAD SECTIONS 3");
+				section.loadPage(i, vpn);
+				System.out.println("\n\nLOAD SECTIONS 4");
 			}
 		}
 
