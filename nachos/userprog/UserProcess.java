@@ -31,10 +31,17 @@ public class UserProcess {
 		for (int i = 0; i < numPhysPages; i++)
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
 
+		boolean intStatus = Machine.interrupt().disable();
 		// When any process is started, its file descriptors 0 and 1 must refer to
 		// standard input and standard output.
 		files[0] = UserKernel.console.openForReading();
 		files[1] = UserKernel.console.openForWriting();
+
+		pid = idCounter;
+		idCounter = idCounter + 1;
+		parent = null;
+
+		Machine.interrupt().restore(intStatus);
 
 		// acquire lock
 	}
@@ -955,6 +962,7 @@ public class UserProcess {
 	private UserProcess parent;
 	private UserProcess child;
 	private int childExitedStatus = -1;
+	private static int idCounter = 0;
 
 	final int pageSizeCopy = 1024;
 	public LinkedList<Integer> children = new LinkedList<Integer>();
