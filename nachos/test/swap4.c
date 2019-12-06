@@ -15,41 +15,40 @@
  * 11/29/15
  */
 
-int bigbufnum = 16 * 1024 / sizeof (int);
-int bigbuf[16 * 1024 / sizeof (int)];
+int bigbufnum = 16 * 1024 / sizeof(int);
+int bigbuf[16 * 1024 / sizeof(int)];
 
-void
-init_buf ()
+void init_buf()
 {
     int i;
 
-    for (i = 0; i < bigbufnum; i++) {
-	bigbuf[i] = i;
+    for (i = 0; i < bigbufnum; i++)
+    {
+        bigbuf[i] = i;
     }
 }
 
-void
-validate_buf ()
+void validate_buf()
 {
     int i;
 
-    for (i = 0; i < bigbufnum; i++) {
-	if (bigbuf[i] != i) {
-	    // encode both the index and the bad data value in the status...
-	    int s = i * 1000 * 1000;
-	    s += bigbuf[i];
-	    exit (s);
-	}
+    for (i = 0; i < bigbufnum; i++)
+    {
+        if (bigbuf[i] != i)
+        {
+            // encode both the index and the bad data value in the status...
+            int s = i * 1000 * 1000;
+            s += bigbuf[i];
+            exit(s);
+        }
     }
 }
 
-
-int
-main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    init_buf ();
-    validate_buf ();
-    validate_buf ();
-    validate_buf ();
-    exit (-1000);
+    init_buf();
+    validate_buf();
+    validate_buf();
+    validate_buf();
+    exit(-1000);
 }
