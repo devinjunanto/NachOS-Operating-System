@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	val = write3();
 	val = write4();
 	val = write5();
-	//val = SNEK(argc, *argv);
+	val = SNEK(argc, *argv);
 	return val;
 }
 
