@@ -232,6 +232,7 @@ public class VMProcess extends UserProcess {
 
 		switch (cause) {
 		case Processor.exceptionPageFault:
+			System.out.println("\nHere in ACTUAL page Fault");
 			int vAddr = processor.readRegister(Processor.regBadVAddr);
 			faultHandler(vAddr);
 		default:
