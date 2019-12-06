@@ -19,7 +19,7 @@ public class VMKernel extends UserKernel {
 		pageSize = Machine.processor().getNumPhysPages();
 		int i = 0;
 		while (i < pageSize) {
-			clkCtr.add(new Integer[] { -1, - 1 });
+			clkCtr.add(new Integer[] { -1, -1 });
 			processes.add(null);
 			i++;
 		}
@@ -57,9 +57,9 @@ public class VMKernel extends UserKernel {
 		super.terminate();
 	}
 
-	public static int pageReplacement(VMProcess process, int vpn) {
-		int[] clockNumbers = clkCtr.get(clkIdx);
-		int clock = clockNumbers[1];
+	public static int pageReplacement(VMProcess newProcess, int vpn) {
+		// int[] clockNumbers = clkCtr.get(clkIdx);
+		int clock = clkCtr.get(clkIdx)[1];
 		while (clock > 0) {
 			clockNumbers[1] = 0;
 			clkIdx++;
@@ -67,34 +67,34 @@ public class VMKernel extends UserKernel {
 				clkIdx = 0;
 			clock = clockNumbers[1];
 		}
-		int a = clkIdx;
-		VMProcess vProcess = processes.get(a);
-		vProcess.unloadSections(clkCtr.get(a)[0].intValue());
-		clkCtr.set(a, new Integer[] { vpn, 1 });
-		pArray.set(a, process);
+		int ppnToReplace = clkIdx;
+		VMProcess oldProcess = processes.get(ppnToReplace);
+		oldProcess.unloadSections(clkCtr.get(ppnToReplace)[0].intValue());
+		clkCtr.set(ppnToReplace, new Integer[] { vpn, 1 });
+		processes.set(ppnToReplace, newProcess);
 		return a;
 	}
 
-	public static void printTable() {
-		System.out.print("\n");
-		int i = 0;
-		while (i < 40) {
-			System.out.print("-");
-			i++;
-		}
-		System.out.print("\n");
-		i = 0;
-		while (i < clkCrt.size()) {
-			System.out.print(i + "\t|\t" + clkCtr.get(i_[0] + "\t|\t" + clkCtr.get(i)[1] + "\n"));
-			i++;
-		}
-		i = 0;
-		while (i < 40) {
-			System.out.print("-");
-			i++;
-		}
-		System.out.print("\n");
-	}
+	// public static void printTable() {
+	// 	System.out.print("\n");
+	// 	int i = 0;
+	// 	while (i < 40) {
+	// 		System.out.print("-");
+	// 		i++;
+	// 	}
+	// 	System.out.print("\n");
+	// 	i = 0;
+	// 	while (i < clkCtr.size()) {
+	// 		System.out.print(i + "\t|\t" + clkCtr.get(i_[0] + "\t|\t" + clkCtr.get(i)[1] + "\n"));
+	// 		i++;
+	// 	}
+	// 	i = 0;
+	// 	while (i < 40) {
+	// 		System.out.print("-");
+	// 		i++;
+	// 	}
+	// 	System.out.print("\n");
+	// }
 
 	public static int swpOut(int ppn) {
 		int swpPg = 0;
