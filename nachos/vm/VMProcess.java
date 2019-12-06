@@ -227,11 +227,14 @@ public class VMProcess extends UserProcess {
 	public void handleException(int cause) {
 		Processor processor = Machine.processor();
 
+		System.out.println("\nCAUSE - " + cause);
+
 		switch (cause) {
 		case Processor.exceptionPageFault:
 			int vAddr = processor.readRegister(Processor.regBadVAddr);
 			faultHandler(vAddr);
 		default:
+			System.out.println("\nHere in default");
 			super.handleException(cause);
 			break;
 		}
