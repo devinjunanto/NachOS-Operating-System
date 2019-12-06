@@ -235,6 +235,7 @@ public class VMProcess extends UserProcess {
 			System.out.println("\nHere in ACTUAL page Fault");
 			int vAddr = processor.readRegister(Processor.regBadVAddr);
 			faultHandler(vAddr);
+			break;
 		default:
 			System.out.println("\nHere in default");
 			super.handleException(cause);
