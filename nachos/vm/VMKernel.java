@@ -19,7 +19,7 @@ public class VMKernel extends UserKernel {
 		pageSize = Machine.processor().getNumPhysPages();
 		int i = 0;
 		while (i < pageSize) {
-			clkCtr.add(new Integer[] { -1. - 1 });
+			clkCtr.add(new Integer[] { -1, - 1 });
 			processes.add(null);
 			i++;
 		}
@@ -69,7 +69,7 @@ public class VMKernel extends UserKernel {
 		}
 		int a = clkIdx;
 		VMProcess vProcess = processes.get(a);
-		vProcess.unloadSection(clkCtr.get(a)[0].intValue());
+		vProcess.unloadSections(clkCtr.get(a)[0].intValue());
 		clkCtr.set(a, new Integer[] { vpn, 1 });
 		pArray.set(a, process);
 		return a;

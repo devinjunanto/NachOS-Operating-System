@@ -155,7 +155,7 @@ public class VMProcess extends UserProcess {
 			transferredCount += numToCopy;
 			thisOffset = thisOffset + numToCopy;
 
-			//Make page dirty 
+			// Make page dirty
 			pageTable[currentBytePageIndex].dirty = true;
 		}
 		return transferredCount;
@@ -201,6 +201,20 @@ public class VMProcess extends UserProcess {
 	 */
 	protected void unloadSections() {
 		super.unloadSections();
+	}
+
+	public void unloadSections(int ppn) {
+		if (isDirty(ppn)) {
+			int ppnFromTable = pageTable[ppn].ppn;
+			int pAddr = VMKernel.swpOut(ppnFromTable);
+			swapMap.set(ppn, pAddr);
+		}
+		pageTable[ppn].valid = true;
+		pageTable[ppn].ppn = -1; // make it available
+	}
+
+	private bool isDirty(int ppn) {
+		return pageTable[ppn].dirty;
 	}
 
 	/**
