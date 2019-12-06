@@ -31,7 +31,7 @@ public class VMKernel extends UserKernel {
 	 */
 	public void initialize(String[] args) {
 		super.initialize(args);
-		swp = ThreadedKernel.fileSystem.open("swap", true);
+		currentFile = ThreadedKernel.fileSystem.open("swap", true);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class VMKernel extends UserKernel {
 	 * Terminate this kernel. Never returns.
 	 */
 	public void terminate() {
-		swp.close();
+		currentFile.close();
 		ThreadedKernel.fileSystem.remove("swap");
 		super.terminate();
 	}
@@ -72,7 +72,7 @@ public class VMKernel extends UserKernel {
 		oldProcess.unloadSections(clkCtr.get(ppnToReplace)[0].intValue());
 		clkCtr.set(ppnToReplace, new Integer[] { vpn, 1 });
 		processes.set(ppnToReplace, newProcess);
-		return a;
+		return ppnToReplace;
 	}
 
 	// public static void printTable() {
@@ -98,22 +98,25 @@ public class VMKernel extends UserKernel {
 	// }
 
 	public static int swpOut(int ppn) {
-		int swpPg = 0;
-		if (swpAd.size() == 0) {
-			swpPg = currSwpPg;
-			currSwpPg++;
+		int swapIndex = 0;
+		if (freeToSwap.size() == 0) {
+			// No pages to swap
+			swapIndex = currPg;
+			// Increment Current Page
+			currPg++;
 		} else {
-			swpPg = SwpAd.pop();
+			// Can swap
+			swapIndex = freeToSwap.pop();
 		}
-
 		byte[] memory = Machine.processor().getMemory();
-		int written = swp.write(swpPg * Processor.pageSize, memory, ppn * Processor.pageSize, Processor.pageSize);
-		return swpPg;
+		int written = currentFile.write(swapIndex * Processor.pageSize, memory, ppn * Processor.pageSize,
+				Processor.pageSize);
+		return swapIndex;
 	}
 
-	public static byte[] swpIn(int swpPg) {
+	public static byte[] swpIn(int swapIndex) {
 		byte[] content = new byte[Processor.pageSize];
-		swp.read(swpPg * Processor.pageSize, content, 0, Processor.pageSize);
+		currentFile.read(swapIndex * Processor.pageSize, content, 0, Processor.pageSize);
 		return content;
 	}
 
@@ -137,9 +140,9 @@ public class VMKernel extends UserKernel {
 
 	private static int clkIdx;
 
-	private static OpenFile swp;
+	private static OpenFile currentFile;
 
-	public static LinkedList<Integer> swpAd = new LinkedList<Integer>();
+	public static LinkedList<Integer> freeToSwap = new LinkedList<Integer>();
 
-	private static int currSwpPg = 0;
+	private static int currPg = 0;
 }
