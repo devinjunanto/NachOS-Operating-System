@@ -182,10 +182,10 @@ public class VMProcess extends UserProcess {
 		for (int i = 0; i < coff.getNumSections(); i++) {
 			CoffSection coffSec = coff.getSection(i);
 
-			for (int y = 0; y < section.getLength(); y++) {
+			for (int y = 0; y < coffSec.getLength(); y++) {
 				coffMap.add(i);
-				int vpn = section.getFirstVPN() + y;
-				pageTable[vpn].readOnly = section.readOnly;
+				int vpn = coffSec.getFirstVPN() + y;
+				pageTable[vpn].readOnly = coffSec.readOnly;
 				pageTable[vpn].dirty = false;
 				pageTable[vpn].used = false;
 				pageTable[vpn].valid = false;
@@ -229,7 +229,7 @@ public class VMProcess extends UserProcess {
 
 		switch (cause) {
 		case Processor.exceptionPageFault:
-			int vAddr = processor.readRegister(processor.readregBadVAddr);
+			int vAddr = processor.readRegister(Processor.regBadVAddr);
 			faultHandler(vAddr);
 		default:
 			super.handleException(cause);
