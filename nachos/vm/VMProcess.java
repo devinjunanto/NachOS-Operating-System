@@ -185,7 +185,7 @@ public class VMProcess extends UserProcess {
 			for (int y = 0; y < coffSec.getLength(); y++) {
 				coffMap.add(i);
 				int vpn = coffSec.getFirstVPN() + y;
-				pageTable[vpn].readOnly = coffSec.readOnly;
+				pageTable[vpn].readOnly = coffSec.isReadOnly();
 				pageTable[vpn].dirty = false;
 				pageTable[vpn].used = false;
 				pageTable[vpn].valid = false;
@@ -241,7 +241,7 @@ public class VMProcess extends UserProcess {
 	// fault exception. Modify your exception handler to catch this exception and
 	// handle it by preparing the requested page on demand.
 	private void faultHandler(int vAddr) {
-		VMKernel.vmLock.acquire();
+		VMKernel.physicalLock.acquire();
 
 		int vpn = Processor.pageFromAddress(vAddr);
 		System.out.println("\nPAGE FAULT on page: " + vpn + "(" + vAddr + ")");
@@ -277,7 +277,7 @@ public class VMProcess extends UserProcess {
 				entry.readOnly = section.isReadOnly();
 			} else {
 				byte[] copyFrom = new byte[pageSize]; // Zero filled by default, will be copied into physical
-				byte[] memory = Machine.processor.getMemory();
+				byte[] memory = Machine.processor().getMemory();
 				int physAddress = ppn * pageSize;
 				System.arraycopy(copyFrom, 0, memory, physAddress, pageSize);
 			}
@@ -285,7 +285,7 @@ public class VMProcess extends UserProcess {
 			// Handle Dirty entry swaping
 			System.out.println("\n Here in handle swap \n");
 		}
-		VMKernel.vmLock.release();
+		VMKernel.physicalLock.release();
 	}
 
 	private ArrayList<Integer> coffMap = new ArrayList<Integer>();
