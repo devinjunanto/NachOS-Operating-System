@@ -18,9 +18,8 @@ public class VMKernel extends UserKernel {
 		super();
 		pageSize = Machine.processor().getNumPhysPages();
 		int i = 0;
-		while(i < pageSize)
-		{
-			clkCtr.add(new Integer[]{-1.-1});
+		while (i < pageSize) {
+			clkCtr.add(new Integer[] { -1. - 1 });
 			processes.add(null);
 			i++;
 		}
@@ -58,54 +57,51 @@ public class VMKernel extends UserKernel {
 		super.terminate();
 	}
 
-	public static int pageReplacement(int vpn, VMProcess process){
-		int clock = clkCtr.get(clkIdx)[1];
-		while(clock > 0)
-		{
-			clkCtr.get(clkIdx)[1] = 0;
+	public static int pageReplacement(VMProcess process, int vpn) {
+		int[] clockNumbers = clkCtr.get(clkIdx);
+		int clock = clockNumbers[1];
+		while (clock > 0) {
+			clockNumbers[1] = 0;
 			clkIdx++;
-			if(clkIdx == pageSize) clkIdx = 0;
-			clock = clkCtr.get(clkIdx < 1];
+			if (clkIdx == pageSize)
+				clkIdx = 0;
+			clock = clockNumbers[1];
 		}
 		int a = clkIdx;
 		VMProcess vProcess = processes.get(a);
 		vProcess.unloadSection(clkCtr.get(a)[0].intValue());
-		clkCtr.set(a, new Integer[]{vpn, 1});
+		clkCtr.set(a, new Integer[] { vpn, 1 });
 		pArray.set(a, process);
 		return a;
 	}
 
-	public static void printTable(){
+	public static void printTable() {
 		System.out.print("\n");
 		int i = 0;
-		while (i < 40)
-		{
-			System.out.pring("-");
+		while (i < 40) {
+			System.out.print("-");
 			i++;
 		}
 		System.out.print("\n");
 		i = 0;
-		while (i < clkCrt.size())
-		{
-			System.out.print(i + "\t|\t" +clkCtr.get(i_[0] + "\t|\t" + clkCtr.get(i)[1] + "\n");
+		while (i < clkCrt.size()) {
+			System.out.print(i + "\t|\t" + clkCtr.get(i_[0] + "\t|\t" + clkCtr.get(i)[1] + "\n"));
 			i++;
 		}
 		i = 0;
-		while (i < 40)
-		{
+		while (i < 40) {
 			System.out.print("-");
 			i++;
 		}
 		System.out.print("\n");
 	}
 
-	public static int swpOut(int ppn){
+	public static int swpOut(int ppn) {
 		int swpPg = 0;
-		if(swpAd.size() == 0){
+		if (swpAd.size() == 0) {
 			swpPg = currSwpPg;
 			currSwpPg++;
-		}
-		else{
+		} else {
 			swpPg = SwpAd.pop();
 		}
 
@@ -114,19 +110,18 @@ public class VMKernel extends UserKernel {
 		return swpPg;
 	}
 
-	public static byte[] swpIn(int swpPg){
+	public static byte[] swpIn(int swpPg) {
 		byte[] content = new byte[Processor.pageSize];
-		swp.read(swpPg*Processor.pageSize, content, 0, Processor.pageSize);
+		swp.read(swpPg * Processor.pageSize, content, 0, Processor.pageSize);
 		return content;
 	}
 
-	public static int physPageNumber(int vpn, VMProcess process){
+	public static int physPageNumber(VMProcess process, int vpn) {
 		int ppn = physPagesAvailable.pop();
-		clkCtr.set(ppn, new Integer[]{vpn, 1});
+		clkCtr.set(ppn, new Integer[] { vpn, 1 });
 		processes.set(ppn, process);
 		return ppn;
 	}
-
 
 	// dummy variables to make javac smarter
 	private static VMProcess dummy1 = null;

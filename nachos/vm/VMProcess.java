@@ -35,6 +35,133 @@ public class VMProcess extends UserProcess {
 	}
 
 	/**
+	 * Transfer data from this process's virtual memory to the specified array. This
+	 * method handles address translation details. This method must <i>not</i>
+	 * destroy the current process if an error occurs, but instead should return the
+	 * number of bytes successfully copied (or zero if no data could be copied).
+	 * 
+	 * @param vaddr  the first byte of virtual memory to read.
+	 * @param data   the array where the data will be stored.
+	 * @param offset the first byte to write in the array.
+	 * @param length the number of bytes to transfer from virtual memory to the
+	 *               array.
+	 * @return the number of bytes successfully transferred.
+	 */
+	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
+		// System.out.println("\n\n IN READ VIRTUAL MEMORY ");
+		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
+
+		byte[] memory = Machine.processor().getMemory();
+		int physSpace = pageSize * numPages;
+
+		// for now, just assume that virtual addresses equal physical addresses
+		if (vaddr < 0 || vaddr >= physSpace)
+			return -1;
+
+		int transferredCount = 0;// Counter for bytes transferred from mem
+		int thisOffset = offset; // Offset while iterating
+
+		int currLocation = vaddr;
+		int lastLocationToCopy = vaddr + length;
+		// System.out.println("\nHere in READ 2 currLoc - "+currLocation+" , lastLoc -
+		// "+lastLocationToCopy);
+
+		// Now we copy from first byte to last byte inclusively
+		while (currLocation < lastLocationToCopy) {
+			// System.out.println("\nHere in READ 2 currLoc - "+currLocation);
+			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
+			int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
+			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
+			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
+
+			if (pageTable[currentBytePageIndex].valid != true)
+				faultHandler(currLocation);
+			// Get ppn from the page table entry at vpn
+			int ppn = pageTable[currentBytePageIndex].ppn;
+
+			// Compute physical address -- (pageSize x ppn) + pageOffset
+			int physAddress = (ppn * pageSize) + currentPageOffset;
+
+			// Either read all in this page, or read num left in this operation
+			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
+
+			// Now Arraycopy should work
+			System.arraycopy(memory, physAddress, data, thisOffset, numToCopy);
+
+			currLocation += numToCopy; // inc current counter
+			transferredCount += numToCopy;
+			thisOffset = thisOffset + numToCopy;
+		}
+		return transferredCount;
+	}
+
+	/**
+	 * Transfer data from the specified array to this process's virtual memory. This
+	 * method handles address translation details. This method must <i>not</i>
+	 * destroy the current process if an error occurs, but instead should return the
+	 * number of bytes successfully copied (or zero if no data could be copied).
+	 * 
+	 * @param vaddr  the first byte of virtual memory to write.
+	 * @param data   the array containing the data to transfer.
+	 * @param offset the first byte to transfer from the array.
+	 * @param length the number of bytes to transfer from the array to virtual
+	 *               memory.
+	 * @return the number of bytes successfully transferred.
+	 */
+	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
+		Lib.assertTrue(offset >= 0 && length >= 0 && offset + length <= data.length);
+
+		byte[] memory = Machine.processor().getMemory();
+
+		// for now, just assume that virtual addresses equal physical addresses
+		if (vaddr < 0 || vaddr >= memory.length)
+			return -1;
+
+		int transferredCount = 0;// Counter for bytes transferred from mem
+
+		int currLocation = vaddr;
+		int lastLocationToCopy = vaddr + length;
+		int thisOffset = offset;
+
+		while (currLocation < lastLocationToCopy) {
+			// Get vpn from vaddr -- Processor.pageFromAddress(vaddr)
+			int currentBytePageIndex = Machine.processor().pageFromAddress(currLocation);
+			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
+			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
+
+			if (pageTable[currentBytePageIndex] == null) {
+				if (currLocation == vaddr)
+					return -1;
+				else
+					break;
+			}
+
+			if (!pageTable[currentBytePageIndex].valid)
+				faultHandler(currLocation);
+
+			// Get ppn from the page table entry at vpn
+			int physPageNum = pageTable[currentBytePageIndex].ppn;
+
+			// Compute physical address -- (pageSize x ppn) + pageOffset
+			int physAddress = (physPageNum * pageSize) + currentPageOffset;
+
+			// Either read all in this page, or read num left in this operation
+			int numToCopy = Math.min((lastLocationToCopy - currLocation), (pageSize - currentPageOffset));
+
+			// Now Arraycopy should work
+			System.arraycopy(data, thisOffset, memory, physAddress, numToCopy);
+
+			currLocation = currLocation + numToCopy; // inc current counter
+			transferredCount += numToCopy;
+			thisOffset = thisOffset + numToCopy;
+
+			//Make page dirty 
+			pageTable[currentBytePageIndex].dirty = true;
+		}
+		return transferredCount;
+	}
+
+	/**
 	 * Initializes page tables for this process so that the executable can be
 	 * demand-paged.
 	 * 
@@ -118,8 +245,8 @@ public class VMProcess extends UserProcess {
 			ppn = VMKernel.physPageNumber(this, vpn);
 		} else {
 			// No physical pages available
-			// ppn = VMKernel.pageReplacement(this, vpn);
-			ppn = -1;
+			ppn = VMKernel.pageReplacement(this, vpn);
+			// ppn = VMKernel.
 			System.out.println("\n HERE no phys pages !");
 		}
 
@@ -127,7 +254,7 @@ public class VMProcess extends UserProcess {
 		entry.ppn = ppn;
 		entry.valid = true;
 
-		if (!entry.dirty) {
+		if (!entry.dirty && entry.valid) {
 			// Entry is valid and not dirty
 			if (coffNum >= 0) {
 				CoffSection section = coff.getSection(coffNum);
