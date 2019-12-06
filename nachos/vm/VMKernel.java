@@ -61,11 +61,11 @@ public class VMKernel extends UserKernel {
 		// int[] clockNumbers = clkCtr.get(clkIdx);
 		int clock = clkCtr.get(clkIdx)[1];
 		while (clock > 0) {
-			clockNumbers[1] = 0;
+			clkCtr.get(clkIdx)[1] = 0;
 			clkIdx++;
 			if (clkIdx == pageSize)
 				clkIdx = 0;
-			clock = clockNumbers[1];
+			clock = clkCtr.get(clkIdx)[1];
 		}
 		int ppnToReplace = clkIdx;
 		VMProcess oldProcess = processes.get(ppnToReplace);
@@ -76,24 +76,25 @@ public class VMKernel extends UserKernel {
 	}
 
 	// public static void printTable() {
-	// 	System.out.print("\n");
-	// 	int i = 0;
-	// 	while (i < 40) {
-	// 		System.out.print("-");
-	// 		i++;
-	// 	}
-	// 	System.out.print("\n");
-	// 	i = 0;
-	// 	while (i < clkCtr.size()) {
-	// 		System.out.print(i + "\t|\t" + clkCtr.get(i_[0] + "\t|\t" + clkCtr.get(i)[1] + "\n"));
-	// 		i++;
-	// 	}
-	// 	i = 0;
-	// 	while (i < 40) {
-	// 		System.out.print("-");
-	// 		i++;
-	// 	}
-	// 	System.out.print("\n");
+	// System.out.print("\n");
+	// int i = 0;
+	// while (i < 40) {
+	// System.out.print("-");
+	// i++;
+	// }
+	// System.out.print("\n");
+	// i = 0;
+	// while (i < clkCtr.size()) {
+	// System.out.print(i + "\t|\t" + clkCtr.get(i_[0] + "\t|\t" + clkCtr.get(i)[1]
+	// + "\n"));
+	// i++;
+	// }
+	// i = 0;
+	// while (i < 40) {
+	// System.out.print("-");
+	// i++;
+	// }
+	// System.out.print("\n");
 	// }
 
 	public static int swpOut(int ppn) {

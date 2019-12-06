@@ -213,7 +213,7 @@ public class VMProcess extends UserProcess {
 		pageTable[ppn].ppn = -1; // make it available
 	}
 
-	private Bool isDirty(int ppn) {
+	private boolean isDirty(int ppn) {
 		return pageTable[ppn].dirty;
 	}
 
