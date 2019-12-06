@@ -228,6 +228,7 @@ public class VMProcess extends UserProcess {
 		Processor processor = Machine.processor();
 
 		System.out.println("\nCAUSE - " + cause);
+		System.out.println("\nSHOULD BE  - " + Processor.exceptionPageFault);
 
 		switch (cause) {
 		case Processor.exceptionPageFault:
