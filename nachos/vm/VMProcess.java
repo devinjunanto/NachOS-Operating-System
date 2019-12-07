@@ -239,6 +239,7 @@ public class VMProcess extends UserProcess {
 			break;
 		default:
 			System.out.println("\nHere in default, cause - "+cause);
+			VMKernel.printTable();
 			super.handleException(cause);
 			break;
 		}
