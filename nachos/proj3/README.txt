@@ -10,7 +10,7 @@ Increment the current page until it can be swap
 Swap the page
 
 swpIn
-Swap the page
+Return the swap content
 
 physPageNumber
 Get the physical page number
