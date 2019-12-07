@@ -27,7 +27,7 @@ public class UserProcess {
 	public UserProcess() {
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
-		pinnedTable = new Array<Pair<Boolean, TranslationEntry>>[numPhysPages];
+		pinnedTable = new ArrayList<Pair<Boolean, TranslationEntry>>[numPhysPages];
 
 		for (int i = 0; i < numPhysPages; i++) {
 			TranslationEntry entry = new TranslationEntry(i, i, true, false, false, false);
