@@ -108,7 +108,7 @@ public class VMProcess extends UserProcess {
 			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
 
 			// if(VMKernel.allPinned.is
-			VMKernel.physicalLock.release();
+			// VMKernel.physicalLock.release();
 			VMKernel.allPinned.wakeAll();
 
 		}
