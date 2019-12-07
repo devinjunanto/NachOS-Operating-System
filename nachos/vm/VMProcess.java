@@ -276,9 +276,11 @@ public class VMProcess extends UserProcess {
 		entry.ppn = ppn;
 		entry.valid = true;
 
+		System.out.println("\n faultHandler with a new ppn -  !"+ppn);
 		// Initialize the entry and allocate page
 		if (!entry.dirty && entry.valid) {
 			// Entry is valid and not dirty
+			System.out.println("\n faultHandler Valid & not dirty ppn");
 			if (coffNum >= 0) {
 				CoffSection section = coff.getSection(coffNum);
 				int pageOffset = vpn - section.getFirstVPN();

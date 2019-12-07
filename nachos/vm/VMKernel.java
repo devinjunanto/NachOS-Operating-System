@@ -110,6 +110,7 @@ public class VMKernel extends UserKernel {
 	// }
 
 	public static int swpOut(int ppn) {
+		System.out.println("\nIn SWP OUT");
 		int swapIndex = 0;
 		if (freeToSwap.size() == 0) {
 			// No pages to swap
@@ -123,20 +124,25 @@ public class VMKernel extends UserKernel {
 		byte[] memory = Machine.processor().getMemory();
 		int written = currentFile.write(swapIndex * Processor.pageSize, memory, ppn * Processor.pageSize,
 				Processor.pageSize);
+		System.out.println("\nExit SWP OUT");
 		return swapIndex;
 	}
 
 	/* Helper Method that will create a swap file */
 	public static byte[] swpIn(int swapIndex) {
+		System.out.println("\nEnter SWP IN");
 		byte[] content = new byte[Processor.pageSize];
 		currentFile.read(swapIndex * Processor.pageSize, content, 0, Processor.pageSize);
+		System.out.println("\nExit SWP IN");
 		return content;
 	}
 
 	public static int physPageNumber(VMProcess process, int vpn) {
+		System.out.println("\nEnter physPageNum");
 		int ppn = physPagesAvailable.pop();
 		clkCtr.set(ppn, new Integer[] { vpn, 1 });
 		processes.set(ppn, process);
+		System.out.println("\nExit physPageNum");
 		return ppn;
 	}
 
