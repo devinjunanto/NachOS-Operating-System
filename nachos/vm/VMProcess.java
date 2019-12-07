@@ -188,7 +188,7 @@ public class VMProcess extends UserProcess {
 				pageTable[vpn].readOnly = coffSec.isReadOnly();
 				// Dont Load a physical page, instead mark table entries as invalid
 				pageTable[vpn].dirty = false;
-				spageTable[vpn].used = false;
+				pageTable[vpn].used = false;
 				pageTable[vpn].valid = false;
 				pageTable[vpn].vpn = y;
 				// Also do not initialize the page by, e.g., loading from the COFF file.
