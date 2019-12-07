@@ -82,7 +82,9 @@ public class VMKernel extends UserKernel {
 		}
 
 		if (pinnedOut) {
+			physicalLock.release();
 			allPinned.sleep();
+			physicalLock.acquire();
 		}
 
 		int clock = clkCtr.get(clkIdx)[1];
