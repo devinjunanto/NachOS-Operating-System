@@ -28,8 +28,11 @@ public class UserProcess {
 	public UserProcess() {
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
+		pinnedTable = new Integer[numPhysPages];
+
 		for (int i = 0; i < numPhysPages; i++)
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
+			pinnedTable[i] = 0; 
 
 		boolean intStatus = Machine.interrupt().disable();
 		// When any process is started, its file descriptors 0 and 1 must refer to
@@ -988,6 +991,8 @@ public class UserProcess {
 
 	/** This process's page table. */
 	protected TranslationEntry[] pageTable;
+
+	protected Integer[] pinnedTable;
 
 	/** The number of contiguous pages occupied by the program. */
 	protected int numPages;

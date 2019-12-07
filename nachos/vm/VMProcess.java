@@ -317,6 +317,8 @@ public class VMProcess extends UserProcess {
 	private static final int pageSize = Processor.pageSize;
 	private ArrayList<Integer> swapMap = new ArrayList<Integer>();
 
+	private static int isPinned;
+
 	private static final char dbgProcess = 'a';
 
 	private static final char dbgVM = 'v';

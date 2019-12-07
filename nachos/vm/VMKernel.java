@@ -71,7 +71,7 @@ public class VMKernel extends UserKernel {
 		int clock = clkCtr.get(clkIdx)[1];
 		while (clock > 0) {
 			clkCtr.get(clkIdx)[1] = 0;
-			System.out.println("\nClockCounter - ");
+			System.out.println("ClockCounter - ");
 			clkIdx++;
 			if (clkIdx == pageSize)
 				clkIdx = 0;
@@ -166,4 +166,6 @@ public class VMKernel extends UserKernel {
 	public static LinkedList<Integer> freeToSwap = new LinkedList<Integer>();
 
 	private static int currPg = 0;
+
+	public static ArrayList<Integer> pinned = new ArrayList<Integer>();
 }
