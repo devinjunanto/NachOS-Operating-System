@@ -110,7 +110,7 @@ public class VMProcess extends UserProcess {
 			// if(VMKernel.allPinned.is
 			// VMKernel.physicalLock.release();
 			VMKernel.physicalLock.acquire();
-			wakePinned();
+			VMKernel.wakePinned();
 
 		}
 		return transferredCount;

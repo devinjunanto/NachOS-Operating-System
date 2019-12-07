@@ -35,7 +35,7 @@ public class VMKernel extends UserKernel {
 		allPinned = new Condition(pinLock);
 	}
 
-	public void wakePinned(){
+	public static void wakePinned(){
 		physicalLock.acquire();
 		allPinned.wake();
 
