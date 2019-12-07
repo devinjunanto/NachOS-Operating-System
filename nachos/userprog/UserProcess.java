@@ -7,6 +7,7 @@ import nachos.vm.*;
 import java.util.*;
 import java.awt.image.Kernel;
 import java.io.EOFException;
+import java.util.Array;
 
 /**
  * Encapsulates the state of a user process that is not contained in its user
