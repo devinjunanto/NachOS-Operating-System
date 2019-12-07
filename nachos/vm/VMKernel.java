@@ -57,8 +57,14 @@ public class VMKernel extends UserKernel {
 		super.terminate();
 	}
 
+	/*
+	 * Page replacement helper to free up a physical page frame to handle page
+	 * faults: Helps to Evict pages once physical memory becomes full.
+	 */
 	public static int pageReplacement(VMProcess newProcess, int vpn) {
 		// int[] clockNumbers = clkCtr.get(clkIdx);
+
+		// Need to select a victim page to evict from memory, using clock algorithm
 		int clock = clkCtr.get(clkIdx)[1];
 		while (clock > 0) {
 			clkCtr.get(clkIdx)[1] = 0;
@@ -67,8 +73,11 @@ public class VMKernel extends UserKernel {
 				clkIdx = 0;
 			clock = clkCtr.get(clkIdx)[1];
 		}
-		int ppnToReplace = clkIdx;
+		int ppnToReplace = clkIdx; // victim page
+
 		VMProcess oldProcess = processes.get(ppnToReplace);
+
+		// Then mark the TranslationEntry for that page as invalid - done in unload
 		oldProcess.unloadSections(clkCtr.get(ppnToReplace)[0].intValue());
 		clkCtr.set(ppnToReplace, new Integer[] { vpn, 1 });
 		processes.set(ppnToReplace, newProcess);
@@ -114,6 +123,7 @@ public class VMKernel extends UserKernel {
 		return swapIndex;
 	}
 
+	/* Helper Method that will create a swap file */
 	public static byte[] swpIn(int swapIndex) {
 		byte[] content = new byte[Processor.pageSize];
 		currentFile.read(swapIndex * Processor.pageSize, content, 0, Processor.pageSize);

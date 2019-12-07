@@ -186,8 +186,9 @@ public class VMProcess extends UserProcess {
 				coffMap.add(i);
 				int vpn = coffSec.getFirstVPN() + y;
 				pageTable[vpn].readOnly = coffSec.isReadOnly();
+				// Dont Load a physical page, instead mark table entries as invalid
 				pageTable[vpn].dirty = false;
-				pageTable[vpn].used = false;
+				spageTable[vpn].used = false;
 				pageTable[vpn].valid = false;
 				pageTable[vpn].vpn = y;
 				// Also do not initialize the page by, e.g., loading from the COFF file.
@@ -274,6 +275,7 @@ public class VMProcess extends UserProcess {
 		entry.ppn = ppn;
 		entry.valid = true;
 
+		// Initialize the entry and allocate page
 		if (!entry.dirty && entry.valid) {
 			// Entry is valid and not dirty
 			if (coffNum >= 0) {
@@ -290,6 +292,14 @@ public class VMProcess extends UserProcess {
 		} else {
 			// Handle Dirty entry swaping
 			System.out.println("\n Here in handle swap \n");
+			int swpAddr = swapMap.get(vpn);
+			VMKernel.freeToSwap.push(swpAddr);
+
+			// Use helper method to get data that we swap into memory
+			byte[] dataToSwapWith = VMKernel.swpIn(swpAddr);
+			swapMap.set(vpn, -1); // unlink swap Addresss from vpn
+			int contentSize = vpn * pageSize;
+			writeVirtualMemory(contentSize, dataToSwapWith, 0, pageSize);
 		}
 		VMKernel.physicalLock.release();
 	}
