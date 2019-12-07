@@ -7,6 +7,7 @@ import nachos.vm.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.locks.Condition;
+import javafx.util.Pair; 
 
 /**
  * A kernel that can support multiple demand-paging user processes.

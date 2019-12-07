@@ -5,6 +5,7 @@ import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
 import java.util.*;
+import javafx.util.Pair;
 
 import java.awt.image.Kernel;
 import java.io.EOFException;
