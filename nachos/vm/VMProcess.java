@@ -282,10 +282,12 @@ public class VMProcess extends UserProcess {
 			// Entry is valid and not dirty
 			System.out.println("\n faultHandler Valid & not dirty ppn");
 			if (coffNum >= 0) {
+				System.out.println("\n CoffNum  "+coffNum+" >= 0");
 				CoffSection section = coff.getSection(coffNum);
 				int pageOffset = vpn - section.getFirstVPN();
 				section.loadPage(pageOffset, ppn);
 				entry.readOnly = section.isReadOnly();
+				System.out.println("FaultHandler Cont");
 			} else {
 				byte[] copyFrom = new byte[pageSize]; // Zero filled by default, will be copied into physical
 				byte[] memory = Machine.processor().getMemory();
