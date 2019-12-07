@@ -306,6 +306,7 @@ public class VMProcess extends UserProcess {
 			int contentSize = vpn * pageSize;
 			writeVirtualMemory(contentSize, dataToSwapWith, 0, pageSize);
 		}
+		System.out.println("\n Releasing Lock");
 		VMKernel.physicalLock.release();
 	}
 
