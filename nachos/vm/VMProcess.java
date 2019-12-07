@@ -268,9 +268,9 @@ public class VMProcess extends UserProcess {
 			ppn = VMKernel.physPageNumber(this, vpn);
 		} else {
 			// No physical pages available
+			System.out.println("\n HERE no phys pages !");
 			ppn = VMKernel.pageReplacement(this, vpn);
 			// ppn = VMKernel.
-			System.out.println("\n HERE no phys pages !");
 		}
 
 		// Now we have a ppn, so we link it to vpn and mark it valid
