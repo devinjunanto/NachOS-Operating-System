@@ -210,7 +210,7 @@ public class VMProcess extends UserProcess {
 			int pAddr = VMKernel.swpOut(ppnFromTable);
 			swapMap.set(ppn, pAddr);
 		}
-		pageTable[ppn].valid = true;
+		pageTable[ppn].valid = false;
 		pageTable[ppn].ppn = -1; // make it available
 	}
 
