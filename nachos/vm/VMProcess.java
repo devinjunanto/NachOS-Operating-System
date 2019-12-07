@@ -84,8 +84,8 @@ public class VMProcess extends UserProcess {
 				faultHandler(currLocation);
 
 			// PIN it !
-			Pair<Boolean, TranslationEntry> oldVal = pinnedTable[currentBytePageIndex];
-			pinnedTable[currentBytePageIndex] = new Pair<Boolean, TranslationEntry>(true, oldVal.getValue());
+			Pair<Boolean, TranslationEntry> oldVal = pinnedTable.get(currentBytePageIndex);
+			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(true, oldVal.getValue()));
 
 			// Get ppn from the page table entry at vpn
 			int ppn = pageTable[currentBytePageIndex].ppn;
@@ -104,8 +104,8 @@ public class VMProcess extends UserProcess {
 			thisOffset = thisOffset + numToCopy;
 
 			// PIN it !
-			oldVal = pinnedTable[currentBytePageIndex];
-			pinnedTable[currentBytePageIndex] = new Pair<Boolean, TranslationEntry>(false, oldVal.getValue());
+			oldVal = pinnedTable.get(currentBytePageIndex);
+			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
 
 		}
 		return transferredCount;
@@ -156,8 +156,8 @@ public class VMProcess extends UserProcess {
 				faultHandler(currLocation);
 
 			// PIN it !
-			Pair<Boolean, TranslationEntry> oldVal = pinnedTable[currentBytePageIndex];
-			pinnedTable[currentBytePageIndex] = new Pair<Boolean, TranslationEntry>(true, oldVal.getValue());
+			Pair<Boolean, TranslationEntry> oldVal = pinnedTable.get(currentBytePageIndex);
+			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(true, oldVal.getValue()));
 
 			// Get ppn from the page table entry at vpn
 			int physPageNum = pageTable[currentBytePageIndex].ppn;
@@ -179,8 +179,8 @@ public class VMProcess extends UserProcess {
 			pageTable[currentBytePageIndex].dirty = true;
 
 			// UnPin it!
-			oldVal = pinnedTable[currentBytePageIndex];
-			pinnedTable[currentBytePageIndex] = new Pair<Boolean, TranslationEntry>(false, oldVal.getValue());
+			oldVal = pinnedTable.get(currentBytePageIndex);
+			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
 		}
 		return transferredCount;
 	}
