@@ -35,11 +35,11 @@ public class VMKernel extends UserKernel {
 		allPinned = new Condition(pinLock);
 	}
 
-	public static void wakePinned(){
-		physicalLock.acquire();
-		allPinned.wake();
+	// public static void wakePinned(){
+	// 	physicalLock.acquire();
+	// 	allPinned.wake();
 
-	}
+	// }
 
 	/**
 	 * Test this kernel.

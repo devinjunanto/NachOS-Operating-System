@@ -85,7 +85,7 @@ public class VMProcess extends UserProcess {
 
 			// PIN it !
 			Pair<Boolean, TranslationEntry> oldVal = pinnedTable.get(currentBytePageIndex);
-			pinnedTable.set(currentBytePageIndex, new Pair<Boolean, TranslationEntry>(true, oldVal.getValue()));
+			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(true, oldVal.getValue()));
 
 			// Get ppn from the page table entry at vpn
 			int ppn = pageTable[currentBytePageIndex].ppn;
@@ -105,12 +105,12 @@ public class VMProcess extends UserProcess {
 
 			// PIN it !
 			oldVal = pinnedTable.get(currentBytePageIndex);
-			pinnedTable.set(currentBytePageIndex, new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
+			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
 
 			// if(VMKernel.allPinned.is
 			// VMKernel.physicalLock.release();
-			VMKernel.physicalLock.acquire();
-			VMKernel.wakePinned();
+			// VMKernel.physicalLock.acquire();
+			// VMKernel.allPinned.wake();
 
 		}
 		return transferredCount;
@@ -162,7 +162,7 @@ public class VMProcess extends UserProcess {
 
 			// PIN it !
 			Pair<Boolean, TranslationEntry> oldVal = pinnedTable.get(currentBytePageIndex);
-			pinnedTable.set(currentBytePageIndex, new Pair<Boolean, TranslationEntry>(true, oldVal.getValue()));
+			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(true, oldVal.getValue()));
 
 			// Get ppn from the page table entry at vpn
 			int physPageNum = pageTable[currentBytePageIndex].ppn;
@@ -185,9 +185,9 @@ public class VMProcess extends UserProcess {
 
 			// UnPin it!
 			oldVal = pinnedTable.get(currentBytePageIndex);
-			pinnedTable.set(currentBytePageIndex, new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
-
-			VMKernel.wakePinned();
+			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
+			
+			// wakePinned()		
 		}
 		return transferredCount;
 	}
