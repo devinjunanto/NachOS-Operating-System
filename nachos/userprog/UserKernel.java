@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
-import javafx.util.Pair;
 
 /**
  * A kernel that can support multiple user processes.

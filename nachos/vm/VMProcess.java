@@ -6,7 +6,6 @@ import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
-import javafx.util.Pair;
 
 /**
  * A <tt>UserProcess</tt> that supports demand-paging.

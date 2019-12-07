@@ -5,8 +5,6 @@ import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
 import java.util.*;
-import javafx.util.Pair;
-
 import java.awt.image.Kernel;
 import java.io.EOFException;
 
@@ -29,12 +27,12 @@ public class UserProcess {
 	public UserProcess() {
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
-		pinnedTable = new  ArrayList<Pair<Boolean,TranslationEntry>>[numPhysPages];
+		pinnedTable = new ArrayList<Pair<Boolean, TranslationEntry>>[numPhysPages];
 
 		for (int i = 0; i < numPhysPages; i++) {
 			TranslationEntry entry = new TranslationEntry(i, i, true, false, false, false);
 			pageTable[i] = entry;
-			pinnedTable[i] = new Pair<Boolean,TranslationEntry>(false, entry);
+			pinnedTable[i] = new Pair<Boolean, TranslationEntry>(false, entry);
 		}
 
 		boolean intStatus = Machine.interrupt().disable();
@@ -995,7 +993,7 @@ public class UserProcess {
 	/** This process's page table. */
 	protected TranslationEntry[] pageTable;
 
-	public ArrayList<Pair<Boolean,TranslationEntry>> pinnedTable;
+	public ArrayList<Pair<Boolean, TranslationEntry>> pinnedTable;
 
 	/** The number of contiguous pages occupied by the program. */
 	protected int numPages;
@@ -1013,4 +1011,26 @@ public class UserProcess {
 	private static final int pageSize = Processor.pageSize;
 
 	private static final char dbgProcess = 'a';
+}
+
+public class Pair<K, V> {
+	private final K a;
+	private final V b;
+
+	public static <K, V> Pair<K, V> createPair(K a, V b) {
+		return new Pair<K, V>(a, b);
+	}
+
+	public Pair(K A, V B) {
+		this.a = A;
+		this.b = B;
+	}
+
+	public K getKey() {
+		return a;
+	}
+
+	public V getValue() {
+		return b;
+	}
 }
