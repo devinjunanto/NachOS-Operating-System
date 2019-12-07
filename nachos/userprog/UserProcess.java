@@ -27,7 +27,7 @@ public class UserProcess {
 	public UserProcess() {
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
-		pinnedTable = new ArrayList<Pair<Boolean, TranslationEntry>>[numPhysPages];
+		pinnedTable = new Array<Pair<Boolean, TranslationEntry>>[numPhysPages];
 
 		for (int i = 0; i < numPhysPages; i++) {
 			TranslationEntry entry = new TranslationEntry(i, i, true, false, false, false);
@@ -993,7 +993,7 @@ public class UserProcess {
 	/** This process's page table. */
 	protected TranslationEntry[] pageTable;
 
-	public ArrayList<Pair<Boolean, TranslationEntry>> pinnedTable;
+	public Array<Pair<Boolean, TranslationEntry>> pinnedTable;
 
 	/** The number of contiguous pages occupied by the program. */
 	protected int numPages;
