@@ -63,6 +63,7 @@ public class VMKernel extends UserKernel {
 	 * faults: Helps to Evict pages once physical memory becomes full.
 	 */
 	public static int pageReplacement(VMProcess newProcess, int vpn) {
+		printTable();
 		// int[] clockNumbers = clkCtr.get(clkIdx);
 
 		// Need to select a victim page to evict from memory, using clock algorithm
@@ -85,7 +86,7 @@ public class VMKernel extends UserKernel {
 		oldProcess.unloadSections(clkCtr.get(ppnToReplace)[0].intValue());
 		clkCtr.set(ppnToReplace, new Integer[] { vpn, 1 });
 		processes.set(ppnToReplace, newProcess);
-		System.out.println('3');
+		printTable();
 		return ppnToReplace;
 	}
 
