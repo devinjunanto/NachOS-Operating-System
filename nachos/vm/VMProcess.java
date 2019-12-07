@@ -253,6 +253,7 @@ public class VMProcess extends UserProcess {
 		int vpn = Processor.pageFromAddress(vAddr);
 		System.out.println("\nPAGE FAULT on page: " + vpn + "(" + vAddr + ")");
 		int coffNum, ppn;
+		ppn = -1;
 
 		if (vpn < coffMap.size()) {
 			// VPN is in CoffMap !

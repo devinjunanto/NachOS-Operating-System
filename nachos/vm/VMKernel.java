@@ -65,6 +65,7 @@ public class VMKernel extends UserKernel {
 		// int[] clockNumbers = clkCtr.get(clkIdx);
 
 		// Need to select a victim page to evict from memory, using clock algorithm
+		System.out.println("1");
 		int clock = clkCtr.get(clkIdx)[1];
 		while (clock > 0) {
 			clkCtr.get(clkIdx)[1] = 0;
@@ -73,6 +74,7 @@ public class VMKernel extends UserKernel {
 				clkIdx = 0;
 			clock = clkCtr.get(clkIdx)[1];
 		}
+		System.out.println("2 - Victim ppn - "+ppnToReplace);
 		int ppnToReplace = clkIdx; // victim page
 
 		VMProcess oldProcess = processes.get(ppnToReplace);
@@ -81,6 +83,7 @@ public class VMKernel extends UserKernel {
 		oldProcess.unloadSections(clkCtr.get(ppnToReplace)[0].intValue());
 		clkCtr.set(ppnToReplace, new Integer[] { vpn, 1 });
 		processes.set(ppnToReplace, newProcess);
+		System.out.println('3');
 		return ppnToReplace;
 	}
 
