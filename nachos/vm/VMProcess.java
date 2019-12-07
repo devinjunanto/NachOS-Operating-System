@@ -109,7 +109,8 @@ public class VMProcess extends UserProcess {
 
 			// if(VMKernel.allPinned.is
 			// VMKernel.physicalLock.release();
-			VMKernel.allPinned.wakeAll();
+			VMKernel.physicalLock.acquire();
+			VMKernel.allPinned.wake();
 
 		}
 		return transferredCount;
@@ -185,6 +186,8 @@ public class VMProcess extends UserProcess {
 			// UnPin it!
 			oldVal = pinnedTable.get(currentBytePageIndex);
 			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
+			
+			VMKernel.physicalLock.acquire();
 			VMKernel.allPinned.wake();
 		}
 		return transferredCount;
