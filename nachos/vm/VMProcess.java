@@ -106,6 +106,7 @@ public class VMProcess extends UserProcess {
 			// PIN it !
 			oldVal = pinnedTable.get(currentBytePageIndex);
 			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
+			VMKernel.allPinned.wake();
 
 		}
 		return transferredCount;
@@ -181,6 +182,7 @@ public class VMProcess extends UserProcess {
 			// UnPin it!
 			oldVal = pinnedTable.get(currentBytePageIndex);
 			pinnedTable.set(currentBytePageIndex,  new Pair<Boolean, TranslationEntry>(false, oldVal.getValue()));
+			VMKernel.allPinned.wake();
 		}
 		return transferredCount;
 	}
