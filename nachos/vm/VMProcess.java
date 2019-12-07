@@ -74,8 +74,20 @@ public class VMProcess extends UserProcess {
 			// Get page offset from vaddr -- Processor.offsetFromAddress(vaddr)
 			int currentPageOffset = Machine.processor().offsetFromAddress(currLocation);
 
+			if (pageTable[currentBytePageIndex] == null) {
+				if ((lastLocationToCopy - currLocation) == 0)
+					return -1;
+				else
+					break;
+			}
+
 			if (pageTable[currentBytePageIndex].valid != true)
 				faultHandler(currLocation);
+
+			// PIN it !
+			Pair<Boolean, TranslationEntry> oldVal = pinnedTable[currentBytePageIndex];
+			pinnedTable[currentBytePageIndex] = new Pair<Boolean, TranslationEntry>(true, oldVal.getValue());
+
 			// Get ppn from the page table entry at vpn
 			int ppn = pageTable[currentBytePageIndex].ppn;
 
@@ -91,6 +103,11 @@ public class VMProcess extends UserProcess {
 			currLocation += numToCopy; // inc current counter
 			transferredCount += numToCopy;
 			thisOffset = thisOffset + numToCopy;
+
+			// PIN it !
+			oldVal = pinnedTable[currentBytePageIndex];
+			pinnedTable[currentBytePageIndex] = new Pair<Boolean, TranslationEntry>(false, oldVal.getValue());
+
 		}
 		return transferredCount;
 	}
@@ -139,6 +156,10 @@ public class VMProcess extends UserProcess {
 			if (!pageTable[currentBytePageIndex].valid)
 				faultHandler(currLocation);
 
+			// PIN it !
+			Pair<Boolean, TranslationEntry> oldVal = pinnedTable[currentBytePageIndex];
+			pinnedTable[currentBytePageIndex] = new Pair<Boolean, TranslationEntry>(true, oldVal.getValue());
+
 			// Get ppn from the page table entry at vpn
 			int physPageNum = pageTable[currentBytePageIndex].ppn;
 
@@ -157,6 +178,10 @@ public class VMProcess extends UserProcess {
 
 			// Make page dirty
 			pageTable[currentBytePageIndex].dirty = true;
+
+			// UnPin it!
+			oldVal = pinnedTable[currentBytePageIndex];
+			pinnedTable[currentBytePageIndex] = new Pair<Boolean, TranslationEntry>(false, oldVal.getValue());
 		}
 		return transferredCount;
 	}
@@ -316,8 +341,6 @@ public class VMProcess extends UserProcess {
 	private ArrayList<Integer> coffMap = new ArrayList<Integer>();
 	private static final int pageSize = Processor.pageSize;
 	private ArrayList<Integer> swapMap = new ArrayList<Integer>();
-
-	private static int isPinned;
 
 	private static final char dbgProcess = 'a';
 

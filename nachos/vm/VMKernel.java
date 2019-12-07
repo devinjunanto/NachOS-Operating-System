@@ -6,6 +6,7 @@ import nachos.userprog.*;
 import nachos.vm.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
 
 /**
  * A kernel that can support multiple demand-paging user processes.
@@ -32,6 +33,7 @@ public class VMKernel extends UserKernel {
 	public void initialize(String[] args) {
 		super.initialize(args);
 		currentFile = ThreadedKernel.fileSystem.open("swap", true);
+		allPinned = new Condition(physicalLock);
 	}
 
 	/**
@@ -68,6 +70,21 @@ public class VMKernel extends UserKernel {
 
 		// Need to select a victim page to evict from memory, using clock algorithm
 		System.out.println("in PAGE REPLACEMENT");
+
+		boolean pinnedOut;
+
+		pinnedOut = true;
+		ArrayList<Pair<Boolean, TranslationEntry>> pinnedTable = newProcess.pinnedTable;
+		for (int i = 0; i < pageSize; i++) {
+			// Check if all pages are pinned
+			boolean pageIsPinned = pinnedTable[i].getKey();
+			pinnedOut = pinnedOut && pageIsPinned;
+		}
+
+		if (pinnedOut) {
+			allPinned.sleep();
+		}
+
 		int clock = clkCtr.get(clkIdx)[1];
 		while (clock > 0) {
 			clkCtr.get(clkIdx)[1] = 0;
@@ -167,5 +184,5 @@ public class VMKernel extends UserKernel {
 
 	private static int currPg = 0;
 
-	public static ArrayList<Integer> pinned = new ArrayList<Integer>();
+	public static Condition allPinned;
 }
