@@ -30,9 +30,10 @@ public class UserProcess {
 		pageTable = new TranslationEntry[numPhysPages];
 		pinnedTable = new Integer[numPhysPages];
 
-		for (int i = 0; i < numPhysPages; i++)
+		for (int i = 0; i < numPhysPages; i++) {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
-			pinnedTable[i] = 0; 
+			pinnedTable[i] = 0;
+		}
 
 		boolean intStatus = Machine.interrupt().disable();
 		// When any process is started, its file descriptors 0 and 1 must refer to
@@ -756,8 +757,8 @@ public class UserProcess {
 		else if (count < 0 || argc > 16)
 			return -1;
 
-		//int argCount = Math.max(count - 1, 0);
-		int argPoint = pointer+4;
+		// int argCount = Math.max(count - 1, 0);
+		int argPoint = pointer + 4;
 
 		String[] argsToExec = new String[count];
 		for (int i = 0; i < count; i++) {
