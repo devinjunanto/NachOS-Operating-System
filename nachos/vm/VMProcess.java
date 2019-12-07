@@ -266,10 +266,12 @@ public class VMProcess extends UserProcess {
 		if (UserKernel.physPagesAvailable.size() > 0) {
 			// There are physics pages available
 			ppn = VMKernel.physPageNumber(this, vpn);
+			System.out.println("\nNo Page Replacement new ppn - "+ppn);
 		} else {
 			// No physical pages available
 			System.out.println("\n HERE no phys pages !");
 			ppn = VMKernel.pageReplacement(this, vpn);
+			System.out.println("\nDone with PAGE REPLACEMENT new ppn - "+ppn);
 			// ppn = VMKernel.
 		}
 
