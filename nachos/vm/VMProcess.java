@@ -184,14 +184,14 @@ public class VMProcess extends UserProcess {
 
 			for (int y = 0; y < coffSec.getLength(); y++) {
 				coffMap.add(i);
-				int vpn = coffSec.getFirstVPN() + y;
-				pageTable[vpn].readOnly = coffSec.isReadOnly();
-				// Dont Load a physical page, instead mark table entries as invalid
-				pageTable[vpn].dirty = false;
-				pageTable[vpn].used = false;
-				pageTable[vpn].valid = false;
-				pageTable[vpn].vpn = y;
-				// Also do not initialize the page by, e.g., loading from the COFF file.
+				// int vpn = coffSec.getFirstVPN() + y;
+				// pageTable[vpn].readOnly = coffSec.isReadOnly();
+				// // Dont Load a physical page, instead mark table entries as invalid
+				// pageTable[vpn].dirty = false;
+				// pageTable[vpn].used = false;
+				// pageTable[vpn].valid = false;
+				// pageTable[vpn].vpn = y;
+				// // Also do not initialize the page by, e.g., loading from the COFF file.
 			}
 		}
 		return true;
@@ -238,7 +238,7 @@ public class VMProcess extends UserProcess {
 			faultHandler(vAddr);
 			break;
 		default:
-			System.out.println("\nHere in default, cause - "+cause);
+			System.out.println("\nHere in default, cause - " + cause);
 			VMKernel.printTable();
 			super.handleException(cause);
 			break;
@@ -266,12 +266,12 @@ public class VMProcess extends UserProcess {
 		if (UserKernel.physPagesAvailable.size() > 0) {
 			// There are physics pages available
 			ppn = VMKernel.physPageNumber(this, vpn);
-			System.out.println("\nNo Page Replacement new ppn - "+ppn);
+			System.out.println("\nNo Page Replacement new ppn - " + ppn);
 		} else {
 			// No physical pages available
 			System.out.println("\n HERE no phys pages !");
 			ppn = VMKernel.pageReplacement(this, vpn);
-			System.out.println("\nDone with PAGE REPLACEMENT new ppn - "+ppn);
+			System.out.println("\nDone with PAGE REPLACEMENT new ppn - " + ppn);
 			// ppn = VMKernel.
 		}
 
@@ -279,13 +279,13 @@ public class VMProcess extends UserProcess {
 		entry.ppn = ppn;
 		entry.valid = true;
 
-		System.out.println("\n faultHandler with a new ppn - "+ppn);
+		System.out.println("\n faultHandler with a new ppn - " + ppn);
 		// Initialize the entry and allocate page
 		if (!entry.dirty) {
 			// Entry is valid and not dirty
 			System.out.println("\n faultHandler Valid & not dirty ppn");
 			if (coffNum >= 0) {
-				System.out.println("\n CoffNum  "+coffNum+" >= 0");
+				System.out.println("\n CoffNum  " + coffNum + " >= 0");
 				CoffSection section = coff.getSection(coffNum);
 				int pageOffset = vpn - section.getFirstVPN();
 				section.loadPage(pageOffset, ppn);
