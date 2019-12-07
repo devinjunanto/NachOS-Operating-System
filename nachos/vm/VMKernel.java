@@ -6,7 +6,6 @@ import nachos.userprog.*;
 import nachos.vm.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Array;
 
 /**
  * A kernel that can support multiple demand-paging user processes.
@@ -74,11 +73,11 @@ public class VMKernel extends UserKernel {
 		boolean pinnedOut;
 
 		pinnedOut = true;
-		Array<Pair<Boolean, TranslationEntry>> pinnedTable = newProcess.pinnedTable;
+		ArrayList<Pair<Boolean, TranslationEntry>> pinnedTable = newProcess.pinnedTable;
 		for (int i = 0; i < pageSize; i++) {
 			// Check if all pages are pinned
 
-			boolean pageIsPinned = (pinnedTable[i]).getKey();
+			boolean pageIsPinned = pinnedTable.get(i).getKey();
 			pinnedOut = pinnedOut && pageIsPinned;
 		}
 

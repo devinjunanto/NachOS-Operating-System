@@ -7,7 +7,6 @@ import nachos.vm.*;
 import java.util.*;
 import java.awt.image.Kernel;
 import java.io.EOFException;
-import java.util.Array;
 
 /**
  * Encapsulates the state of a user process that is not contained in its user
@@ -33,7 +32,8 @@ public class UserProcess {
 		for (int i = 0; i < numPhysPages; i++) {
 			TranslationEntry entry = new TranslationEntry(i, i, true, false, false, false);
 			pageTable[i] = entry;
-			pinnedTable[i] = new Pair<Boolean, TranslationEntry>(false, entry);
+			Pair<Boolean, TranslationEntry> pinPair = new Pair<Boolean, TranslationEntry>(false, entry);
+			pinnedTable.add(pinPair);
 		}
 
 		boolean intStatus = Machine.interrupt().disable();
@@ -994,7 +994,7 @@ public class UserProcess {
 	/** This process's page table. */
 	protected TranslationEntry[] pageTable;
 
-	public Array<Pair<Boolean, TranslationEntry>> pinnedTable;
+	public ArrayList<Pair<Boolean, TranslationEntry>> pinnedTable;
 
 	/** The number of contiguous pages occupied by the program. */
 	protected int numPages;
