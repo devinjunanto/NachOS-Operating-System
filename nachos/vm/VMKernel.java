@@ -54,6 +54,7 @@ public class VMKernel extends UserKernel {
 	public void terminate() {
 		currentFile.close();
 		ThreadedKernel.fileSystem.remove("swap");
+		System.out.println("in TERMINATE");
 		super.terminate();
 	}
 
@@ -65,7 +66,7 @@ public class VMKernel extends UserKernel {
 		// int[] clockNumbers = clkCtr.get(clkIdx);
 
 		// Need to select a victim page to evict from memory, using clock algorithm
-		System.out.println("1");
+		System.out.println("in PAGE REPLACEMENT");
 		int clock = clkCtr.get(clkIdx)[1];
 		while (clock > 0) {
 			clkCtr.get(clkIdx)[1] = 0;
