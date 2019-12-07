@@ -76,7 +76,8 @@ public class VMKernel extends UserKernel {
 		ArrayList<Pair<Boolean, TranslationEntry>> pinnedTable = newProcess.pinnedTable;
 		for (int i = 0; i < pageSize; i++) {
 			// Check if all pages are pinned
-			boolean pageIsPinned = pinnedTable[i].getKey();
+
+			boolean pageIsPinned = (pinnedTable[i]).getKey();
 			pinnedOut = pinnedOut && pageIsPinned;
 		}
 
