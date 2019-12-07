@@ -74,7 +74,7 @@ public class VMKernel extends UserKernel {
 				clkIdx = 0;
 			clock = clkCtr.get(clkIdx)[1];
 		}
-		System.out.println("2 - Victim ppn - "+ppnToReplace);
+		System.out.println("2 - Victim ppn - "+clkIdx);
 		int ppnToReplace = clkIdx; // victim page
 
 		VMProcess oldProcess = processes.get(ppnToReplace);
