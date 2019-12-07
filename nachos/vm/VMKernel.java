@@ -32,7 +32,7 @@ public class VMKernel extends UserKernel {
 	public void initialize(String[] args) {
 		super.initialize(args);
 		currentFile = ThreadedKernel.fileSystem.open("swap", true);
-		allPinned = new Condition(pinLock);
+		allPinned = new Condition(physicalLock);
 	}
 
 	// public static void wakePinned(){
@@ -193,5 +193,4 @@ public class VMKernel extends UserKernel {
 	private static int currPg = 0;
 
 	public static Condition allPinned;
-	public static Lock pinLock = new Lock();
 }
